@@ -39,8 +39,10 @@
 # define PADDING 10
 # define FOV 60
 # define TEXTURES_NB 5
-# define MOVEMENT_SPEED 0.15
-# define ROTATION_SPEED 0.06
+# define MOVEMENT_SPEED 0.08
+# define ROTATION_SPEED 0.03
+# define PITCH_SPEED 6.0
+# define PITCH_LIMIT (WIN_HEIGHT / 3)
 # define COLLISION_SAFETY 0.1
 # define RANGE_TOGGLE_DOOR 0.5
 # define DOOR_ANIMATION_SPEED 0.5

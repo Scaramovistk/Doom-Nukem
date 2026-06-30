@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_wall.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:12:52 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:12:54 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:12:52 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:12:54 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,15 @@ t_texture	*get_wall_texture(t_ray *ray, t_game *g)
 	}
 }
 
-void	get_wall_top_bottom(t_dimensions *wall, t_ray *ray)
+void	get_wall_top_bottom(t_dimensions *wall, t_ray *ray, t_game *g)
 {
 	int	wall_height;
+	int	horizon;
 
+	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
 	wall_height = (int)(WIN_HEIGHT / ray->distance);
-	wall->top = (WIN_HEIGHT / 2) - (wall_height / 2);
-	wall->bottom = (WIN_HEIGHT / 2) + (wall_height / 2);
+	wall->top = horizon - (wall_height / 2);
+	wall->bottom = horizon + (wall_height / 2);
 	if (wall->top < 0)
 		wall->top = 0;
 	if (wall->bottom > WIN_HEIGHT)

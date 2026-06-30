@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hooks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:12:14 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:12:17 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:12:14 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:12:17 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,13 @@ int	pressed(int key, t_game *g)
 	else if (key == KEY_D)
 		g->player.lateral_move = 1;
 	else if (key == KEY_LEFT)
-		g->player.rotation_move = -1;
+		g->player.key_rotation_move = -1;
 	else if (key == KEY_RIGHT)
-		g->player.rotation_move = 1;
+		g->player.key_rotation_move = 1;
+	else if (key == KEY_PAGE_UP)
+		g->player.key_pitch_move = -1;
+	else if (key == KEY_PAGE_DOWN)
+		g->player.key_pitch_move = 1;
 	else if (key == KEY_SPACE)
 		toggle_door(g);
 	return (0);
@@ -50,33 +54,28 @@ int	released(int key, t_game *g)
 	else if (key == KEY_A || key == KEY_D)
 		g->player.lateral_move = 0;
 	else if (key == KEY_LEFT || key == KEY_RIGHT)
-		g->player.rotation_move = 0;
+		g->player.key_rotation_move = 0;
+	else if (key == KEY_PAGE_UP || key == KEY_PAGE_DOWN)
+		g->player.key_pitch_move = 0;
 	return (0);
 }
 
 int	mouse_move(int x, int y, void *param)
 {
-	void	*win;
-	void	*mlx;
-	int		mouse_x;
 	t_game	*g;
+	int		delta_x;
+	int		delta_y;
 
 	g = (t_game *)param;
-	win = g->mlx_win;
-	mlx = g->mlx;
-	get_mouse_pos(mlx, win, &x, &y);
-	mouse_x = g->player.mouse.x;
-	if (0 < x && x < WIN_WIDTH && 0 < y && y < WIN_HEIGHT)
-	{
-		if (x > mouse_x + 1)
-			g->player.rotation_move = 2;
-		else if (x < mouse_x - 1)
-			g->player.rotation_move = -2;
-		else
-			g->player.rotation_move = 0;
-		g->player.mouse.x = x;
-	}
-	else
-		g->player.rotation_move = 0;
+	delta_x = x - (WIN_WIDTH / 2);
+	delta_y = y - (WIN_HEIGHT / 2);
+	if (delta_x == 0 && delta_y == 0)
+		return (0);
+	g->player.rotation_move = (double)delta_x;
+	g->player.pitch_move = (double)-delta_y;
+	g->player.mouse_move_pending = true;
+	g->player.mouse.x = x;
+	g->player.mouse.y = y;
+	move_mouse(g->mlx, g->mlx_win);
 	return (0);
 }

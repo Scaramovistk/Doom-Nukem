@@ -38,6 +38,8 @@
 #  define KEY_DOWN 65364
 #  define KEY_LEFT 65361
 #  define KEY_RIGHT 65363
+#  define KEY_PAGE_UP 65365
+#  define KEY_PAGE_DOWN 65366
 #  define KEY_SPACE 32
 # elif defined(__APPLE__)
 #  define KEY_ESC 53
@@ -49,6 +51,8 @@
 #  define KEY_DOWN 125
 #  define KEY_LEFT 123
 #  define KEY_RIGHT 124
+#  define KEY_PAGE_UP 116
+#  define KEY_PAGE_DOWN 121
 #  define KEY_SPACE 49
 # else
 #  error "Unsupported operating system"

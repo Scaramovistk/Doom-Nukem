@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_door_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:12:40 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:12:42 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:12:40 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:12:42 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	draw_door_slice(t_ray *ray, t_game *g)
 	int				door_top;
 	int				door_bottom;
 
-	get_door_top_bottom(&door_top, &door_bottom, ray);
+	get_door_top_bottom(&door_top, &door_bottom, ray, g);
 	slice.screen_x = ray->x;
 	slice.y_start = door_top;
 	slice.y_end = door_bottom;
@@ -28,15 +28,18 @@ void	draw_door_slice(t_ray *ray, t_game *g)
 	draw_texture_slice(&slice, g);
 }
 
-void	get_door_top_bottom(int *door_top, int *door_bottom, t_ray *ray)
+void	get_door_top_bottom(int *door_top, int *door_bottom,
+		t_ray *ray, t_game *g)
 {
 	int	full_door_height;
 	int	visible_door_height;
+	int	horizon;
 
+	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
 	full_door_height = (int)(WIN_HEIGHT / ray->door_distance);
 	visible_door_height = full_door_height * (1.0
 			- ray->hit_door->opening_state);
-	*door_bottom = (WIN_HEIGHT / 2) + (full_door_height / 2);
+	*door_bottom = horizon + (full_door_height / 2);
 	*door_top = *door_bottom - visible_door_height;
 	if (*door_top < 0)
 		*door_top = 0;

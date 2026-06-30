@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_structures.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:38:52 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:38:54 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:38:52 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:38:54 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,12 @@ typedef struct s_player
 	t_coord		mouse;
 	char		look;
 	double		orientation;
-	int			rotation_move;
+	double		rotation_move;
+	double		key_rotation_move;
+	double		pitch;
+	double		pitch_move;
+	double		key_pitch_move;
+	bool		mouse_move_pending;
 	int			vertical_move;
 	int			lateral_move;
 }				t_player;
@@ -87,9 +92,24 @@ typedef struct s_texture
 typedef struct s_assets
 {
 	t_texture	textures[TEXTURES_NB];
+	t_texture	floor_texture;
+	t_texture	ceiling_texture;
 	int			floor_color;
 	int			ceiling_color;
 }				t_assets;
+
+typedef struct s_floor_cast
+{
+	double	ray_dir_x0;
+	double	ray_dir_y0;
+	double	ray_dir_x1;
+	double	ray_dir_y1;
+	double	floor_x;
+	double	floor_y;
+	double	step_x;
+	double	step_y;
+	double	row_distance;
+}			t_floor_cast;
 
 typedef struct s_ray
 {

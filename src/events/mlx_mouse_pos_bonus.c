@@ -26,6 +26,12 @@ int	move_mouse(void *mlx, void *win)
 	return (0);
 }
 
+int	hide_mouse(void *mlx, void *win)
+{
+	mlx_mouse_hide(mlx, win);
+	return (0);
+}
+
 #elif defined(__APPLE__)
 
 int	get_mouse_pos(void *mlx, void *win, int *x, int *y)
@@ -39,6 +45,14 @@ int	move_mouse(void *mlx, void *win)
 {
 	(void)mlx;
 	mlx_mouse_move(win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
+	return (0);
+}
+
+int	hide_mouse(void *mlx, void *win)
+{
+	(void)mlx;
+	(void)win;
+	mlx_mouse_hide();
 	return (0);
 }
 

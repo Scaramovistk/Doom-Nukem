@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:12:04 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:12:08 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:12:04 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:12:08 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ int	game_loop(t_game *g)
 
 	update_doors(&door_updated, g);
 	if (!door_updated && !g->player.vertical_move && !g->player.lateral_move
-		&& !g->player.rotation_move)
+		&& !g->player.rotation_move && !g->player.key_rotation_move
+		&& !g->player.pitch_move && !g->player.key_pitch_move)
 		return (EXIT_SUCCESS);
 	update_player_pos(&g->player, g);
 	render(g);

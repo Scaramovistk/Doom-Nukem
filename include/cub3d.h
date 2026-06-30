@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:37:56 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:38:00 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:37:56 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:38:00 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int			mouse_move(int x, int y, void *param);
 // mlx_mouse_pos.c
 int			get_mouse_pos(void *mlx, void *win, int *x, int *y);
 int			move_mouse(void *mlx, void *win);
+int			hide_mouse(void *mlx, void *win);
 
 // game_loop.c
 void		start_game(t_game *g);
@@ -63,6 +64,7 @@ int			stop_game(void *param);
 void		load_game(t_game *g);
 void		load_all_textures(t_game *g);
 void		load_texture(t_texture *t, int *size, t_game *g);
+void		load_floor_ceiling_textures(t_game *g);
 void		ft_adjust_player_view(t_game *g);
 void		open_window(t_game *g);
 
@@ -93,6 +95,7 @@ void		apply_cross_distance(t_dda *dda, double *dist, int side, t_game *g);
 
 // draw_scene.c
 void		draw_scene(t_game *g);
+void		draw_floor_ceiling(t_game *g);
 void		draw_all_rays(t_ray *rays, t_game *g);
 void		draw_one_ray(t_ray *ray, t_game *g);
 void		draw_vertical_line(int x, t_dimensions dims, int color, t_game *g);
@@ -100,11 +103,12 @@ void		draw_vertical_line(int x, t_dimensions dims, int color, t_game *g);
 // draw_wall.c
 void		draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g);
 t_texture	*get_wall_texture(t_ray *ray, t_game *g);
-void		get_wall_top_bottom(t_dimensions *wall, t_ray *ray);
+void		get_wall_top_bottom(t_dimensions *wall, t_ray *ray, t_game *g);
 
 // draw_door.c
 void		draw_door_slice(t_ray *ray, t_game *g);
-void		get_door_top_bottom(int *door_top, int *door_bottom, t_ray *ray);
+void		get_door_top_bottom(int *door_top, int *door_bottom,
+				t_ray *ray, t_game *g);
 
 // draw_utils.c
 double		get_texture_x(t_ray *ray, double distance, int side, t_game *g);

@@ -3,14 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   update_player_pos.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:12:25 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:12:27 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:12:25 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:12:27 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/cub3d.h"
+
+static void	update_pitch(t_player *p)
+{
+	p->pitch += (p->key_pitch_move + p->pitch_move) * PITCH_SPEED;
+	if (p->pitch < -PITCH_LIMIT)
+		p->pitch = -PITCH_LIMIT;
+	else if (p->pitch > PITCH_LIMIT)
+		p->pitch = PITCH_LIMIT;
+}
+
+static void	clear_mouse_move(t_player *p)
+{
+	if (!p->mouse_move_pending)
+		return ;
+	p->rotation_move = 0;
+	p->pitch_move = 0;
+	p->mouse_move_pending = false;
+}
 
 void	update_player_pos(t_player *p, t_game *g)
 {
@@ -29,7 +47,10 @@ void	update_player_pos(t_player *p, t_game *g)
 	new_pos.y += add * LATERAL_MOVE_RATIO;
 	if (is_position_legal(new_pos, g))
 		p->pos = new_pos;
-	p->orientation += normalize_angle(p->rotation_move * ROTATION_SPEED);
+	p->orientation = normalize_angle(p->orientation + (p->key_rotation_move
+				+ p->rotation_move) * ROTATION_SPEED);
+	update_pitch(p);
+	clear_mouse_move(p);
 }
 
 bool	is_position_legal(t_position pos, t_game *g)

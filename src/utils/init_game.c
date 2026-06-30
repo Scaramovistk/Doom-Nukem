@@ -31,6 +31,10 @@ void	ft_int_assets(t_assets *assets)
 		ft_int_image(&assets->textures[i].img);
 		assets->textures[i].source = NULL;
 	}
+	ft_int_image(&assets->floor_texture.img);
+	ft_int_image(&assets->ceiling_texture.img);
+	assets->floor_texture.source = NULL;
+	assets->ceiling_texture.source = NULL;
 	assets->ceiling_color = -1;
 	assets->floor_color = -1;
 }
@@ -40,6 +44,11 @@ void	ft_int_player(t_player *p)
 	p->pos.x = 0;
 	p->pos.y = 0;
 	p->rotation_move = 0;
+	p->key_rotation_move = 0;
+	p->pitch = 0;
+	p->pitch_move = 0;
+	p->key_pitch_move = 0;
+	p->mouse_move_pending = false;
 	p->vertical_move = 0;
 	p->lateral_move = 0;
 	p->orientation = 0.0;

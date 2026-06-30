@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ugerkens <ugerkens@student.s19.be>         +#+  +:+       +#+        */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/17 11:12:47 by ugerkens          #+#    #+#             */
-/*   Updated: 2024/07/17 11:12:50 by ugerkens         ###   ########.fr       */
+/*   Created: 2024/07/17 11:12:47 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:12:50 by gscarama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,13 @@ void	draw_texture_slice(t_texture_slice *s, t_game *g)
 	int		texture_y;
 	int		pixel_color;
 	int		screen_y;
+	int		horizon;
 
+	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
 	s->texture_x_size = (int)(s->texture_x * (double)TEXTURE_SIZE);
 	s->height = WIN_HEIGHT / s->viewer_distance;
 	s->texture_step = 1.0 * TEXTURE_SIZE / s->height;
-	texture_y_pos = (s->y_start - WIN_HEIGHT / 2 + s->height / 2)
+	texture_y_pos = (s->y_start - horizon + s->height / 2)
 		* s->texture_step;
 	screen_y = s->y_start;
 	while (screen_y < s->y_end)
