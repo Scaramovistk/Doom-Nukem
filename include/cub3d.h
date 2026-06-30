@@ -86,6 +86,7 @@ void		perform_dda(t_dda *dda, t_ray *ray, t_game *g);
 void		progress_dda(t_dda *dda);
 bool		wall_collision(t_dda *dda, t_ray *ray, t_game *g);
 bool		door_collision(t_dda *dda, t_ray *ray, t_game *g);
+void		transparent_collision(t_dda *dda, t_ray *ray, t_game *g);
 void		update_door_ray_info(t_dda *dda, t_ray *ray, t_game *g);
 
 // dda_utils.c
@@ -105,6 +106,8 @@ void		draw_sprites(t_game *g, double *z_buffer);
 
 // draw_wall.c
 void		draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g);
+void		draw_transparent_walls(t_ray *ray, t_game *g);
+void		draw_wall_decal(t_dimensions wall, t_ray *ray, t_game *g);
 t_texture	*get_wall_texture(t_ray *ray, t_game *g);
 void		get_wall_top_bottom(t_dimensions *wall, t_ray *ray, t_game *g);
 
@@ -116,7 +119,9 @@ void		get_door_top_bottom(int *door_top, int *door_bottom,
 // draw_utils.c
 double		get_texture_x(t_ray *ray, double distance, int side, t_game *g);
 void		draw_texture_slice(t_texture_slice *slice, t_game *g);
+void		draw_texture_slice_alpha(t_texture_slice *slice, t_game *g);
 int			get_pixel(t_img *img, int x, int y);
+int			blend_color(int dst, int src, double alpha);
 
 // mlx_utils.c
 void		put_pixel(t_img *img, int x, int y, int color);

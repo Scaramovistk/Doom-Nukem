@@ -2,8 +2,9 @@ WE tests/textures_blue/blue2.xpm
 EA tests/textures_blue/blue3.xpm
 NO tests/textures_blue/blue1.xpm
 SO tests/textures_blue/blue4.xpm
+
 DO tests/textures_classic/eagle.xpm
-SK tests/textures_blue/sky_test.xpm
+
 SP tests/textures_blue/test_sprite.xpm
 SP0 tests/textures_blue/sprite_dir_0.xpm
 SP1 tests/textures_blue/sprite_dir_1.xpm
@@ -13,18 +14,24 @@ SP4 tests/textures_blue/sprite_dir_4.xpm
 SP5 tests/textures_blue/sprite_dir_5.xpm
 SP6 tests/textures_blue/sprite_dir_6.xpm
 SP7 tests/textures_blue/sprite_dir_7.xpm
+
+TR tests/textures_blue/glass_wall.xpm
+DC tests/textures_blue/wall_decal.xpm
+
 F tests/textures_blue/floor_stone.xpm
+
+SK tests/textures_blue/sky_test.xpm
 C tests/textures_blue/ceiling_panel.xpm
 
 111111111111111111111111
-100000000000300000000001
+100000000000000000000001
 1000000000000000N0000001
 100000000000000000000001
 100000111112111111000001
+100000100000000004000001
+100000100000300005000001
 100000100000000001000001
-100000100000000001000001
-100000100000000001000001
-100000111111111111000001
+100000111111411111000001
 100000000000000000000001
 100000000001000000000001
 100000100000000010000001

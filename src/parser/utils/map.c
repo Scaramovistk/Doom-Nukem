@@ -25,7 +25,7 @@ int	ft_map_line(const char *str)
 
 int	ft_invalid_line(const char *str)
 {
-	const char	*valid_chars = "0123 NWSE";
+	const char	*valid_chars = "012345 NWSE";
 
 	while (*str)
 	{

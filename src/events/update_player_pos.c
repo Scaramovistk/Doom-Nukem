@@ -65,7 +65,7 @@ bool	is_position_legal(t_position pos, t_game *g)
 	{
 		cell = get_adjacent_cell(pos, check_pos[i]);
 		block = g->map.grid[cell.y][cell.x];
-		if (block == WALL)
+		if (block == WALL || block == TRANSPARENT_WALL || block == DECAL_WALL)
 			return (false);
 		if (block == DOOR && !is_door_open(cell, g->map.doors))
 			return (false);

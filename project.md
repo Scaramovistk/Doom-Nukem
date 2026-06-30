@@ -78,11 +78,11 @@ Fix:
 - Needed by enemies (S5)
 - **Week 2**
 
-#### S1 · Transparent / semi-transparent walls `[ ]`
+#### S1 · Transparent / semi-transparent walls `[✅]`
 - Multi-pass raycasting: continue ray after transparent surface, blend pixels
 - **Week 3**
 
-#### S2 · Wall decorations / decals `[ ]`
+#### S2 · Wall decorations / decals `[✅]`
 - Sprites anchored flat to a wall face (paintings, posters)
 - **Week 3**
 

@@ -52,6 +52,48 @@ void	draw_texture_slice(t_texture_slice *s, t_game *g)
 	}
 }
 
+int	blend_color(int dst, int src, double alpha)
+{
+	int	red;
+	int	green;
+	int	blue;
+
+	red = ((src >> 16) & 0xFF) * alpha + ((dst >> 16) & 0xFF)
+		* (1.0 - alpha);
+	green = ((src >> 8) & 0xFF) * alpha + ((dst >> 8) & 0xFF)
+		* (1.0 - alpha);
+	blue = (src & 0xFF) * alpha + (dst & 0xFF) * (1.0 - alpha);
+	return ((red << 16) | (green << 8) | blue);
+}
+
+void	draw_texture_slice_alpha(t_texture_slice *s, t_game *g)
+{
+	double	texture_y_pos;
+	int		texture_y;
+	int		pixel_color;
+	int		screen_y;
+	int		horizon;
+
+	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
+	s->texture_x_size = (int)(s->texture_x * (double)TEXTURE_SIZE);
+	s->height = WIN_HEIGHT / s->viewer_distance;
+	s->texture_step = 1.0 * TEXTURE_SIZE / s->height;
+	texture_y_pos = (s->y_start - horizon + s->height / 2)
+		* s->texture_step;
+	screen_y = s->y_start;
+	while (screen_y < s->y_end)
+	{
+		texture_y = ((int)(texture_y_pos)) & (TEXTURE_SIZE - 1);
+		texture_y_pos += s->texture_step;
+		pixel_color = get_pixel(&s->texture->img, s->texture_x_size, texture_y);
+		if ((pixel_color & 0x00FFFFFF) != 0x00FF00FF)
+			put_pixel(&g->img, s->screen_x, screen_y,
+				blend_color(get_pixel(&g->img, s->screen_x, screen_y),
+					pixel_color, 0.45));
+		screen_y++;
+	}
+}
+
 int	get_pixel(t_img *img, int x, int y)
 {
 	int	y_cord;

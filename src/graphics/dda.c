@@ -30,13 +30,30 @@ void	progress_dda(t_dda *dda)
 
 bool	wall_collision(t_dda *dda, t_ray *ray, t_game *g)
 {
-	if (g->map.grid[dda->map.y][dda->map.x] == WALL)
+	t_block	block;
+
+	block = g->map.grid[dda->map.y][dda->map.x];
+	if (block == WALL || block == DECAL_WALL)
 	{
 		ray->side = dda->side;
+		ray->hit_block = block;
 		apply_cross_distance(dda, &ray->distance, ray->side, g);
 		return (true);
 	}
 	return (false);
+}
+
+void	transparent_collision(t_dda *dda, t_ray *ray, t_game *g)
+{
+	t_transparent_hit	*hit;
+
+	if (g->map.grid[dda->map.y][dda->map.x] != TRANSPARENT_WALL)
+		return ;
+	if (ray->transparent_count >= TRANSPARENT_HIT_MAX)
+		return ;
+	hit = &ray->transparent_hits[ray->transparent_count++];
+	hit->side = dda->side;
+	apply_cross_distance(dda, &hit->distance, hit->side, g);
 }
 
 bool	door_collision(t_dda *dda, t_ray *ray, t_game *g)
@@ -68,10 +85,13 @@ void	perform_dda(t_dda *dda, t_ray *ray, t_game *g)
 
 	hit = false;
 	ray->hit_door = NULL;
+	ray->transparent_count = 0;
+	ray->hit_block = WALL;
 	while (!hit)
 	{
 		progress_dda(dda);
 		door_collision(dda, ray, g);
+		transparent_collision(dda, ray, g);
 		if (wall_collision(dda, ray, g))
 		{
 			hit = true;

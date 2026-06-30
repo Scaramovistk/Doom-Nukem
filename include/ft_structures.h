@@ -117,6 +117,12 @@ typedef struct s_floor_cast
 	double	row_distance;
 }			t_floor_cast;
 
+typedef struct s_transparent_hit
+{
+	double	distance;
+	int		side;
+}			t_transparent_hit;
+
 typedef struct s_ray
 {
 	int			x;
@@ -125,10 +131,13 @@ typedef struct s_ray
 
 	double		distance;
 	int			side;
+	t_block		hit_block;
 
 	t_door		*hit_door;
 	double		door_distance;
 	int			door_side;
+	t_transparent_hit	transparent_hits[TRANSPARENT_HIT_MAX];
+	int					transparent_count;
 }				t_ray;
 
 typedef struct s_sprite_draw
@@ -200,6 +209,8 @@ typedef struct s_header
 	char		ceiling_texture[LINE_SIZE];
 	char		sky_texture[LINE_SIZE];
 	char		sprite_texture[LINE_SIZE];
+	char		transparent_texture[LINE_SIZE];
+	char		decal_texture[LINE_SIZE];
 	char		sprite_frame_textures[SPRITE_FRAME_NB][LINE_SIZE];
 	int			floor[3];
 	int			ceiling[3];

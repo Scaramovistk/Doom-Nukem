@@ -20,7 +20,9 @@ enum	e_texture_type
 	EAST,
 	WEST,
 	DOOR_T,
-	SPRITE_T
+	SPRITE_T,
+	TRANSPARENT_T,
+	DECAL_T
 };
 
 enum	e_texture_length
@@ -36,7 +38,9 @@ typedef enum t_block
 	WALL,
 	PLAYER,
 	DOOR,
-	SPRITE
+	SPRITE,
+	TRANSPARENT_WALL,
+	DECAL_WALL
 }		t_block;
 
 #endif

@@ -143,8 +143,11 @@ void	draw_one_ray(t_ray *ray, t_game *g)
 
 	get_wall_top_bottom(&wall, ray, g);
 	draw_wall_slice(wall, ray, g);
+	if (ray->hit_block == DECAL_WALL)
+		draw_wall_decal(wall, ray, g);
 	if (ray->hit_door)
 		draw_door_slice(ray, g);
+	draw_transparent_walls(ray, g);
 }
 
 void	draw_vertical_line(int x, t_dimensions dimensions, int color, t_game *g)

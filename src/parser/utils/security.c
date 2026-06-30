@@ -12,6 +12,11 @@
 
 #include "../../../include/cub3d.h"
 
+static int	ft_is_wall_like(char c)
+{
+	return (c == '1' || c == '4' || c == '5');
+}
+
 int	ft_is_halway(char **map, int vert, int hor)
 {
 	int	up;
@@ -23,9 +28,11 @@ int	ft_is_halway(char **map, int vert, int hor)
 	right = map[vert][hor + 1];
 	up = map[vert - 1][hor];
 	down = map[vert + 1][hor];
-	if (left == '1' && right == '1' && up == '0' && down == '0')
+	if (ft_is_wall_like(left) && ft_is_wall_like(right)
+		&& up == '0' && down == '0')
 		return (1);
-	if (up == '1' && down == '1' && left == '0' && right == '0')
+	if (ft_is_wall_like(up) && ft_is_wall_like(down)
+		&& left == '0' && right == '0')
 		return (1);
 	return (0);
 }

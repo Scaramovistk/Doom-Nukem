@@ -26,6 +26,10 @@ t_block	ft_convert_tblock(char c)
 		return (EMPTY);
 	else if (c == '3')
 		return (SPRITE);
+	else if (c == '4')
+		return (TRANSPARENT_WALL);
+	else if (c == '5')
+		return (DECAL_WALL);
 	else
 		return (NULL_BLOCK);
 }
@@ -141,6 +145,12 @@ void	ft_populate_info(t_header *h, t_game *g)
 	if (h->sprite_texture[0])
 		g->assets.textures[SPRITE_T].source = s_alloc(
 				ft_strdup(h->sprite_texture), g);
+	if (h->transparent_texture[0])
+		g->assets.textures[TRANSPARENT_T].source = s_alloc(
+				ft_strdup(h->transparent_texture), g);
+	if (h->decal_texture[0])
+		g->assets.textures[DECAL_T].source = s_alloc(
+				ft_strdup(h->decal_texture), g);
 	i = 0;
 	while (i < SPRITE_FRAME_NB && h->sprite_frame_textures[i][0])
 	{

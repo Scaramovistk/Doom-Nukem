@@ -37,6 +37,12 @@ void	load_all_textures(t_game *g)
 	size = TEXTURE_SIZE;
 	if (g->assets.textures[SPRITE_T].source)
 		load_texture(&g->assets.textures[SPRITE_T], &size, g);
+	size = TEXTURE_SIZE;
+	if (g->assets.textures[TRANSPARENT_T].source)
+		load_texture(&g->assets.textures[TRANSPARENT_T], &size, g);
+	size = TEXTURE_SIZE;
+	if (g->assets.textures[DECAL_T].source)
+		load_texture(&g->assets.textures[DECAL_T], &size, g);
 	i = 0;
 	while (i < SPRITE_FRAME_NB)
 	{
