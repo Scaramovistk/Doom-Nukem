@@ -18,6 +18,7 @@
 
 # define WHITE 0x00FFFFFF
 # define RED 0x00FF0000
+# define BLUE 0x000000FF
 # define GREY 0x00A0A0A0
 # define GREEN 0x0004ff00
 #endif

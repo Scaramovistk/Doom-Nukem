@@ -20,7 +20,7 @@ void	draw_scene(t_game *g)
 	draw_floor_ceiling(g);
 	cast_all_rays(rays, g);
 	draw_all_rays(rays, g, z_buffer);
-	draw_sprites(g, z_buffer);
+	draw_sprites(g, z_buffer, rays);
 }
 
 static void	init_floor_cast(t_floor_cast *cast, t_game *g)

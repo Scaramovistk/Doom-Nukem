@@ -97,8 +97,58 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 	return (&g->assets.sprite_frames[frame]);
 }
 
+static int	get_glass_pixel(t_transparent_hit *hit, int y, t_ray *ray, t_game *g)
+{
+	t_dimensions	wall;
+	double			tex_y_pos;
+	double			wall_height;
+	int				tex_x;
+	int				tex_y;
+	int				horizon;
+
+	ray->distance = hit->distance;
+	ray->side = hit->side;
+	get_wall_top_bottom(&wall, ray, g);
+	if (y < wall.top || y >= wall.bottom)
+		return (-1);
+	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
+	wall_height = WIN_HEIGHT / hit->distance;
+	tex_x = (int)(get_texture_x(ray, hit->distance, hit->side, g)
+			* (double)TEXTURE_SIZE);
+	tex_y_pos = (y - horizon + wall_height / 2)
+		* (1.0 * TEXTURE_SIZE / wall_height);
+	tex_y = ((int)tex_y_pos) & (TEXTURE_SIZE - 1);
+	return (get_pixel(&g->assets.textures[TRANSPARENT_T].img, tex_x, tex_y));
+}
+
+static int	blend_sprite_glass(int color, int y, double sprite_depth,
+		t_ray *ray, t_game *g)
+{
+	int		i;
+	int		glass_color;
+	double	save_distance;
+	int		save_side;
+
+	if (!g->assets.textures[TRANSPARENT_T].img.ptr)
+		return (color);
+	save_distance = ray->distance;
+	save_side = ray->side;
+	i = ray->transparent_count;
+	while (i--)
+	{
+		if (sprite_depth <= ray->transparent_hits[i].distance)
+			continue ;
+		glass_color = get_glass_pixel(&ray->transparent_hits[i], y, ray, g);
+		if (glass_color >= 0 && (glass_color & 0x00FFFFFF) != 0x00FF00FF)
+			color = blend_color(color, glass_color, 0.45);
+	}
+	ray->distance = save_distance;
+	ray->side = save_side;
+	return (color);
+}
+
 static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
-		t_texture *texture)
+		t_texture *texture, t_ray *ray)
 {
 	int	tex_x;
 	int	tex_y;
@@ -116,12 +166,16 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
 		tex_y = ((d * TEXTURE_SIZE) / s->height) / 256;
 		color = get_pixel(&texture->img, tex_x, tex_y);
 		if ((color & 0x00FFFFFF) != 0x00FF00FF)
+		{
+			color = blend_sprite_glass(color, y, s->transform_y, ray, g);
 			put_pixel(&g->img, stripe, y, color);
+		}
 		y++;
 	}
 }
 
-static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer)
+static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer,
+		t_ray *rays)
 {
 	int	stripe;
 	t_texture	*texture;
@@ -135,12 +189,12 @@ static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer)
 	{
 		if (s->transform_y > 0 && stripe > 0 && stripe < WIN_WIDTH
 			&& s->transform_y < z_buffer[stripe])
-			draw_sprite_stripe(s, stripe, g, texture);
+			draw_sprite_stripe(s, stripe, g, texture, &rays[stripe]);
 		stripe++;
 	}
 }
 
-void	draw_sprites(t_game *g, double *z_buffer)
+void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 {
 	t_sprite_draw	*sprites;
 	int				i;
@@ -160,6 +214,6 @@ void	draw_sprites(t_game *g, double *z_buffer)
 	sort_sprites(sprites, g->map.sprite_count);
 	i = 0;
 	while (i < g->map.sprite_count)
-		draw_one_sprite(&sprites[i++], g, z_buffer);
+		draw_one_sprite(&sprites[i++], g, z_buffer, rays);
 	free(sprites);
 }

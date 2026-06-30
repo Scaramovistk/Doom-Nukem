@@ -90,6 +90,21 @@ void	draw_player_orientation(t_img *img, int *map, int color)
 	}
 }
 
+static void	draw_sprites_on_minimap(t_game *g, int *map)
+{
+	int	i;
+
+	map[2] = RED;
+	i = 0;
+	while (i < g->map.sprite_count)
+	{
+		map[5] = (int)(g->map.sprites[i].x * MAP_SCALE) + PADDING;
+		map[6] = (int)(g->map.sprites[i].y * MAP_SCALE) + PADDING;
+		draw_player_on_minimap(&(g->img), map, MAP_SCALE / 3);
+		i++;
+	}
+}
+
 void	draw_minimap(t_game *g, int *map)
 {
 	map[0] = -1;
@@ -99,7 +114,9 @@ void	draw_minimap(t_game *g, int *map)
 		while (++map[1] < g->map.width)
 		{
 			map[2] = WHITE;
-			if (g->map.grid[map[0]][map[1]] == WALL)
+			if (g->map.grid[map[0]][map[1]] == WALL
+				|| g->map.grid[map[0]][map[1]] == TRANSPARENT_WALL
+				|| g->map.grid[map[0]][map[1]] == DECAL_WALL)
 				map[2] = GREY;
 			else if (g->map.grid[map[0]][map[1]] == DOOR)
 				map[2] = GREEN;
@@ -110,11 +127,12 @@ void	draw_minimap(t_game *g, int *map)
 			draw_square_on_minimap(&(g->img), map, MAP_SCALE);
 		}
 	}
+	draw_sprites_on_minimap(g, map);
 	map[5] = (int)(g->player.pos.x * MAP_SCALE) + PADDING;
 	map[6] = (int)(g->player.pos.y * MAP_SCALE) + PADDING;
-	map[2] = RED;
+	map[2] = BLUE;
 	draw_player_on_minimap(&(g->img), map, MAP_SCALE / 2);
 	map[7] = map[5] + MAP_SCALE * cos(g->player.orientation);
 	map[8] = map[6] + MAP_SCALE * sin(g->player.orientation);
-	draw_player_orientation(&(g->img), map, RED);
+	draw_player_orientation(&(g->img), map, BLUE);
 }
