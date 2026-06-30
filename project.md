@@ -73,7 +73,7 @@ Fix:
 - Sort sprites by distance, project onto screen, respect Z-buffer
 - **Week 2**
 
-#### G5 · Multi-angle sprites (directional characters) `[ ]`
+#### G5 · Multi-angle sprites (directional characters) `[✅]`
 - Pick one of 8 rotation frames based on angle between player and object
 - Needed by enemies (S5)
 - **Week 2**

@@ -5,6 +5,14 @@ SO tests/textures_blue/blue4.xpm
 DO tests/textures_classic/eagle.xpm
 SK tests/textures_blue/sky_test.xpm
 SP tests/textures_blue/test_sprite.xpm
+SP0 tests/textures_blue/sprite_dir_0.xpm
+SP1 tests/textures_blue/sprite_dir_1.xpm
+SP2 tests/textures_blue/sprite_dir_2.xpm
+SP3 tests/textures_blue/sprite_dir_3.xpm
+SP4 tests/textures_blue/sprite_dir_4.xpm
+SP5 tests/textures_blue/sprite_dir_5.xpm
+SP6 tests/textures_blue/sprite_dir_6.xpm
+SP7 tests/textures_blue/sprite_dir_7.xpm
 F tests/textures_blue/floor_stone.xpm
 C tests/textures_blue/ceiling_panel.xpm
 

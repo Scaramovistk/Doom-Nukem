@@ -33,6 +33,13 @@ void	ft_destroy_textures(t_game *g)
 	img = &g->assets.sky_texture.img;
 	if (img->ptr)
 		mlx_destroy_image(g->mlx, img->ptr);
+	i = SPRITE_FRAME_NB;
+	while (i--)
+	{
+		img = &g->assets.sprite_frames[i].img;
+		if (img->ptr)
+			mlx_destroy_image(g->mlx, img->ptr);
+	}
 }
 
 #ifdef __linux__

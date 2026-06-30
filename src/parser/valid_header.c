@@ -113,6 +113,34 @@ static int	ft_good_optional_xpm(char *path, int *ok)
 	return (1);
 }
 
+static int	ft_good_sprite_frames(t_header *header, int *ok)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (i < SPRITE_FRAME_NB)
+	{
+		if (header->sprite_frame_textures[i][0])
+			count++;
+		i++;
+	}
+	if (count != 0 && count != SPRITE_FRAME_NB)
+	{
+		*ok = ft_parsing_error(PATHS, 0);
+		return (0);
+	}
+	i = 0;
+	while (i < SPRITE_FRAME_NB)
+	{
+		if (!ft_good_optional_xpm(header->sprite_frame_textures[i], ok))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void	ft_ok(int *vals, int *ok, t_header *header)
 {
 	int	values[9];
@@ -133,6 +161,8 @@ void	ft_ok(int *vals, int *ok, t_header *header)
 	if (!ft_good_optional_xpm(header->sky_texture, ok))
 		return ;
 	if (!ft_good_optional_xpm(header->sprite_texture, ok))
+		return ;
+	if (!ft_good_sprite_frames(header, ok))
 		return ;
 	if (!ft_good_rgb(header, ok))
 		return ;

@@ -39,6 +39,7 @@
 # define PADDING 10
 # define FOV 60
 # define TEXTURES_NB 6
+# define SPRITE_FRAME_NB 8
 # define MOVEMENT_SPEED 0.08
 # define ROTATION_SPEED 0.03
 # define PITCH_SPEED 6.0

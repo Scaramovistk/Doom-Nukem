@@ -28,6 +28,8 @@ char	**ft_values_setup(int *readval)
 
 void	ft_setup_header(t_header *header)
 {
+	int	i;
+
 	header->floor[0] = -1;
 	header->floor[1] = -1;
 	header->floor[2] = -1;
@@ -43,6 +45,9 @@ void	ft_setup_header(t_header *header)
 	ft_bzero(header->ceiling_texture, LINE_SIZE);
 	ft_bzero(header->sky_texture, LINE_SIZE);
 	ft_bzero(header->sprite_texture, LINE_SIZE);
+	i = SPRITE_FRAME_NB;
+	while (i--)
+		ft_bzero(header->sprite_frame_textures[i], LINE_SIZE);
 }
 
 void	ft_get_xpm(char *dest, char *src, int *found, int *vals)
@@ -110,6 +115,19 @@ static void	ft_get_surface(char *dest, int *rgb, int *found,
 	free(trim);
 }
 
+static int	ft_get_sprite_frame(char *text, t_header *header, int *values,
+		int *vals)
+{
+	int	frame;
+
+	if (text[0] != 'S' || text[1] != 'P' || text[2] < '0' || text[2] > '7')
+		return (0);
+	frame = text[2] - '0';
+	ft_get_xpm(header->sprite_frame_textures[frame], text + 3, &values[8],
+		vals);
+	return (1);
+}
+
 int	ft_header_extractor(char *line, int *vals, t_header *header)
 {
 	int		values[9];
@@ -117,6 +135,8 @@ int	ft_header_extractor(char *line, int *vals, t_header *header)
 
 	ft_values_setup(values);
 	text = line + vals[6];
+	if (ft_get_sprite_frame(text, header, values, vals))
+		return (1);
 	if (ft_strncmp(text, "NO", wall) == 0)
 		return (ft_get_xpm(header->no, text + wall, &vals[0], vals), 1);
 	else if (ft_strncmp(text, "EA", wall) == 0)

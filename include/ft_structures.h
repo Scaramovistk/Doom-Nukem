@@ -97,7 +97,9 @@ typedef struct s_assets
 	t_texture	floor_texture;
 	t_texture	ceiling_texture;
 	t_texture	sky_texture;
+	t_texture	sprite_frames[SPRITE_FRAME_NB];
 	bool		has_sky;
+	bool		has_sprite_frames;
 	int			floor_color;
 	int			ceiling_color;
 }				t_assets;
@@ -198,6 +200,7 @@ typedef struct s_header
 	char		ceiling_texture[LINE_SIZE];
 	char		sky_texture[LINE_SIZE];
 	char		sprite_texture[LINE_SIZE];
+	char		sprite_frame_textures[SPRITE_FRAME_NB][LINE_SIZE];
 	int			floor[3];
 	int			ceiling[3];
 }				t_header;

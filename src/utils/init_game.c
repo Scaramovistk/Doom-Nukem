@@ -37,7 +37,14 @@ void	ft_int_assets(t_assets *assets)
 	assets->floor_texture.source = NULL;
 	assets->ceiling_texture.source = NULL;
 	assets->sky_texture.source = NULL;
+	i = SPRITE_FRAME_NB;
+	while (i--)
+	{
+		ft_int_image(&assets->sprite_frames[i].img);
+		assets->sprite_frames[i].source = NULL;
+	}
 	assets->has_sky = false;
+	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
 	assets->floor_color = -1;
 }

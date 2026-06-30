@@ -83,7 +83,22 @@ static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 		s->right = WIN_WIDTH - 1;
 }
 
-static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g)
+static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
+{
+	double	angle;
+	int		frame;
+
+	if (!g->assets.has_sprite_frames)
+		return (&g->assets.textures[SPRITE_T]);
+	angle = normalize_angle(atan2(g->player.pos.y - s->pos.y,
+				g->player.pos.x - s->pos.x));
+	frame = (int)((angle + (M_PI / SPRITE_FRAME_NB))
+			/ (2 * M_PI / SPRITE_FRAME_NB)) % SPRITE_FRAME_NB;
+	return (&g->assets.sprite_frames[frame]);
+}
+
+static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
+		t_texture *texture)
 {
 	int	tex_x;
 	int	tex_y;
@@ -99,7 +114,7 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g)
 		d = (y - ((WIN_HEIGHT / 2) + (int)g->player.pitch)) * 256
 			+ s->height * 128;
 		tex_y = ((d * TEXTURE_SIZE) / s->height) / 256;
-		color = get_pixel(&g->assets.textures[SPRITE_T].img, tex_x, tex_y);
+		color = get_pixel(&texture->img, tex_x, tex_y);
 		if ((color & 0x00FFFFFF) != 0x00FF00FF)
 			put_pixel(&g->img, stripe, y, color);
 		y++;
@@ -109,16 +124,18 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g)
 static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer)
 {
 	int	stripe;
+	t_texture	*texture;
 
 	if (s->transform_y <= 0)
 		return ;
 	set_sprite_bounds(s, g);
+	texture = get_sprite_texture(s, g);
 	stripe = s->left;
 	while (stripe < s->right)
 	{
 		if (s->transform_y > 0 && stripe > 0 && stripe < WIN_WIDTH
 			&& s->transform_y < z_buffer[stripe])
-			draw_sprite_stripe(s, stripe, g);
+			draw_sprite_stripe(s, stripe, g, texture);
 		stripe++;
 	}
 }
@@ -128,7 +145,8 @@ void	draw_sprites(t_game *g, double *z_buffer)
 	t_sprite_draw	*sprites;
 	int				i;
 
-	if (!g->map.sprite_count || !g->assets.textures[SPRITE_T].img.ptr)
+	if (!g->map.sprite_count || (!g->assets.textures[SPRITE_T].img.ptr
+			&& !g->assets.has_sprite_frames))
 		return ;
 	sprites = malloc(g->map.sprite_count * sizeof(t_sprite_draw));
 	if (!sprites)

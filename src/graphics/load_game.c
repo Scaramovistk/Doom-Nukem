@@ -37,6 +37,14 @@ void	load_all_textures(t_game *g)
 	size = TEXTURE_SIZE;
 	if (g->assets.textures[SPRITE_T].source)
 		load_texture(&g->assets.textures[SPRITE_T], &size, g);
+	i = 0;
+	while (i < SPRITE_FRAME_NB)
+	{
+		size = TEXTURE_SIZE;
+		if (g->assets.sprite_frames[i].source)
+			load_texture(&g->assets.sprite_frames[i], &size, g);
+		i++;
+	}
 }
 
 void	load_texture(t_texture *t, int *size, t_game *g)

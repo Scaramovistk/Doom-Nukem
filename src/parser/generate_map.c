@@ -108,6 +108,7 @@ void	ft_populate_info(t_header *h, t_game *g)
 {
 	int	ceiling;
 	int	floor;
+	int	i;
 
 	g->assets.textures[NORTH].source = s_alloc(ft_strdup(h->no), g);
 	g->assets.textures[SOUTH].source = s_alloc(ft_strdup(h->so), g);
@@ -140,4 +141,13 @@ void	ft_populate_info(t_header *h, t_game *g)
 	if (h->sprite_texture[0])
 		g->assets.textures[SPRITE_T].source = s_alloc(
 				ft_strdup(h->sprite_texture), g);
+	i = 0;
+	while (i < SPRITE_FRAME_NB && h->sprite_frame_textures[i][0])
+	{
+		g->assets.sprite_frames[i].source = s_alloc(
+				ft_strdup(h->sprite_frame_textures[i]), g);
+		i++;
+	}
+	if (i == SPRITE_FRAME_NB)
+		g->assets.has_sprite_frames = true;
 }
