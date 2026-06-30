@@ -63,8 +63,26 @@ void	ft_populate_info(t_header *h, t_game *g)
 	g->assets.textures[EAST].source = s_alloc(ft_strdup(h->ea), g);
 	if (MODE_BONUS)
 		g->assets.textures[DOOR_T].source = s_alloc(ft_strdup(h->door), g);
-	floor = ((h->floor[0] << 16) | (h->floor[1] << 8) | h->floor[2]);
-	g->assets.floor_color = floor;
-	ceiling = ((h->ceiling[0] << 16) | (h->ceiling[1] << 8) | h->ceiling[2]);
-	g->assets.ceiling_color = ceiling;
+	if (h->floor_texture[0])
+		g->assets.floor_texture.source = s_alloc(ft_strdup(h->floor_texture),
+				g);
+	else
+	{
+		floor = ((h->floor[0] << 16) | (h->floor[1] << 8) | h->floor[2]);
+		g->assets.floor_color = floor;
+	}
+	if (h->ceiling_texture[0])
+		g->assets.ceiling_texture.source = s_alloc(
+				ft_strdup(h->ceiling_texture), g);
+	else
+	{
+		ceiling = ((h->ceiling[0] << 16) | (h->ceiling[1] << 8)
+				| h->ceiling[2]);
+		g->assets.ceiling_color = ceiling;
+	}
+	if (h->sky_texture[0])
+	{
+		g->assets.sky_texture.source = s_alloc(ft_strdup(h->sky_texture), g);
+		g->assets.has_sky = true;
+	}
 }

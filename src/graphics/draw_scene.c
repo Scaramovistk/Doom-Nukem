@@ -60,6 +60,27 @@ static void	draw_surface_row(int y, int horizon, t_floor_cast cast, t_game *g)
 	}
 }
 
+static void	draw_sky_row(int y, t_game *g)
+{
+	int	x;
+	int	tex_x;
+	int	tex_y;
+	int	angle_offset;
+
+	angle_offset = (int)((g->player.orientation / (2 * M_PI)) * TEXTURE_SIZE);
+	tex_y = ((int)(((double)y - g->player.pitch) * TEXTURE_SIZE
+				/ (WIN_HEIGHT / 2))) & (TEXTURE_SIZE - 1);
+	x = 0;
+	while (x < WIN_WIDTH)
+	{
+		tex_x = ((x * TEXTURE_SIZE / WIN_WIDTH) + angle_offset)
+			& (TEXTURE_SIZE - 1);
+		put_pixel(&g->img, x, y,
+			get_pixel(&g->assets.sky_texture.img, tex_x, tex_y));
+		x++;
+	}
+}
+
 static void	set_surface_row(int y, int horizon, t_floor_cast *cast, t_game *g)
 {
 	int	row_offset;
@@ -89,7 +110,9 @@ void	draw_floor_ceiling(t_game *g)
 	y = 0;
 	while (y < WIN_HEIGHT)
 	{
-		if (y != horizon)
+		if (g->assets.has_sky && y < horizon)
+			draw_sky_row(y, g);
+		else if (y != horizon)
 		{
 			set_surface_row(y, horizon, &cast, g);
 			draw_surface_row(y, horizon, cast, g);

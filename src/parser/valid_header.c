@@ -62,10 +62,16 @@ int	ft_good_rgb(t_header *header, int *ok)
 	int			texture;
 	int			invalid;
 	const int	*rgb[2] = {header->floor, header->ceiling};
+	const char	*xpm[2] = {header->floor_texture, header->ceiling_texture};
 
 	texture = 0;
 	while (texture < 2)
 	{
+		if (xpm[texture][0])
+		{
+			texture++;
+			continue ;
+		}
 		i = 0;
 		while (i < 3)
 		{
@@ -77,6 +83,32 @@ int	ft_good_rgb(t_header *header, int *ok)
 			i++;
 		}
 		texture++;
+	}
+	return (1);
+}
+
+static int	ft_good_optional_xpm(char *path, int *ok)
+{
+	int	fd;
+
+	if (!path[0])
+		return (1);
+	if (!ft_xpm_extension(path))
+	{
+		*ok = ft_parsing_error(XPMFILE, 0);
+		return (0);
+	}
+	fd = open(path, O_RDONLY);
+	if (fd == -1)
+	{
+		*ok = ft_parsing_error(NOXPMS, 0);
+		return (0);
+	}
+	close(fd);
+	if (!ft_is_file(path))
+	{
+		*ok = ft_parsing_error(DIRXPMS, 0);
+		return (0);
 	}
 	return (1);
 }
@@ -93,6 +125,12 @@ void	ft_ok(int *vals, int *ok, t_header *header)
 	ft_values_setup(values);
 	values[2] = ft_check_amount();
 	if (!ft_good_xpms(header, ok, values, values[2]))
+		return ;
+	if (!ft_good_optional_xpm(header->floor_texture, ok))
+		return ;
+	if (!ft_good_optional_xpm(header->ceiling_texture, ok))
+		return ;
+	if (!ft_good_optional_xpm(header->sky_texture, ok))
 		return ;
 	if (!ft_good_rgb(header, ok))
 		return ;
@@ -112,8 +150,6 @@ int	ft_get_header(char *map, int *ok, t_header *h)
 	while (++val[8], line != NULL)
 	{
 		val[6] = ft_trimspaces(line);
-		if (ft_header_done(val))
-			break ;
 		if (!ft_header_extractor(line, val, h))
 		{
 			trim = ft_strtrim(line, " \t");

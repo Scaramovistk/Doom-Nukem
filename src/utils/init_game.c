@@ -33,8 +33,11 @@ void	ft_int_assets(t_assets *assets)
 	}
 	ft_int_image(&assets->floor_texture.img);
 	ft_int_image(&assets->ceiling_texture.img);
+	ft_int_image(&assets->sky_texture.img);
 	assets->floor_texture.source = NULL;
 	assets->ceiling_texture.source = NULL;
+	assets->sky_texture.source = NULL;
+	assets->has_sky = false;
 	assets->ceiling_color = -1;
 	assets->floor_color = -1;
 }

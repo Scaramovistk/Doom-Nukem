@@ -39,6 +39,9 @@ void	ft_setup_header(t_header *header)
 	ft_bzero(header->so, LINE_SIZE);
 	ft_bzero(header->we, LINE_SIZE);
 	ft_bzero(header->door, LINE_SIZE);
+	ft_bzero(header->floor_texture, LINE_SIZE);
+	ft_bzero(header->ceiling_texture, LINE_SIZE);
+	ft_bzero(header->sky_texture, LINE_SIZE);
 }
 
 void	ft_get_xpm(char *dest, char *src, int *found, int *vals)
@@ -80,6 +83,32 @@ void	ft_get_rgb(int *rgb, int *found, char *line, int *values)
 	*found = 1;
 }
 
+static int	ft_has_comma(char *line)
+{
+	while (*line)
+	{
+		if (*line == ',')
+			return (1);
+		line++;
+	}
+	return (0);
+}
+
+static void	ft_get_surface(char *dest, int *rgb, int *found,
+		char *line, int *values)
+{
+	char	*trim;
+
+	trim = ft_strtrim(line, " \t\n");
+	if (!trim)
+		return ;
+	if (ft_has_comma(trim))
+		ft_get_rgb(rgb, found, line, values);
+	else
+		ft_get_xpm(dest, line, found, values);
+	free(trim);
+}
+
 int	ft_header_extractor(char *line, int *vals, t_header *header)
 {
 	int		values[9];
@@ -96,11 +125,16 @@ int	ft_header_extractor(char *line, int *vals, t_header *header)
 	else if (ft_strncmp(text, "WE", wall) == 0)
 		return (ft_get_xpm(header->we, text + wall, &vals[3], vals), 1);
 	else if (ft_strncmp(text, "F", color) == 0)
-		return (ft_get_rgb(header->floor, &vals[4], text + color, values), 1);
+		return (ft_get_surface(header->floor_texture, header->floor,
+				&vals[4], text + color, values), 1);
 	else if (ft_strncmp(text, "C", color) == 0)
-		return (ft_get_rgb(header->ceiling, &vals[5], text + color, values), 1);
+		return (ft_get_surface(header->ceiling_texture, header->ceiling,
+				&vals[5], text + color, values), 1);
 	else if (ft_strncmp(text, "DO", wall) == 0)
 		return (ft_get_xpm(header->door, text + wall, &vals[7], vals), 1);
+	else if (ft_strncmp(text, "SK", wall) == 0)
+		return (ft_get_xpm(header->sky_texture, text + wall,
+				&values[8], vals), 1);
 	else
 		return (0);
 }

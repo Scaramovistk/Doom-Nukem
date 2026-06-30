@@ -24,6 +24,15 @@ void	ft_destroy_textures(t_game *g)
 		if (img->ptr)
 			mlx_destroy_image(g->mlx, img->ptr);
 	}
+	img = &g->assets.floor_texture.img;
+	if (img->ptr)
+		mlx_destroy_image(g->mlx, img->ptr);
+	img = &g->assets.ceiling_texture.img;
+	if (img->ptr)
+		mlx_destroy_image(g->mlx, img->ptr);
+	img = &g->assets.sky_texture.img;
+	if (img->ptr)
+		mlx_destroy_image(g->mlx, img->ptr);
 }
 
 #ifdef __linux__

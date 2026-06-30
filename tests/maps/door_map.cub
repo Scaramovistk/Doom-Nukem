@@ -3,8 +3,9 @@ EA tests/textures_blue/blue3.xpm
 NO tests/textures_blue/blue1.xpm
 SO tests/textures_blue/blue4.xpm
 DO tests/textures_classic/eagle.xpm
-F 31, 18, 106
-C 248, 249, 252
+SK tests/textures_blue/sky_test.xpm
+F tests/textures_blue/floor_stone.xpm
+C tests/textures_blue/ceiling_panel.xpm
 
 111111111111111111111111
 100000000000000000000001

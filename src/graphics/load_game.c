@@ -79,9 +79,22 @@ static void	fill_surface_texture(t_texture *t, int color, t_game *g)
 
 void	load_floor_ceiling_textures(t_game *g)
 {
-	fill_surface_texture(&g->assets.floor_texture, g->assets.floor_color, g);
-	fill_surface_texture(&g->assets.ceiling_texture,
-		g->assets.ceiling_color, g);
+	int	size;
+
+	size = TEXTURE_SIZE;
+	if (g->assets.floor_texture.source)
+		load_texture(&g->assets.floor_texture, &size, g);
+	else
+		fill_surface_texture(&g->assets.floor_texture, g->assets.floor_color, g);
+	size = TEXTURE_SIZE;
+	if (g->assets.ceiling_texture.source)
+		load_texture(&g->assets.ceiling_texture, &size, g);
+	else
+		fill_surface_texture(&g->assets.ceiling_texture,
+			g->assets.ceiling_color, g);
+	size = TEXTURE_SIZE;
+	if (g->assets.has_sky)
+		load_texture(&g->assets.sky_texture, &size, g);
 }
 
 void	ft_adjust_player_view(t_game *g)
