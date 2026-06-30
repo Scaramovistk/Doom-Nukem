@@ -46,6 +46,8 @@ typedef struct s_map
 {
 	t_block		**grid;
 	t_door		**doors;
+	t_position	*sprites;
+	int			sprite_count;
 	int			width;
 	int			height;
 }				t_map;
@@ -127,6 +129,21 @@ typedef struct s_ray
 	int			door_side;
 }				t_ray;
 
+typedef struct s_sprite_draw
+{
+	t_position	pos;
+	double		distance;
+	double		transform_x;
+	double		transform_y;
+	int			screen_x;
+	int			height;
+	int			width;
+	int			top;
+	int			bottom;
+	int			left;
+	int			right;
+}				t_sprite_draw;
+
 typedef struct s_dda
 {
 	t_position	step;
@@ -180,6 +197,7 @@ typedef struct s_header
 	char		floor_texture[LINE_SIZE];
 	char		ceiling_texture[LINE_SIZE];
 	char		sky_texture[LINE_SIZE];
+	char		sprite_texture[LINE_SIZE];
 	int			floor[3];
 	int			ceiling[3];
 }				t_header;

@@ -132,6 +132,8 @@ void	ft_ok(int *vals, int *ok, t_header *header)
 		return ;
 	if (!ft_good_optional_xpm(header->sky_texture, ok))
 		return ;
+	if (!ft_good_optional_xpm(header->sprite_texture, ok))
+		return ;
 	if (!ft_good_rgb(header, ok))
 		return ;
 }

@@ -41,7 +41,7 @@ Jul 28 – Jul 31  BUFFER  Bug fixes, evaluation prep, README
 
 ### 🔵 Gabriel (start now — all renderer work)
 
-#### G0 · Fix mouse look → true FPS feel `[ ]` ⚡ first thing
+#### G0 · Fix mouse look → true FPS feel `[✅]` ⚡ first thing
 Current problems in `src/events/hooks.c` + `mlx_mouse_pos_bonus.c`:
 - Cursor is never hidden — visible and can escape the window
 - `rotation_move` is only ever -2, 0, or +2 (binary, not proportional to speed)
@@ -54,22 +54,22 @@ Fix:
 4. Store `delta_y` the same way for pitch (G1 can consume it)
 5. Change `rotation_move` in `t_player` from `int` to `double`
 
-#### G1 · Vertical look (pitch / horizon shift) `[ ]`
+#### G1 · Vertical look (pitch / horizon shift) `[✅]`
 - Offset the horizon line up/down based on a pitch value
 - Mouse Y axis controls it; keyboard fallback (PgUp/PgDn)
 - **Week 1**
 
-#### G2 · Textured floors & ceilings `[ ]`
+#### G2 · Textured floors & ceilings `[✅]`
 - Standard floor-casting raycasting algorithm, sample texture per pixel
 - Replaces the solid-color floor/ceiling pass in `draw_scene.c`
 - **Week 1**
 
-#### G3 · Sky texture `[ ]`
+#### G3 · Sky texture `[✅]`
 - Replace ceiling with a scrolling sky image when sky flag is set in level
 - Scrolls horizontally with player angle, shifts with pitch
 - **Week 1–2**
 
-#### G4 · Billboard sprites (always face player) `[ ]`
+#### G4 · Billboard sprites (always face player) `[✅]`
 - Sort sprites by distance, project onto screen, respect Z-buffer
 - **Week 2**
 

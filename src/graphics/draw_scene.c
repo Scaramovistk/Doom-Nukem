@@ -15,10 +15,12 @@
 void	draw_scene(t_game *g)
 {
 	t_ray	rays[WIN_WIDTH];
+	double	z_buffer[WIN_WIDTH];
 
 	draw_floor_ceiling(g);
 	cast_all_rays(rays, g);
-	draw_all_rays(rays, g);
+	draw_all_rays(rays, g, z_buffer);
+	draw_sprites(g, z_buffer);
 }
 
 static void	init_floor_cast(t_floor_cast *cast, t_game *g)
@@ -121,7 +123,7 @@ void	draw_floor_ceiling(t_game *g)
 	}
 }
 
-void	draw_all_rays(t_ray *rays, t_game *g)
+void	draw_all_rays(t_ray *rays, t_game *g, double *z_buffer)
 {
 	int	x;
 
@@ -130,6 +132,7 @@ void	draw_all_rays(t_ray *rays, t_game *g)
 	{
 		rays[x].x = x;
 		draw_one_ray(&rays[x], g);
+		z_buffer[x] = rays[x].distance;
 		x++;
 	}
 }

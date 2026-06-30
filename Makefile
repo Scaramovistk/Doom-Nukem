@@ -50,7 +50,7 @@ VPATH			=	src src/events src/graphics src/parser src/parser/utils src/utils
 SRC_MAIN		=	main.c
 SRC_EVENTS		=	door_bonus.c game_loop.c hooks.c hooks_door_bonus.c mlx_mouse_pos_bonus.c stop_game.c \
 					update_player_pos.c
-SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_scene.c draw_utils.c draw_wall.c graphics_utils.c \
+SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_scene.c draw_sprites.c draw_utils.c draw_wall.c graphics_utils.c \
 					load_game.c minimap_bonus.c ray_casting.c render.c time_bonus.c
 SRC_PARSER		=	generate_map.c get_header.c get_map.c parser.c valid_header.c valid_map.c \
 					parsing_error.c header.c map.c security.c valid_header_check_bonus.c
@@ -105,4 +105,3 @@ re:				fclean all
 -include $(DEP) $(BONUS_DEP)
 
 .PHONY:			all clean fclean bonus re
-

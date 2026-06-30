@@ -54,6 +54,6 @@ int	ft_header_error(int *vals)
 int	ft_check_amount(void)
 {
 	if (MODE_BONUS)
-		return (TEXTURES_NB);
-	return (TEXTURES_NB - 1);
+		return (TEXTURES_NB - 1);
+	return (TEXTURES_NB - 2);
 }

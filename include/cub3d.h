@@ -96,9 +96,12 @@ void		apply_cross_distance(t_dda *dda, double *dist, int side, t_game *g);
 // draw_scene.c
 void		draw_scene(t_game *g);
 void		draw_floor_ceiling(t_game *g);
-void		draw_all_rays(t_ray *rays, t_game *g);
+void		draw_all_rays(t_ray *rays, t_game *g, double *z_buffer);
 void		draw_one_ray(t_ray *ray, t_game *g);
 void		draw_vertical_line(int x, t_dimensions dims, int color, t_game *g);
+
+// draw_sprites.c
+void		draw_sprites(t_game *g, double *z_buffer);
 
 // draw_wall.c
 void		draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g);

@@ -42,6 +42,7 @@ void	ft_setup_header(t_header *header)
 	ft_bzero(header->floor_texture, LINE_SIZE);
 	ft_bzero(header->ceiling_texture, LINE_SIZE);
 	ft_bzero(header->sky_texture, LINE_SIZE);
+	ft_bzero(header->sprite_texture, LINE_SIZE);
 }
 
 void	ft_get_xpm(char *dest, char *src, int *found, int *vals)
@@ -134,6 +135,9 @@ int	ft_header_extractor(char *line, int *vals, t_header *header)
 		return (ft_get_xpm(header->door, text + wall, &vals[7], vals), 1);
 	else if (ft_strncmp(text, "SK", wall) == 0)
 		return (ft_get_xpm(header->sky_texture, text + wall,
+				&values[8], vals), 1);
+	else if (ft_strncmp(text, "SP", wall) == 0)
+		return (ft_get_xpm(header->sprite_texture, text + wall,
 				&values[8], vals), 1);
 	else
 		return (0);

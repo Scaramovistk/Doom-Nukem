@@ -27,10 +27,16 @@ void	load_all_textures(t_game *g)
 	int	size;
 	int	i;
 
-	size = TEXTURE_SIZE;
 	i = ft_check_amount();
 	while (i--)
-		load_texture(&g->assets.textures[i], &size, g);
+	{
+		size = TEXTURE_SIZE;
+		if (g->assets.textures[i].source)
+			load_texture(&g->assets.textures[i], &size, g);
+	}
+	size = TEXTURE_SIZE;
+	if (g->assets.textures[SPRITE_T].source)
+		load_texture(&g->assets.textures[SPRITE_T], &size, g);
 }
 
 void	load_texture(t_texture *t, int *size, t_game *g)

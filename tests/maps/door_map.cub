@@ -4,11 +4,12 @@ NO tests/textures_blue/blue1.xpm
 SO tests/textures_blue/blue4.xpm
 DO tests/textures_classic/eagle.xpm
 SK tests/textures_blue/sky_test.xpm
+SP tests/textures_blue/test_sprite.xpm
 F tests/textures_blue/floor_stone.xpm
 C tests/textures_blue/ceiling_panel.xpm
 
 111111111111111111111111
-100000000000000000000001
+100000000000300000000001
 1000000000000000N0000001
 100000000000000000000001
 100000111112111111000001

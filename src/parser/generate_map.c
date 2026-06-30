@@ -24,8 +24,55 @@ t_block	ft_convert_tblock(char c)
 		return (DOOR);
 	else if (c == '2' && MODE_BONUS == 0)
 		return (EMPTY);
+	else if (c == '3')
+		return (SPRITE);
 	else
 		return (NULL_BLOCK);
+}
+
+static int	count_sprites(char **map, int lines, int width)
+{
+	int	count;
+	int	vert;
+	int	hor;
+
+	count = 0;
+	vert = 0;
+	while (vert < lines)
+	{
+		hor = 0;
+		while (hor < width)
+		{
+			if (map[vert][hor] == '3')
+				count++;
+			hor++;
+		}
+		vert++;
+	}
+	return (count);
+}
+
+static void	add_sprites(char **map, int lines, int width, t_game *g)
+{
+	int	vert;
+	int	hor;
+	int	i;
+
+	g->map.sprite_count = count_sprites(map, lines, width);
+	if (!g->map.sprite_count)
+		return ;
+	g->map.sprites = calloc_s(g->map.sprite_count, sizeof(t_position), g);
+	i = 0;
+	vert = -1;
+	while (++vert < lines)
+	{
+		hor = -1;
+		while (++hor < width)
+		{
+			if (map[vert][hor] == '3')
+				g->map.sprites[i++] = (t_position){hor + 0.5, vert + 0.5};
+		}
+	}
 }
 
 void	ft_populate_map(char **map, int *vals, t_game *g)
@@ -37,6 +84,7 @@ void	ft_populate_map(char **map, int *vals, t_game *g)
 
 	lines = vals[0];
 	width = vals[1];
+	add_sprites(map, lines - vals[2], width, g);
 	g->map.grid = calloc_s(lines, sizeof(t_block *), g);
 	vert = 0;
 	while (vert < lines - vals[2])
@@ -44,7 +92,11 @@ void	ft_populate_map(char **map, int *vals, t_game *g)
 		hor = -1;
 		g->map.grid[vert] = calloc_s(width, sizeof(t_block), g);
 		while (++hor < width)
+		{
 			g->map.grid[vert][hor] = ft_convert_tblock(map[vert][hor]);
+			if (g->map.grid[vert][hor] == SPRITE)
+				g->map.grid[vert][hor] = EMPTY;
+		}
 		vert++;
 	}
 	g->map.height = lines - vals[2];
@@ -85,4 +137,7 @@ void	ft_populate_info(t_header *h, t_game *g)
 		g->assets.sky_texture.source = s_alloc(ft_strdup(h->sky_texture), g);
 		g->assets.has_sky = true;
 	}
+	if (h->sprite_texture[0])
+		g->assets.textures[SPRITE_T].source = s_alloc(
+				ft_strdup(h->sprite_texture), g);
 }

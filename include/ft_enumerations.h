@@ -19,7 +19,8 @@ enum	e_texture_type
 	SOUTH,
 	EAST,
 	WEST,
-	DOOR_T
+	DOOR_T,
+	SPRITE_T
 };
 
 enum	e_texture_length
@@ -34,7 +35,8 @@ typedef enum t_block
 	EMPTY,
 	WALL,
 	PLAYER,
-	DOOR
+	DOOR,
+	SPRITE
 }		t_block;
 
 #endif
