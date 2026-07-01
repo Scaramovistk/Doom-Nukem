@@ -30,17 +30,48 @@ static void	clear_mouse_move(t_player *p)
 	p->mouse_move_pending = false;
 }
 
+void	jump_player(t_player *p)
+{
+	if (!p->on_ground || p->is_crouching)
+		return ;
+	p->z_velocity = PLAYER_JUMP_SPEED;
+	p->on_ground = false;
+}
+
+static void	update_vertical_physics(t_player *p)
+{
+	if (!p->on_ground)
+	{
+		p->z += p->z_velocity;
+		p->z_velocity -= PLAYER_GRAVITY;
+		if (p->z <= PLAYER_FLOOR_Z)
+		{
+			p->z = PLAYER_FLOOR_Z;
+			p->z_velocity = 0;
+			p->on_ground = true;
+		}
+	}
+	if (p->is_crouching)
+		p->eye_height = PLAYER_CROUCH_HEIGHT;
+	else
+		p->eye_height = PLAYER_STAND_HEIGHT;
+}
+
 void	update_player_pos(t_player *p, t_game *g)
 {
 	double		vertical_move_step;
 	double		lateral_move_step;
 	t_position	new_pos;
 	double		add;
+	double		move_speed;
 
-	vertical_move_step = p->vertical_move * MOVEMENT_SPEED;
+	move_speed = MOVEMENT_SPEED;
+	if (p->is_running && !p->is_crouching)
+		move_speed *= RUN_SPEED_MULTIPLIER;
+	vertical_move_step = p->vertical_move * move_speed;
 	new_pos.x = p->pos.x + vertical_move_step * cos(p->orientation);
 	new_pos.y = p->pos.y + vertical_move_step * sin(p->orientation);
-	lateral_move_step = p->lateral_move * MOVEMENT_SPEED;
+	lateral_move_step = p->lateral_move * move_speed;
 	add = lateral_move_step * cos(p->orientation + M_PI_2);
 	new_pos.x += add * LATERAL_MOVE_RATIO;
 	add = lateral_move_step * sin(p->orientation + M_PI_2);
@@ -50,6 +81,7 @@ void	update_player_pos(t_player *p, t_game *g)
 	p->orientation = normalize_angle(p->orientation + (p->key_rotation_move
 				+ p->rotation_move) * ROTATION_SPEED);
 	update_pitch(p);
+	update_vertical_physics(p);
 	clear_mouse_move(p);
 }
 

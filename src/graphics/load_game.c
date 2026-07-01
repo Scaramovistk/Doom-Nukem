@@ -131,7 +131,7 @@ void	ft_adjust_player_view(t_game *g)
 
 void	open_window(t_game *g)
 {
-	g->mlx_win = mlx_new_window(g->mlx, WIN_WIDTH, WIN_HEIGHT, "Cube 3D");
+	g->mlx_win = mlx_new_window(g->mlx, WIN_WIDTH, WIN_HEIGHT, "Doom-Nukem");
 	hide_mouse(g->mlx, g->mlx_win);
 	move_mouse(g->mlx, g->mlx_win);
 }

@@ -12,6 +12,11 @@
 
 #include "../../include/cub3d.h"
 
+static double	get_eye_z(t_player *p)
+{
+	return (p->z + p->eye_height);
+}
+
 void	draw_scene(t_game *g)
 {
 	t_ray	rays[WIN_WIDTH];
@@ -86,11 +91,16 @@ static void	draw_sky_row(int y, t_game *g)
 static void	set_surface_row(int y, int horizon, t_floor_cast *cast, t_game *g)
 {
 	int	row_offset;
+	double	camera_height;
 
 	row_offset = y - horizon;
 	if (row_offset < 0)
 		row_offset = -row_offset;
-	cast->row_distance = (0.5 * WIN_HEIGHT) / row_offset;
+	if (y > horizon)
+		camera_height = get_eye_z(&g->player);
+	else
+		camera_height = 1.0 - get_eye_z(&g->player);
+	cast->row_distance = (camera_height * WIN_HEIGHT) / row_offset;
 	cast->step_x = cast->row_distance * (cast->ray_dir_x1
 			- cast->ray_dir_x0) / WIN_WIDTH;
 	cast->step_y = cast->row_distance * (cast->ray_dir_y1

@@ -12,6 +12,11 @@
 
 #include "../../include/cub3d.h"
 
+static double	get_eye_z(t_player *p)
+{
+	return (p->z + p->eye_height);
+}
+
 void	draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g)
 {
 	t_texture_slice	slice;
@@ -100,11 +105,13 @@ void	get_wall_top_bottom(t_dimensions *wall, t_ray *ray, t_game *g)
 {
 	int	wall_height;
 	int	horizon;
+	double	eye_z;
 
 	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
+	eye_z = get_eye_z(&g->player);
 	wall_height = (int)(WIN_HEIGHT / ray->distance);
-	wall->top = horizon - (wall_height / 2);
-	wall->bottom = horizon + (wall_height / 2);
+	wall->top = horizon - (int)((1.0 - eye_z) * wall_height);
+	wall->bottom = horizon + (int)(eye_z * wall_height);
 	if (wall->top < 0)
 		wall->top = 0;
 	if (wall->bottom > WIN_HEIGHT)

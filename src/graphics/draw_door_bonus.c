@@ -12,6 +12,11 @@
 
 #include "../../include/cub3d.h"
 
+static double	get_eye_z(t_player *p)
+{
+	return (p->z + p->eye_height);
+}
+
 void	draw_door_slice(t_ray *ray, t_game *g)
 {
 	t_texture_slice	slice;
@@ -34,12 +39,14 @@ void	get_door_top_bottom(int *door_top, int *door_bottom,
 	int	full_door_height;
 	int	visible_door_height;
 	int	horizon;
+	double	eye_z;
 
 	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
+	eye_z = get_eye_z(&g->player);
 	full_door_height = (int)(WIN_HEIGHT / ray->door_distance);
 	visible_door_height = full_door_height * (1.0
 			- ray->hit_door->opening_state);
-	*door_bottom = horizon + (full_door_height / 2);
+	*door_bottom = horizon + (int)(eye_z * full_door_height);
 	*door_top = *door_bottom - visible_door_height;
 	if (*door_top < 0)
 		*door_top = 0;

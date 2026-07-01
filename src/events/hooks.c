@@ -15,8 +15,7 @@
 void	setup_hooks(t_game *g)
 {
 	mlx_loop_hook(g->mlx, game_loop, g);
-	if (MODE_BONUS)
-		mlx_hook(g->mlx_win, MOUSE_MOVE, MOUSE_MOVE_MASK, mouse_move, g);
+	mlx_hook(g->mlx_win, MOUSE_MOVE, MOUSE_MOVE_MASK, mouse_move, g);
 	mlx_hook(g->mlx_win, CLIENT_MESSAGE, STRUCTURE_NOTIFY_MASK, stop_game, g);
 	mlx_hook(g->mlx_win, KEY_PRESS, KEY_PRESS_MASK, pressed, g);
 	mlx_hook(g->mlx_win, KEY_RELEASE, KEY_RELEASE_MASK, released, g);
@@ -42,7 +41,16 @@ int	pressed(int key, t_game *g)
 		g->player.key_pitch_move = -1;
 	else if (key == KEY_PAGE_DOWN)
 		g->player.key_pitch_move = 1;
+	else if (key == KEY_SHIFT)
+		g->player.is_running = true;
+	else if (key == KEY_CTRL)
+	{
+		g->player.is_crouching = true;
+		g->player.eye_height = PLAYER_CROUCH_HEIGHT;
+	}
 	else if (key == KEY_SPACE)
+		jump_player(&g->player);
+	else if (key == KEY_E)
 		toggle_door(g);
 	return (0);
 }
@@ -57,6 +65,13 @@ int	released(int key, t_game *g)
 		g->player.key_rotation_move = 0;
 	else if (key == KEY_PAGE_UP || key == KEY_PAGE_DOWN)
 		g->player.key_pitch_move = 0;
+	else if (key == KEY_SHIFT)
+		g->player.is_running = false;
+	else if (key == KEY_CTRL)
+	{
+		g->player.is_crouching = false;
+		g->player.eye_height = PLAYER_STAND_HEIGHT;
+	}
 	return (0);
 }
 

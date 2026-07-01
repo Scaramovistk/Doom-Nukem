@@ -63,7 +63,13 @@ typedef struct s_player
 	double		pitch;
 	double		pitch_move;
 	double		key_pitch_move;
+	double		z;
+	double		z_velocity;
+	double		eye_height;
 	bool		mouse_move_pending;
+	bool		is_running;
+	bool		is_crouching;
+	bool		on_ground;
 	int			vertical_move;
 	int			lateral_move;
 }				t_player;

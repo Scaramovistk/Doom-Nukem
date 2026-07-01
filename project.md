@@ -127,9 +127,11 @@ Fix:
 
 ### 🟣 Rodolfo (gameplay systems)
 
-#### R1 · Physics: jump, fall, crouch, run `[ ]`
+#### R1 · Physics: jump, fall, crouch, run `[✅]`
 - Jump + gravity; fall when stepping off ledge to lower sector
 - Crouch shrinks eye height and collision box (Ctrl); run on Shift
+- Current flat-grid implementation lands on the base floor; sector-height fall plugs
+  into the same `PLAYER_FLOOR_Z` path when M3 exists.
 - **Week 1**
 
 #### R2 · Fly / swim mode `[ ]`
@@ -267,7 +269,7 @@ cub3D base
 | M4 | Murillo | Inclined planes | 2–3 | `[ ]` |
 | M5 | Murillo | Per-room lighting | 2 | `[ ]` |
 | S8 | Murillo | Level editor | 3–4 | `[ ]` |
-| R1 | Rodolfo | Physics (jump/fall/crouch/run) | 1 | `[ ]` |
+| R1 | Rodolfo | Physics (jump/fall/crouch/run) | 1 | `[x]` |
 | R2 | Rodolfo | Fly / swim mode | 2 | `[ ]` |
 | R3 | Rodolfo | HUD system | 1 | `[ ]` |
 | R4 | Rodolfo | Inventory & item pickup | 2 | `[ ]` |

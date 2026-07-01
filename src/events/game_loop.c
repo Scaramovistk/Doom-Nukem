@@ -26,7 +26,8 @@ int	game_loop(t_game *g)
 	update_doors(&door_updated, g);
 	if (!door_updated && !g->player.vertical_move && !g->player.lateral_move
 		&& !g->player.rotation_move && !g->player.key_rotation_move
-		&& !g->player.pitch_move && !g->player.key_pitch_move)
+		&& !g->player.pitch_move && !g->player.key_pitch_move
+		&& g->player.on_ground)
 		return (EXIT_SUCCESS);
 	update_player_pos(&g->player, g);
 	render(g);

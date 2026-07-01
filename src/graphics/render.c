@@ -21,8 +21,6 @@ int	render(t_game *g)
 	update_time(g);
 	ft_regenerate_image(g);
 	draw_scene(g);
-	if (MODE_BONUS)
-		render_minimap(g);
 	mlx = g->mlx;
 	win = g->mlx_win;
 	img = g->img.ptr;
@@ -52,12 +50,4 @@ void	init_display_img(t_img *img, t_game *g)
 	line = &img->line_length;
 	endian = &img->endian;
 	img->addr = mlx_get_data_addr(img->ptr, bits, line, endian);
-}
-
-void	render_minimap(t_game *g)
-{
-	int	map[9];
-
-	ft_values_setup(map);
-	draw_minimap(g, map);
 }

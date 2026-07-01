@@ -14,8 +14,7 @@
 CC				=	cc
 CFLAGS			=	-Wall -Wextra -Werror -O3 -MMD -MP
 RM				=	rm -rf
-NAME			=	cub3D
-BONUS_NAME		=	cub3D_bonus
+NAME			=	doom-nukem
 
 # Libraries
 
@@ -51,7 +50,7 @@ SRC_MAIN		=	main.c
 SRC_EVENTS		=	door_bonus.c game_loop.c hooks.c hooks_door_bonus.c mlx_mouse_pos_bonus.c stop_game.c \
 					update_player_pos.c
 SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_scene.c draw_sprites.c draw_utils.c draw_wall.c graphics_utils.c \
-					load_game.c minimap_bonus.c ray_casting.c render.c time_bonus.c
+					load_game.c ray_casting.c render.c time_bonus.c
 SRC_PARSER		=	generate_map.c get_header.c get_map.c parser.c valid_header.c valid_map.c \
 					parsing_error.c header.c map.c security.c valid_header_check_bonus.c
 SRC_UTILS		=	allocation.c error.c free.c init_game.c
@@ -60,9 +59,7 @@ SRC				=	$(SRC_MAIN) $(SRC_EVENTS) $(SRC_GRAPHICS) $(SRC_PARSER) $(SRC_UTILS)
 
 # Source and Object Files
 OBJ				=	$(SRC:%.c=build/%.o)
-BONUS_OBJ		=	$(SRC:%.c=build/bonus_%.o)
 DEP				=	$(OBJ:%.o=%.d)
-BONUS_DEP		=	$(BONUS_OBJ:%.o=%.d)
 OBJ_DIR_NAME	=	build
 
 # Rules
@@ -70,9 +67,6 @@ all:			$(NAME)
 
 $(NAME):		$(LIBFT) $(MLX_FILE) $(OBJ_DIR_NAME) $(OBJ)
 				$(CC) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $@
-
-$(BONUS_NAME):	$(LIBFT) $(MLX_FILE) $(OBJ_DIR_NAME) $(BONUS_OBJ)
-				$(CC) $(CFLAGS) $(BONUS_OBJ) $(LDFLAGS) -o $@
 
 $(LIBFT):
 				$(MAKE) --no-print-directory -C $(LIBFT_DIR)
@@ -86,22 +80,17 @@ $(OBJ_DIR_NAME):
 build/%.o:		%.c
 				$(CC) $(CFLAGS) -c $< -o $@
 
-build/bonus_%.o:	%.c
-				$(CC) $(CFLAGS) -DMODE_BONUS=1 -c $< -o $@
-
 clean:
 				@$(MAKE) --no-print-directory -C $(LIBFT_DIR) clean
 				@$(MAKE) --no-print-directory -sC $(MLX_DIR) clean
 				$(RM) build
 
 fclean:			clean
-				$(RM) $(NAME) $(BONUS_NAME)
+				$(RM) $(NAME)
 				@$(MAKE) --no-print-directory -C $(LIBFT_DIR) fclean
-
-bonus:			$(BONUS_NAME)
 
 re:				fclean all
 
--include $(DEP) $(BONUS_DEP)
+-include $(DEP)
 
-.PHONY:			all clean fclean bonus re
+.PHONY:			all clean fclean re

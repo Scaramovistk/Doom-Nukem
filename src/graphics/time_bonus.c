@@ -16,8 +16,6 @@ void	update_time(t_game *g)
 {
 	static double	last_time = 0;
 
-	if (!MODE_BONUS)
-		return ;
 	if (last_time == 0)
 		last_time = get_time();
 	g->delta_time = calculate_delta_time(&last_time);

@@ -12,48 +12,14 @@
 
 #include "../../include/cub3d.h"
 
-int	ft_header_done(int *val)
-{
-	if (MODE_BONUS)
-	{
-		if (val[0] && val[1] && val[2] && val[3] && val[4] && val[5] && val[7])
-			return (1);
-		return (0);
-	}
-	else
-	{
-		if (val[0] && val[1] && val[2] && val[3] && val[4] && val[5])
-			return (1);
-		return (0);
-	}
-	return (0);
-}
-
 int	ft_header_error(int *vals)
 {
-	int	base;
-	int	bonus;
-
-	base = (vals[0] && vals[1] && vals[2] && vals[3] && vals[4] && vals[5]);
-	bonus = vals[7];
-	if (MODE_BONUS)
-	{
-		if (!(base && bonus))
-			return (1);
-		return (0);
-	}
-	else
-	{
-		if (!base)
-			return (1);
-		return (0);
-	}
+	if (!(vals[0] && vals[1] && vals[2] && vals[3] && vals[4] && vals[5]))
+		return (1);
 	return (0);
 }
 
 int	ft_check_amount(void)
 {
-	if (MODE_BONUS)
-		return (DOOR_T + 1);
-	return (DOOR_T);
+	return (DOOR_T + 1);
 }

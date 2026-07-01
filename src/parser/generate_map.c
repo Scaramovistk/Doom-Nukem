@@ -20,10 +20,8 @@ t_block	ft_convert_tblock(char c)
 		return (WALL);
 	else if (c == 'S' || c == 'W' || c == 'N' || c == 'E')
 		return (PLAYER);
-	else if (c == '2' && MODE_BONUS)
+	else if (c == '2')
 		return (DOOR);
-	else if (c == '2' && MODE_BONUS == 0)
-		return (EMPTY);
 	else if (c == '3')
 		return (SPRITE);
 	else if (c == '4')
@@ -118,7 +116,7 @@ void	ft_populate_info(t_header *h, t_game *g)
 	g->assets.textures[SOUTH].source = s_alloc(ft_strdup(h->so), g);
 	g->assets.textures[WEST].source = s_alloc(ft_strdup(h->we), g);
 	g->assets.textures[EAST].source = s_alloc(ft_strdup(h->ea), g);
-	if (MODE_BONUS)
+	if (h->door[0])
 		g->assets.textures[DOOR_T].source = s_alloc(ft_strdup(h->door), g);
 	if (h->floor_texture[0])
 		g->assets.floor_texture.source = s_alloc(ft_strdup(h->floor_texture),

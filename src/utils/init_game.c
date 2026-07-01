@@ -58,7 +58,13 @@ void	ft_int_player(t_player *p)
 	p->pitch = 0;
 	p->pitch_move = 0;
 	p->key_pitch_move = 0;
+	p->z = PLAYER_FLOOR_Z;
+	p->z_velocity = 0;
+	p->eye_height = PLAYER_STAND_HEIGHT;
 	p->mouse_move_pending = false;
+	p->is_running = false;
+	p->is_crouching = false;
+	p->on_ground = true;
 	p->vertical_move = 0;
 	p->lateral_move = 0;
 	p->orientation = 0.0;

@@ -38,6 +38,7 @@ int			game_loop(t_game *g);
 
 // update_player_pos.c
 void		update_player_pos(t_player *p, t_game *g);
+void		jump_player(t_player *p);
 bool		is_position_legal(t_position pos, t_game *g);
 t_coord		get_adjacent_cell(t_position pos, const t_position check_pos);
 bool		is_door_open(t_coord pos, t_door **doors);
@@ -72,10 +73,6 @@ void		open_window(t_game *g);
 int			render(t_game *g);
 void		ft_regenerate_image(t_game *g);
 void		init_display_img(t_img *img, t_game *g);
-void		render_minimap(t_game *g);
-
-// minimap.c
-void		draw_minimap(t_game *g, int *map);
 
 // ray_casting.c
 void		cast_all_rays(t_ray *rays, t_game *g);
@@ -139,7 +136,6 @@ double		angle_diff(double angle1, double angle2);
 // ----- PARSER ----- //
 // bonus.c
 int			ft_header_error(int *vals);
-int			ft_header_done(int *val);
 int			ft_check_amount(void);
 
 // generate_map.c
