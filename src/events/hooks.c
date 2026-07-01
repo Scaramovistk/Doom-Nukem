@@ -47,11 +47,20 @@ int	pressed(int key, t_game *g)
 	{
 		g->player.is_crouching = true;
 		g->player.eye_height = PLAYER_CROUCH_HEIGHT;
+		if (g->player.is_flying || g->player.is_swimming)
+			g->player.fly_move = -1;
 	}
 	else if (key == KEY_SPACE)
-		jump_player(&g->player);
+	{
+		if (g->player.is_flying || g->player.is_swimming)
+			g->player.fly_move = 1;
+		else
+			jump_player(&g->player);
+	}
 	else if (key == KEY_E)
 		toggle_door(g);
+	else if (key == KEY_F)
+		toggle_fly_mode(&g->player);
 	return (0);
 }
 
@@ -71,7 +80,11 @@ int	released(int key, t_game *g)
 	{
 		g->player.is_crouching = false;
 		g->player.eye_height = PLAYER_STAND_HEIGHT;
+		if (g->player.fly_move < 0)
+			g->player.fly_move = 0;
 	}
+	else if (key == KEY_SPACE && g->player.fly_move > 0)
+		g->player.fly_move = 0;
 	return (0);
 }
 

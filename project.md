@@ -134,9 +134,11 @@ Fix:
   into the same `PLAYER_FLOOR_Z` path when M3 exists.
 - **Week 1**
 
-#### R2 · Fly / swim mode `[ ]`
+#### R2 · Fly / swim mode `[✅]`
 - Gravity disabled; vertical look moves player up/down
 - Triggered by fly toggle (F) or entering a water sector
+- Current implementation supports the fly toggle and the shared free-movement
+  state; water sectors can enable the same state when sector metadata exists.
 - **Week 2**
 
 #### R3 · HUD system `[ ]`
@@ -270,7 +272,7 @@ cub3D base
 | M5 | Murillo | Per-room lighting | 2 | `[ ]` |
 | S8 | Murillo | Level editor | 3–4 | `[ ]` |
 | R1 | Rodolfo | Physics (jump/fall/crouch/run) | 1 | `[x]` |
-| R2 | Rodolfo | Fly / swim mode | 2 | `[ ]` |
+| R2 | Rodolfo | Fly / swim mode | 2 | `[x]` |
 | R3 | Rodolfo | HUD system | 1 | `[ ]` |
 | R4 | Rodolfo | Inventory & item pickup | 2 | `[ ]` |
 | R5 | Rodolfo | Interaction system | 2 | `[ ]` |

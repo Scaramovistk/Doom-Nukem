@@ -27,7 +27,9 @@ int	game_loop(t_game *g)
 	if (!door_updated && !g->player.vertical_move && !g->player.lateral_move
 		&& !g->player.rotation_move && !g->player.key_rotation_move
 		&& !g->player.pitch_move && !g->player.key_pitch_move
-		&& g->player.on_ground)
+		&& !g->player.fly_move
+		&& (g->player.on_ground || g->player.is_flying
+			|| g->player.is_swimming))
 		return (EXIT_SUCCESS);
 	update_player_pos(&g->player, g);
 	render(g);

@@ -28,7 +28,8 @@ This produces:
 - Mouse: look around
 - Page Up / Page Down: keyboard pitch fallback
 - Shift: run
-- Ctrl: crouch
-- Space: jump
+- Ctrl: crouch, or descend while flying/swimming
+- Space: jump, or ascend while flying/swimming
+- `F`: toggle fly mode
 - `E`: interact with doors
 - Esc or window close button: quit cleanly

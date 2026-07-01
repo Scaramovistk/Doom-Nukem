@@ -69,7 +69,10 @@ typedef struct s_player
 	bool		mouse_move_pending;
 	bool		is_running;
 	bool		is_crouching;
+	bool		is_flying;
+	bool		is_swimming;
 	bool		on_ground;
+	int			fly_move;
 	int			vertical_move;
 	int			lateral_move;
 }				t_player;

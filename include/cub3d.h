@@ -39,6 +39,7 @@ int			game_loop(t_game *g);
 // update_player_pos.c
 void		update_player_pos(t_player *p, t_game *g);
 void		jump_player(t_player *p);
+void		toggle_fly_mode(t_player *p);
 bool		is_position_legal(t_position pos, t_game *g);
 t_coord		get_adjacent_cell(t_position pos, const t_position check_pos);
 bool		is_door_open(t_coord pos, t_door **doors);

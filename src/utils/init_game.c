@@ -64,7 +64,10 @@ void	ft_int_player(t_player *p)
 	p->mouse_move_pending = false;
 	p->is_running = false;
 	p->is_crouching = false;
+	p->is_flying = false;
+	p->is_swimming = false;
 	p->on_ground = true;
+	p->fly_move = 0;
 	p->vertical_move = 0;
 	p->lateral_move = 0;
 	p->orientation = 0.0;

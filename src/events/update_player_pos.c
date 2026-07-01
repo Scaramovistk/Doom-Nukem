@@ -30,9 +30,40 @@ static void	clear_mouse_move(t_player *p)
 	p->mouse_move_pending = false;
 }
 
+static bool	has_free_movement(t_player *p)
+{
+	return (p->is_flying || p->is_swimming);
+}
+
+static void	clamp_player_z(t_player *p)
+{
+	if (p->z < PLAYER_MIN_Z)
+		p->z = PLAYER_MIN_Z;
+	else if (p->z > PLAYER_MAX_Z)
+		p->z = PLAYER_MAX_Z;
+}
+
+void	toggle_fly_mode(t_player *p)
+{
+	p->is_flying = !p->is_flying;
+	p->z_velocity = 0;
+	p->on_ground = !p->is_flying;
+	if (!p->is_flying)
+	{
+		p->fly_move = 0;
+		if (p->z <= PLAYER_FLOOR_Z)
+		{
+			p->z = PLAYER_FLOOR_Z;
+			p->on_ground = true;
+		}
+		else
+			p->on_ground = false;
+	}
+}
+
 void	jump_player(t_player *p)
 {
-	if (!p->on_ground || p->is_crouching)
+	if (!p->on_ground || p->is_crouching || has_free_movement(p))
 		return ;
 	p->z_velocity = PLAYER_JUMP_SPEED;
 	p->on_ground = false;
@@ -40,6 +71,14 @@ void	jump_player(t_player *p)
 
 static void	update_vertical_physics(t_player *p)
 {
+	if (has_free_movement(p))
+	{
+		p->z += p->fly_move * FLY_VERTICAL_SPEED;
+		clamp_player_z(p);
+		p->z_velocity = 0;
+		p->on_ground = false;
+		return ;
+	}
 	if (!p->on_ground)
 	{
 		p->z += p->z_velocity;
@@ -55,6 +94,11 @@ static void	update_vertical_physics(t_player *p)
 		p->eye_height = PLAYER_CROUCH_HEIGHT;
 	else
 		p->eye_height = PLAYER_STAND_HEIGHT;
+}
+
+static double	get_pitch_climb(t_player *p, double move_step)
+{
+	return (move_step * (p->pitch / PITCH_LIMIT) * FLY_PITCH_CLIMB_RATIO);
 }
 
 void	update_player_pos(t_player *p, t_game *g)
@@ -78,6 +122,11 @@ void	update_player_pos(t_player *p, t_game *g)
 	new_pos.y += add * LATERAL_MOVE_RATIO;
 	if (is_position_legal(new_pos, g))
 		p->pos = new_pos;
+	if (has_free_movement(p))
+	{
+		p->z += get_pitch_climb(p, vertical_move_step);
+		clamp_player_z(p);
+	}
 	p->orientation = normalize_angle(p->orientation + (p->key_rotation_move
 				+ p->rotation_move) * ROTATION_SPEED);
 	update_pitch(p);
