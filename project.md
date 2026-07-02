@@ -141,7 +141,7 @@ Fix:
   state; water sectors can enable the same state when sector metadata exists.
 - **Week 2**
 
-#### R3 · HUD system `[ ]`
+#### R3 · HUD system `[✅]`
 - Distinct elements: health bar, ammo counter, inventory slots, currency/score
 - Each element drawn individually on top of the frame buffer each frame
 - **Week 1**
@@ -273,7 +273,7 @@ cub3D base
 | S8 | Murillo | Level editor | 3–4 | `[ ]` |
 | R1 | Rodolfo | Physics (jump/fall/crouch/run) | 1 | `[x]` |
 | R2 | Rodolfo | Fly / swim mode | 2 | `[x]` |
-| R3 | Rodolfo | HUD system | 1 | `[ ]` |
+| R3 | Rodolfo | HUD system | 1 | `[x]` |
 | R4 | Rodolfo | Inventory & item pickup | 2 | `[ ]` |
 | R5 | Rodolfo | Interaction system | 2 | `[ ]` |
 | R6 | Rodolfo | World events & triggers | 3 | `[ ]` |

@@ -21,4 +21,10 @@
 # define BLUE 0x000000FF
 # define GREY 0x00A0A0A0
 # define GREEN 0x0004ff00
+# define BLACK 0x00000000
+# define YELLOW 0x00FFD84D
+# define ORANGE 0x00FF8A2A
+# define DARK_GREY 0x00202024
+# define HUD_BG 0x00101014
+# define HUD_BORDER 0x00D8D8D8
 #endif

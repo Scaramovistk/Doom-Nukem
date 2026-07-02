@@ -21,6 +21,7 @@ int	render(t_game *g)
 	update_time(g);
 	ft_regenerate_image(g);
 	draw_scene(g);
+	draw_hud(g);
 	mlx = g->mlx;
 	win = g->mlx_win;
 	img = g->img.ptr;

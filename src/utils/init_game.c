@@ -76,6 +76,19 @@ void	ft_int_player(t_player *p)
 	p->mouse.y = WIN_HEIGHT / 2;
 }
 
+void	ft_int_hud(t_hud *hud)
+{
+	int	i;
+
+	hud->health = 100;
+	hud->max_health = 100;
+	hud->ammo = 30;
+	hud->score = 0;
+	i = 0;
+	while (i < 4)
+		hud->inventory[i++] = 0;
+}
+
 void	ft_init_map(t_map *map)
 {
 	map->grid = NULL;
@@ -91,6 +104,7 @@ void	init_game_struct(t_game *g)
 	g->exit_status = EXIT_SUCCESS;
 	ft_init_map(&g->map);
 	ft_int_player(&g->player);
+	ft_int_hud(&g->hud);
 	ft_int_assets(&g->assets);
 	ft_int_image(&g->img);
 	g->mlx = NULL;

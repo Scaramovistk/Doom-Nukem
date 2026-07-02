@@ -33,3 +33,8 @@ This produces:
 - `F`: toggle fly mode
 - `E`: interact with doors
 - Esc or window close button: quit cleanly
+
+## HUD
+
+The frame buffer HUD renders health, ammo, inventory slots, and score/currency
+as separate overlay elements.

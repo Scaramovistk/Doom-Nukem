@@ -188,6 +188,17 @@ typedef struct s_texture_slice
 	double		texture_step;
 }				t_texture_slice;
 
+// ----- GAMEPLAY ----- //
+
+typedef struct s_hud
+{
+	int			health;
+	int			max_health;
+	int			ammo;
+	int			score;
+	int			inventory[4];
+}				t_hud;
+
 // ----- GENERAL ----- //
 
 typedef struct s_game
@@ -202,6 +213,7 @@ typedef struct s_game
 	void		*mlx_win;
 	t_img		img;
 	t_assets	assets;
+	t_hud		hud;
 
 	double		delta_time;
 

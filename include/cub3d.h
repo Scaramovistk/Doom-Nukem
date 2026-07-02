@@ -75,6 +75,9 @@ int			render(t_game *g);
 void		ft_regenerate_image(t_game *g);
 void		init_display_img(t_img *img, t_game *g);
 
+// hud.c
+void		draw_hud(t_game *g);
+
 // ray_casting.c
 void		cast_all_rays(t_ray *rays, t_game *g);
 void		cast_one_ray(t_ray *ray, double angle, t_game *g);
