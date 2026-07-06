@@ -151,9 +151,14 @@ Fix:
 - Items optionally block passage
 - **Week 2**
 
-#### R5 · Interaction system — proximity & action `[ ]`
+#### R5 · Interaction system — proximity & action `[✅]`
 - E key interact ray; proximity triggers (damage zones, text, scripts)
 - Actions: open door, toggle switch, pick up item, play sound, display text
+- Map chars: `T` switch (reuses `DECAL_WALL`), `H` hazard zone, `M` message zone.
+  Switches toggle every door in the level (no per-entity linking yet — needs
+  M1/M2 level format). `play_sound_effect()` is a stderr/stdout stub pending
+  S7's real audio backend; message overlay is a fixed per-level string
+  pending S3's richer text system.
 - **Week 2**
 
 #### R6 · Dynamic world events & scripted sequences `[ ]`
@@ -275,7 +280,7 @@ cub3D base
 | R2 | Rodolfo | Fly / swim mode | 2 | `[x]` |
 | R3 | Rodolfo | HUD system | 1 | `[x]` |
 | R4 | Rodolfo | Inventory & item pickup | 2 | `[x]` |
-| R5 | Rodolfo | Interaction system | 2 | `[ ]` |
+| R5 | Rodolfo | Interaction system | 2 | `[x]` |
 | R6 | Rodolfo | World events & triggers | 3 | `[ ]` |
 | S3 | Rodolfo | Text overlay | 2 | `[ ]` |
 | S4 | Shared | Projectile system | 3 | `[ ]` |

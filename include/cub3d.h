@@ -50,8 +50,7 @@ void		update_doors(bool *door_updated, t_game *g);
 bool		update_one_door(t_door *door, double delta_time);
 void		toggle_adjacent_door(t_game *g);
 
-// hooks_door.c
-void		toggle_door(t_game *g);
+// hooks_door_bonus.c
 bool		is_in_bounds(t_coord pos, t_game *g);
 bool		is_door(t_coord pos, t_game *g);
 bool		is_on_player(t_coord pos, t_game *g);
@@ -63,6 +62,13 @@ int			stop_game(void *param);
 // pickup.c
 void		update_item_pickups(t_game *g);
 bool		is_item_blocking(t_coord cell, t_game *g);
+void		collect_item(t_item *item, t_game *g);
+
+// interact.c
+void		interact(t_game *g);
+
+// triggers.c
+bool		update_proximity_triggers(t_game *g);
 
 // ----- GRAPHICS ----- //
 
@@ -199,6 +205,7 @@ int			ft_hallway(char **map, int *vals);
 
 // init_game.c
 void		init_game_struct(t_game *g);
+void		ft_int_message(t_message *message);
 
 // allocation.c
 void		*s_alloc(void *pointer, t_game *g);
@@ -210,5 +217,8 @@ void		error(char *description, t_game *g);
 
 // free.c
 void		free_all(t_game *g);
+
+// sound.c
+void		play_sound_effect(const char *name);
 
 #endif

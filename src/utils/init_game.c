@@ -96,8 +96,20 @@ void	ft_init_map(t_map *map)
 	map->sprite_count = 0;
 	map->items = NULL;
 	map->item_count = 0;
+	map->switches = NULL;
+	map->switch_count = 0;
+	map->hazard_zones = NULL;
+	map->hazard_count = 0;
+	map->message_zones = NULL;
+	map->message_count = 0;
 	map->width = 0;
 	map->height = 0;
+}
+
+void	ft_int_message(t_message *message)
+{
+	message->text[0] = '\0';
+	message->timer = 0.0;
 }
 
 void	init_game_struct(t_game *g)
@@ -107,6 +119,7 @@ void	init_game_struct(t_game *g)
 	ft_init_map(&g->map);
 	ft_int_player(&g->player);
 	ft_int_hud(&g->hud);
+	ft_int_message(&g->message);
 	ft_int_assets(&g->assets);
 	ft_int_image(&g->img);
 	g->mlx = NULL;

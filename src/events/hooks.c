@@ -58,7 +58,7 @@ int	pressed(int key, t_game *g)
 			jump_player(&g->player);
 	}
 	else if (key == KEY_E)
-		toggle_door(g);
+		interact(g);
 	else if (key == KEY_F)
 		toggle_fly_mode(&g->player);
 	return (0);

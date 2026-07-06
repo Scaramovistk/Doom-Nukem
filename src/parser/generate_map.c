@@ -26,9 +26,9 @@ t_block	ft_convert_tblock(char c)
 		return (SPRITE);
 	else if (c == '4')
 		return (TRANSPARENT_WALL);
-	else if (c == '5')
+	else if (c == '5' || c == 'T')
 		return (DECAL_WALL);
-	else if (c >= '6' && c <= '9')
+	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M')
 		return (EMPTY);
 	else
 		return (NULL_BLOCK);
@@ -160,6 +160,98 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 	add_items(map, lines, width, g, deco);
 }
 
+static int	count_char(char **map, int lines, int width, char target)
+{
+	int	count;
+	int	vert;
+	int	hor;
+
+	count = 0;
+	vert = 0;
+	while (vert < lines)
+	{
+		hor = 0;
+		while (hor < width)
+		{
+			if (map[vert][hor] == target)
+				count++;
+			hor++;
+		}
+		vert++;
+	}
+	return (count);
+}
+
+static void	add_switches(char **map, int lines, int width, t_game *g)
+{
+	int	vert;
+	int	hor;
+	int	i;
+
+	g->map.switch_count = count_char(map, lines, width, 'T');
+	if (!g->map.switch_count)
+		return ;
+	g->map.switches = calloc_s(g->map.switch_count, sizeof(t_coord), g);
+	i = 0;
+	vert = -1;
+	while (++vert < lines)
+	{
+		hor = -1;
+		while (++hor < width)
+			if (map[vert][hor] == 'T')
+				g->map.switches[i++] = (t_coord){hor, vert};
+	}
+}
+
+static void	add_hazards(char **map, int lines, int width, t_game *g)
+{
+	int	vert;
+	int	hor;
+	int	i;
+
+	g->map.hazard_count = count_char(map, lines, width, 'H');
+	if (!g->map.hazard_count)
+		return ;
+	g->map.hazard_zones = calloc_s(g->map.hazard_count, sizeof(t_coord), g);
+	i = 0;
+	vert = -1;
+	while (++vert < lines)
+	{
+		hor = -1;
+		while (++hor < width)
+			if (map[vert][hor] == 'H')
+				g->map.hazard_zones[i++] = (t_coord){hor, vert};
+	}
+}
+
+static void	add_messages(char **map, int lines, int width, t_game *g)
+{
+	int	vert;
+	int	hor;
+	int	i;
+
+	g->map.message_count = count_char(map, lines, width, 'M');
+	if (!g->map.message_count)
+		return ;
+	g->map.message_zones = calloc_s(g->map.message_count, sizeof(t_coord), g);
+	i = 0;
+	vert = -1;
+	while (++vert < lines)
+	{
+		hor = -1;
+		while (++hor < width)
+			if (map[vert][hor] == 'M')
+				g->map.message_zones[i++] = (t_coord){hor, vert};
+	}
+}
+
+static void	add_interactables(char **map, int lines, int width, t_game *g)
+{
+	add_switches(map, lines, width, g);
+	add_hazards(map, lines, width, g);
+	add_messages(map, lines, width, g);
+}
+
 void	ft_populate_map(char **map, int *vals, t_game *g)
 {
 	int	lines;
@@ -170,6 +262,7 @@ void	ft_populate_map(char **map, int *vals, t_game *g)
 	lines = vals[0];
 	width = vals[1];
 	add_sprites(map, lines - vals[2], width, g);
+	add_interactables(map, lines - vals[2], width, g);
 	g->map.grid = calloc_s(lines, sizeof(t_block *), g);
 	vert = 0;
 	while (vert < lines - vals[2])

@@ -60,6 +60,12 @@ typedef struct s_map
 	int			sprite_count;
 	t_item		*items;
 	int			item_count;
+	t_coord		*switches;
+	int			switch_count;
+	t_coord		*hazard_zones;
+	int			hazard_count;
+	t_coord		*message_zones;
+	int			message_count;
 	int			width;
 	int			height;
 }				t_map;
@@ -211,6 +217,12 @@ typedef struct s_hud
 	int			inventory[4];
 }				t_hud;
 
+typedef struct s_message
+{
+	char		text[HUD_MESSAGE_LEN];
+	double		timer;
+}				t_message;
+
 // ----- GENERAL ----- //
 
 typedef struct s_game
@@ -226,6 +238,7 @@ typedef struct s_game
 	t_img		img;
 	t_assets	assets;
 	t_hud		hud;
+	t_message	message;
 
 	double		delta_time;
 

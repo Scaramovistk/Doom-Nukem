@@ -14,7 +14,7 @@
 
 static int	ft_is_wall_like(char c)
 {
-	return (c == '1' || c == '4' || c == '5');
+	return (c == '1' || c == '4' || c == '5' || c == 'T');
 }
 
 int	ft_is_halway(char **map, int vert, int hor)

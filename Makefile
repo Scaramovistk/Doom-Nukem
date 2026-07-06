@@ -47,13 +47,13 @@ VPATH			=	src src/events src/graphics src/parser src/parser/utils src/utils
 
 # Source Files
 SRC_MAIN		=	main.c
-SRC_EVENTS		=	door_bonus.c game_loop.c hooks.c hooks_door_bonus.c mlx_mouse_pos_bonus.c pickup.c stop_game.c \
-					update_player_pos.c
+SRC_EVENTS		=	door_bonus.c game_loop.c hooks.c hooks_door_bonus.c interact.c mlx_mouse_pos_bonus.c pickup.c \
+					stop_game.c triggers.c update_player_pos.c
 SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_scene.c draw_sprites.c draw_utils.c draw_wall.c graphics_utils.c \
 					hud.c load_game.c ray_casting.c render.c time_bonus.c
 SRC_PARSER		=	generate_map.c get_header.c get_map.c parser.c valid_header.c valid_map.c \
 					parsing_error.c header.c map.c security.c valid_header_check_bonus.c
-SRC_UTILS		=	allocation.c error.c free.c init_game.c
+SRC_UTILS		=	allocation.c error.c free.c init_game.c sound.c
 
 SRC				=	$(SRC_MAIN) $(SRC_EVENTS) $(SRC_GRAPHICS) $(SRC_PARSER) $(SRC_UTILS)
 

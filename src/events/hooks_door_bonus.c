@@ -12,29 +12,6 @@
 
 #include "../../include/cub3d.h"
 
-void	toggle_door(t_game *g)
-{
-	t_position	dir;
-	t_coord		check;
-	double		check_distance;
-	bool		open;
-
-	dir = (t_position){cos(g->player.orientation), sin(g->player.orientation)};
-	check_distance = 0.0;
-	while (check_distance < 2.5)
-	{
-		check.x = (int)(g->player.pos.x + dir.x * check_distance);
-		check.y = (int)(g->player.pos.y + dir.y * check_distance);
-		open = (is_in_bounds(check, g) && is_door(check, g));
-		if (open && !is_on_player(check, g))
-		{
-			activate_door(check, g);
-			break ;
-		}
-		check_distance += 0.1;
-	}
-}
-
 bool	is_in_bounds(t_coord pos, t_game *g)
 {
 	bool	x_ok;

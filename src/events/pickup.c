@@ -52,6 +52,14 @@ static void	remove_item_sprite(t_item *item, t_game *g)
 	item->sprite_index = -1;
 }
 
+void	collect_item(t_item *item, t_game *g)
+{
+	g->hud.inventory[item->type] += item->quantity;
+	item->active = false;
+	remove_item_sprite(item, g);
+	play_sound_effect("pickup");
+}
+
 void	update_item_pickups(t_game *g)
 {
 	int	i;
@@ -61,12 +69,7 @@ void	update_item_pickups(t_game *g)
 	{
 		if (g->map.items[i].active
 			&& in_pickup_range(g->player.pos, g->map.items[i].pos))
-		{
-			g->hud.inventory[g->map.items[i].type]
-				+= g->map.items[i].quantity;
-			g->map.items[i].active = false;
-			remove_item_sprite(&g->map.items[i], g);
-		}
+			collect_item(&g->map.items[i], g);
 		i++;
 	}
 }

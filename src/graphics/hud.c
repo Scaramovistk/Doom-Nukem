@@ -160,10 +160,83 @@ static void	draw_score(t_game *g)
 	draw_number(g, g->hud.score, (t_coord){pos.x + 42, pos.y + 9}, 4);
 }
 
+static const char	*letter_pattern(char c)
+{
+	static const char	*patterns[26] = {
+		"010101111101101", "110101110101110", "011100100100011",
+		"110101101101110", "111100110100111", "111100110100100",
+		"011100101101011", "101101111101101", "111010010010111",
+		"001001001101011", "101101110101101", "100100100100111",
+		"101111111101101", "101111111111101", "010101101101010",
+		"110101110100100", "010101101111011", "110101110101101",
+		"011100010001110", "111010010010010", "101101101101011",
+		"101101101010010", "101101111111101", "101101010101101",
+		"101101010010010", "111001010100111"
+	};
+
+	if (c < 'A' || c > 'Z')
+		return (NULL);
+	return (patterns[c - 'A']);
+}
+
+static void	draw_char(t_game *g, char c, t_coord pos, int scale)
+{
+	const char	*pattern;
+	t_coord		cell;
+
+	pattern = letter_pattern(c);
+	if (!pattern)
+		return ;
+	cell.y = 0;
+	while (cell.y < 5)
+	{
+		cell.x = 0;
+		while (cell.x < 3)
+		{
+			if (pattern[cell.y * 3 + cell.x] == '1')
+				hud_rect(g, (t_coord){pos.x + cell.x * scale,
+					pos.y + cell.y * scale}, (t_coord){scale, scale}, WHITE);
+			cell.x++;
+		}
+		cell.y++;
+	}
+}
+
+static void	draw_text(t_game *g, const char *text, t_coord pos, int scale)
+{
+	int	i;
+
+	i = 0;
+	while (text[i])
+	{
+		draw_char(g, text[i], (t_coord){pos.x + i * scale * 4, pos.y}, scale);
+		i++;
+	}
+}
+
+static void	draw_message(t_game *g)
+{
+	t_coord	pos;
+	int		scale;
+	int		width;
+
+	if (g->message.timer <= 0.0)
+		return ;
+	scale = 3;
+	width = (int)ft_strlen(g->message.text) * scale * 4;
+	pos = (t_coord){(WIN_WIDTH - width) / 2, 90};
+	hud_rect(g, (t_coord){pos.x - 10, pos.y - 10},
+		(t_coord){width + 20, scale * 5 + 20}, HUD_BG);
+	hud_frame(g, (t_coord){pos.x - 10, pos.y - 10},
+		(t_coord){width + 20, scale * 5 + 20}, HUD_BORDER);
+	draw_text(g, g->message.text, pos, scale);
+}
+
 void	draw_hud(t_game *g)
 {
 	draw_health(g);
 	draw_ammo(g);
 	draw_inventory(g);
 	draw_score(g);
+	draw_message(g);
 }

@@ -64,5 +64,9 @@
 # define LATERAL_MOVE_RATIO 0.5
 # define ITEM_TYPES_NB 4
 # define ITEM_PICKUP_RADIUS 0.4
+# define INTERACT_RANGE 2.5
+# define HAZARD_DAMAGE_PER_SEC 10.0
+# define HUD_MESSAGE_LEN 32
+# define MESSAGE_DISPLAY_TIME 3.0
 
 #endif
