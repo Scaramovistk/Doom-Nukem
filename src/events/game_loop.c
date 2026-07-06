@@ -32,6 +32,7 @@ int	game_loop(t_game *g)
 			|| g->player.is_swimming))
 		return (EXIT_SUCCESS);
 	update_player_pos(&g->player, g);
+	update_item_pickups(g);
 	render(g);
 	return (EXIT_SUCCESS);
 }

@@ -143,6 +143,8 @@ static void	draw_inventory(t_game *g)
 			HUD_BORDER);
 		hud_rect(g, (t_coord){pos.x + 12 + i * 52, pos.y + 12},
 			(t_coord){18, 18}, color);
+		draw_number(g, g->hud.inventory[i],
+			(t_coord){pos.x + 4 + i * 52, pos.y + 32}, 2);
 		i++;
 	}
 }

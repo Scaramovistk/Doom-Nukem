@@ -25,7 +25,7 @@ int	ft_map_line(const char *str)
 
 int	ft_invalid_line(const char *str)
 {
-	const char	*valid_chars = "012345 NWSE";
+	const char	*valid_chars = "0123456789 NWSE";
 
 	while (*str)
 	{
@@ -43,7 +43,8 @@ int	ft_find_access_map(char **map, int vert, int hor, int *vals)
 	if (hor < 0 || vert >= vals[0] || vert < 0 || hor >= vals[1])
 		return (0);
 	pos = map[vert][hor];
-	if (pos == '0' || pos == (char)vals[2] || pos == '2' || pos == '3')
+	if (pos == '0' || pos == (char)vals[2] || pos == '2' || pos == '3'
+		|| (pos >= '6' && pos <= '9'))
 	{
 		map[vert][hor] = 'R';
 		ft_find_access_map(map, vert + 1, hor, vals);

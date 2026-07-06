@@ -94,6 +94,8 @@ void	ft_init_map(t_map *map)
 	map->grid = NULL;
 	map->sprites = NULL;
 	map->sprite_count = 0;
+	map->items = NULL;
+	map->item_count = 0;
 	map->width = 0;
 	map->height = 0;
 }

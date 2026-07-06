@@ -150,6 +150,8 @@ bool	is_position_legal(t_position pos, t_game *g)
 			return (false);
 		if (block == DOOR && !is_door_open(cell, g->map.doors))
 			return (false);
+		if (is_item_blocking(cell, g))
+			return (false);
 		i++;
 	}
 	return (true);

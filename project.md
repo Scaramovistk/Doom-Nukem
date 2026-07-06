@@ -146,7 +146,7 @@ Fix:
 - Each element drawn individually on top of the frame buffer each frame
 - **Week 1**
 
-#### R4 · Inventory & item pickup `[ ]`
+#### R4 · Inventory & item pickup `[✅]`
 - Walk-over pickup; inventory struct with counts per type
 - Items optionally block passage
 - **Week 2**
@@ -257,14 +257,14 @@ cub3D base
 
 | ID | Owner | Task | Week | Status |
 |---|---|---|---|---|
-| G0 | Gabriel | Fix mouse look (cursor lock, proportional delta, recenter) | 1 | `[ ]` |
-| G1 | Gabriel | Vertical look / pitch | 1 | `[ ]` |
-| G2 | Gabriel | Textured floors & ceilings | 1 | `[ ]` |
-| G3 | Gabriel | Sky texture | 1–2 | `[ ]` |
-| G4 | Gabriel | Billboard sprites | 2 | `[ ]` |
-| G5 | Gabriel | Multi-angle sprites | 2 | `[ ]` |
-| S1 | Gabriel | Transparent walls | 3 | `[ ]` |
-| S2 | Gabriel | Wall decals | 3 | `[ ]` |
+| G0 | Gabriel | Fix mouse look (cursor lock, proportional delta, recenter) | 1 | `[x]` |
+| G1 | Gabriel | Vertical look / pitch | 1 | `[x]` |
+| G2 | Gabriel | Textured floors & ceilings | 1 | `[x]` |
+| G3 | Gabriel | Sky texture | 1–2 | `[x]` |
+| G4 | Gabriel | Billboard sprites | 2 | `[x]` |
+| G5 | Gabriel | Multi-angle sprites | 2 | `[x]` |
+| S1 | Gabriel | Transparent walls | 3 | `[x]` |
+| S2 | Gabriel | Wall decals | 3 | `[x]` |
 | M1 | Murillo | Level file format | 1 | `[ ]` |
 | M2 | Murillo | Sector-based map | 1–2 | `[ ]` |
 | M3 | Murillo | Variable floor/ceil heights | 2 | `[ ]` |
@@ -274,7 +274,7 @@ cub3D base
 | R1 | Rodolfo | Physics (jump/fall/crouch/run) | 1 | `[x]` |
 | R2 | Rodolfo | Fly / swim mode | 2 | `[x]` |
 | R3 | Rodolfo | HUD system | 1 | `[x]` |
-| R4 | Rodolfo | Inventory & item pickup | 2 | `[ ]` |
+| R4 | Rodolfo | Inventory & item pickup | 2 | `[x]` |
 | R5 | Rodolfo | Interaction system | 2 | `[ ]` |
 | R6 | Rodolfo | World events & triggers | 3 | `[ ]` |
 | S3 | Rodolfo | Text overlay | 2 | `[ ]` |

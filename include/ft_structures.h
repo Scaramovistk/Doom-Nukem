@@ -42,12 +42,24 @@ typedef struct s_door
 	bool		is_opening;
 }				t_door;
 
+typedef struct s_item
+{
+	t_position	pos;
+	int			type;
+	int			quantity;
+	bool		blocks_passage;
+	bool		active;
+	int			sprite_index;
+}				t_item;
+
 typedef struct s_map
 {
 	t_block		**grid;
 	t_door		**doors;
 	t_position	*sprites;
 	int			sprite_count;
+	t_item		*items;
+	int			item_count;
 	int			width;
 	int			height;
 }				t_map;

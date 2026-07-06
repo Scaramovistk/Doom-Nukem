@@ -28,6 +28,8 @@ t_block	ft_convert_tblock(char c)
 		return (TRANSPARENT_WALL);
 	else if (c == '5')
 		return (DECAL_WALL);
+	else if (c >= '6' && c <= '9')
+		return (EMPTY);
 	else
 		return (NULL_BLOCK);
 }
@@ -54,13 +56,93 @@ static int	count_sprites(char **map, int lines, int width)
 	return (count);
 }
 
+static bool	ft_is_item_char(char c)
+{
+	return (c >= '6' && c <= '9');
+}
+
+static int	count_items(char **map, int lines, int width)
+{
+	int	count;
+	int	vert;
+	int	hor;
+
+	count = 0;
+	vert = 0;
+	while (vert < lines)
+	{
+		hor = 0;
+		while (hor < width)
+		{
+			if (ft_is_item_char(map[vert][hor]))
+				count++;
+			hor++;
+		}
+		vert++;
+	}
+	return (count);
+}
+
+static int	item_default_quantity(int type)
+{
+	static const int	amounts[ITEM_TYPES_NB] = {25, 10, 1, 5};
+
+	if (type < 0 || type >= ITEM_TYPES_NB)
+		return (1);
+	return (amounts[type]);
+}
+
+static bool	item_default_blocks(int type)
+{
+	static const bool	blocking[ITEM_TYPES_NB] = {false, false, false, true};
+
+	if (type < 0 || type >= ITEM_TYPES_NB)
+		return (false);
+	return (blocking[type]);
+}
+
+static void	add_items(char **map, int lines, int width, t_game *g, int deco)
+{
+	int		vert;
+	int		hor;
+	int		i;
+	int		type;
+
+	if (!g->map.item_count)
+		return ;
+	g->map.items = calloc_s(g->map.item_count, sizeof(t_item), g);
+	i = 0;
+	vert = -1;
+	while (++vert < lines)
+	{
+		hor = -1;
+		while (++hor < width)
+		{
+			if (!ft_is_item_char(map[vert][hor]))
+				continue ;
+			type = map[vert][hor] - '6';
+			g->map.items[i].pos = (t_position){hor + 0.5, vert + 0.5};
+			g->map.items[i].type = type;
+			g->map.items[i].quantity = item_default_quantity(type);
+			g->map.items[i].blocks_passage = item_default_blocks(type);
+			g->map.items[i].active = true;
+			g->map.items[i].sprite_index = deco + i;
+			g->map.sprites[deco + i] = g->map.items[i].pos;
+			i++;
+		}
+	}
+}
+
 static void	add_sprites(char **map, int lines, int width, t_game *g)
 {
 	int	vert;
 	int	hor;
 	int	i;
+	int	deco;
 
-	g->map.sprite_count = count_sprites(map, lines, width);
+	deco = count_sprites(map, lines, width);
+	g->map.item_count = count_items(map, lines, width);
+	g->map.sprite_count = deco + g->map.item_count;
 	if (!g->map.sprite_count)
 		return ;
 	g->map.sprites = calloc_s(g->map.sprite_count, sizeof(t_position), g);
@@ -75,6 +157,7 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 				g->map.sprites[i++] = (t_position){hor + 0.5, vert + 0.5};
 		}
 	}
+	add_items(map, lines, width, g, deco);
 }
 
 void	ft_populate_map(char **map, int *vals, t_game *g)

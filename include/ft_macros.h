@@ -62,5 +62,7 @@
 # define MAX_MAP_WIDTH 158
 # define MAX_MAP_HEIGHT 99
 # define LATERAL_MOVE_RATIO 0.5
+# define ITEM_TYPES_NB 4
+# define ITEM_PICKUP_RADIUS 0.4
 
 #endif

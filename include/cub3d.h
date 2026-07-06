@@ -60,6 +60,10 @@ void		activate_door(t_coord pos, t_game *g);
 // stop_game.c
 int			stop_game(void *param);
 
+// pickup.c
+void		update_item_pickups(t_game *g);
+bool		is_item_blocking(t_coord cell, t_game *g);
+
 // ----- GRAPHICS ----- //
 
 // load_game.c
