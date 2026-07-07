@@ -37,4 +37,11 @@ This produces:
 ## HUD
 
 The frame buffer HUD renders health, ammo, inventory slots, and score/currency
-as separate overlay elements.
+as separate overlay elements. The minimap is shown in the top-left, score is
+centered at the top, and FPS is shown in the top-right.
+
+## Scripted Events
+
+Switch interactions enqueue timed world events. The current sequence shows a
+message, adds score, toggles doors after a short delay, then closes doors again
+after a timer.

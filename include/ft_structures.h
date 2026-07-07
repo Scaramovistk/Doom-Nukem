@@ -214,6 +214,7 @@ typedef struct s_hud
 	int			max_health;
 	int			ammo;
 	int			score;
+	int			fps;
 	int			inventory[4];
 }				t_hud;
 
@@ -222,6 +223,17 @@ typedef struct s_message
 	char		text[HUD_MESSAGE_LEN];
 	double		timer;
 }				t_message;
+
+typedef struct s_world_event
+{
+	t_event_action	action;
+	double			timer;
+	double			reload;
+	int				value;
+	bool			repeat;
+	bool			active;
+	char			message[HUD_MESSAGE_LEN];
+}				t_world_event;
 
 // ----- GENERAL ----- //
 
@@ -239,6 +251,7 @@ typedef struct s_game
 	t_assets	assets;
 	t_hud		hud;
 	t_message	message;
+	t_world_event	events[WORLD_EVENT_MAX];
 
 	double		delta_time;
 

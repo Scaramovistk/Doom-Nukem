@@ -26,26 +26,6 @@ static bool	is_switch(t_coord pos, t_game *g)
 	return (false);
 }
 
-static void	toggle_all_doors(t_game *g)
-{
-	t_coord	pos;
-
-	pos.y = 0;
-	while (pos.y < g->map.height)
-	{
-		pos.x = 0;
-		while (pos.x < g->map.width)
-		{
-			if (g->map.grid[pos.y][pos.x] == DOOR)
-				g->map.doors[pos.y][pos.x].is_opening
-					= !g->map.doors[pos.y][pos.x].is_opening;
-			pos.x++;
-		}
-		pos.y++;
-	}
-	play_sound_effect("switch");
-}
-
 static bool	try_pickup_item_at(t_coord pos, t_game *g)
 {
 	int		i;
@@ -87,7 +67,7 @@ void	interact(t_game *g)
 			return ;
 		if (is_switch(check, g))
 		{
-			toggle_all_doors(g);
+			trigger_switch_sequence(g);
 			return ;
 		}
 		if (is_door(check, g) && !is_on_player(check, g))

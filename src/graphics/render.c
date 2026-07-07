@@ -19,8 +19,11 @@ int	render(t_game *g)
 	void	*img;
 
 	update_time(g);
+	if (g->delta_time > 0.0)
+		g->hud.fps = (int)(1.0 / g->delta_time);
 	ft_regenerate_image(g);
 	draw_scene(g);
+	draw_minimap(g);
 	draw_hud(g);
 	mlx = g->mlx;
 	win = g->mlx_win;

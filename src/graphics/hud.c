@@ -153,7 +153,7 @@ static void	draw_score(t_game *g)
 {
 	t_coord	pos;
 
-	pos = (t_coord){24, 24};
+	pos = (t_coord){(WIN_WIDTH / 2) - 64, 24};
 	hud_rect(g, pos, (t_coord){128, 42}, HUD_BG);
 	hud_frame(g, pos, (t_coord){128, 42}, HUD_BORDER);
 	hud_rect(g, (t_coord){pos.x + 12, pos.y + 12}, (t_coord){18, 18}, YELLOW);
@@ -232,11 +232,23 @@ static void	draw_message(t_game *g)
 	draw_text(g, g->message.text, pos, scale);
 }
 
+static void	draw_fps(t_game *g)
+{
+	t_coord	pos;
+
+	pos = (t_coord){WIN_WIDTH - 136, 24};
+	hud_rect(g, pos, (t_coord){112, 42}, HUD_BG);
+	hud_frame(g, pos, (t_coord){112, 42}, HUD_BORDER);
+	draw_text(g, "FPS", (t_coord){pos.x + 12, pos.y + 12}, 3);
+	draw_number(g, g->hud.fps, (t_coord){pos.x + 58, pos.y + 9}, 4);
+}
+
 void	draw_hud(t_game *g)
 {
 	draw_health(g);
 	draw_ammo(g);
 	draw_inventory(g);
 	draw_score(g);
+	draw_fps(g);
 	draw_message(g);
 }

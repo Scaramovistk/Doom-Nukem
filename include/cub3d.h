@@ -70,6 +70,11 @@ void		interact(t_game *g);
 // triggers.c
 bool		update_proximity_triggers(t_game *g);
 
+// events.c
+bool		update_world_events(t_game *g);
+void		queue_world_event(t_game *g, t_world_event event);
+void		trigger_switch_sequence(t_game *g);
+
 // ----- GRAPHICS ----- //
 
 // load_game.c
@@ -87,6 +92,9 @@ void		init_display_img(t_img *img, t_game *g);
 
 // hud.c
 void		draw_hud(t_game *g);
+
+// minimap.c
+void		draw_minimap(t_game *g);
 
 // ray_casting.c
 void		cast_all_rays(t_ray *rays, t_game *g);

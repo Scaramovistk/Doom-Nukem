@@ -161,9 +161,11 @@ Fix:
   pending S3's richer text system.
 - **Week 2**
 
-#### R6 · Dynamic world events & scripted sequences `[ ]`
+#### R6 · Dynamic world events & scripted sequences `[✅]`
 - Trigger → action map per level; timers, repeatable vs one-shot
 - Supports elevators, texture swaps, height changes, secret passages
+- Current grid implementation has a generic event queue and switch-driven timed
+  sequences: message, score, delayed door toggle, and timed auto-close.
 - **Week 3**
 
 #### S3 · Text messages overlay `[ ]`
@@ -281,7 +283,7 @@ cub3D base
 | R3 | Rodolfo | HUD system | 1 | `[x]` |
 | R4 | Rodolfo | Inventory & item pickup | 2 | `[x]` |
 | R5 | Rodolfo | Interaction system | 2 | `[x]` |
-| R6 | Rodolfo | World events & triggers | 3 | `[ ]` |
+| R6 | Rodolfo | World events & triggers | 3 | `[x]` |
 | S3 | Rodolfo | Text overlay | 2 | `[ ]` |
 | S4 | Shared | Projectile system | 3 | `[ ]` |
 | S5 | Shared | Enemy AI | 3 | `[ ]` |

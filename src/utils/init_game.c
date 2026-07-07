@@ -84,6 +84,7 @@ void	ft_int_hud(t_hud *hud)
 	hud->max_health = 100;
 	hud->ammo = 30;
 	hud->score = 0;
+	hud->fps = 0;
 	i = 0;
 	while (i < 4)
 		hud->inventory[i++] = 0;
@@ -112,6 +113,24 @@ void	ft_int_message(t_message *message)
 	message->timer = 0.0;
 }
 
+void	ft_int_events(t_world_event *events)
+{
+	int	i;
+
+	i = 0;
+	while (i < WORLD_EVENT_MAX)
+	{
+		events[i].action = EVENT_NONE;
+		events[i].timer = 0.0;
+		events[i].reload = 0.0;
+		events[i].value = 0;
+		events[i].repeat = false;
+		events[i].active = false;
+		events[i].message[0] = '\0';
+		i++;
+	}
+}
+
 void	init_game_struct(t_game *g)
 {
 	g->allocated_pointers = NULL;
@@ -120,6 +139,7 @@ void	init_game_struct(t_game *g)
 	ft_int_player(&g->player);
 	ft_int_hud(&g->hud);
 	ft_int_message(&g->message);
+	ft_int_events(g->events);
 	ft_int_assets(&g->assets);
 	ft_int_image(&g->img);
 	g->mlx = NULL;

@@ -43,4 +43,15 @@ typedef enum t_block
 	DECAL_WALL
 }		t_block;
 
+typedef enum e_event_action
+{
+	EVENT_NONE,
+	EVENT_TOGGLE_DOORS,
+	EVENT_OPEN_DOORS,
+	EVENT_CLOSE_DOORS,
+	EVENT_ADD_SCORE,
+	EVENT_DAMAGE_PLAYER,
+	EVENT_SHOW_MESSAGE
+}		t_event_action;
+
 #endif
