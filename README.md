@@ -45,3 +45,8 @@ centered at the top, and FPS is shown in the top-right.
 Switch interactions enqueue timed world events. The current sequence shows a
 message, adds score, toggles doors after a short delay, then closes doors again
 after a timer.
+
+## Text Overlay
+
+Timed overlay messages are drawn over the frame for pickups, story/message
+zones, and scripted events.

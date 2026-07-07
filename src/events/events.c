@@ -51,8 +51,7 @@ static void	toggle_all_doors(t_game *g)
 
 static void	show_event_message(t_game *g, t_world_event *event)
 {
-	ft_strlcpy(g->message.text, event->message, HUD_MESSAGE_LEN);
-	g->message.timer = MESSAGE_DISPLAY_TIME;
+	show_message(g, event->message, MESSAGE_DISPLAY_TIME);
 }
 
 static void	run_event_action(t_game *g, t_world_event *event)

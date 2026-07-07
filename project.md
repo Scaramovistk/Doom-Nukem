@@ -155,10 +155,9 @@ Fix:
 - E key interact ray; proximity triggers (damage zones, text, scripts)
 - Actions: open door, toggle switch, pick up item, play sound, display text
 - Map chars: `T` switch (reuses `DECAL_WALL`), `H` hazard zone, `M` message zone.
-  Switches toggle every door in the level (no per-entity linking yet — needs
-  M1/M2 level format). `play_sound_effect()` is a stderr/stdout stub pending
-  S7's real audio backend; message overlay is a fixed per-level string
-  pending S3's richer text system.
+  Switches enqueue the R6 timed sequence for doors/score/messages (no per-entity
+  linking yet — needs M1/M2 level format). `play_sound_effect()` is a
+  stderr/stdout stub pending S7's real audio backend.
 - **Week 2**
 
 #### R6 · Dynamic world events & scripted sequences `[✅]`
@@ -168,8 +167,10 @@ Fix:
   sequences: message, score, delayed door toggle, and timed auto-close.
 - **Week 3**
 
-#### S3 · Text messages overlay `[ ]`
+#### S3 · Text messages overlay `[✅]`
 - Draw timed string on screen: story text, pickup messages
+- Central `show_message()` / `update_message()` API is used by pickups,
+  message zones, and scripted events.
 - **Week 2**
 
 #### S6 · Story, mission & level flow `[ ]`
@@ -284,7 +285,7 @@ cub3D base
 | R4 | Rodolfo | Inventory & item pickup | 2 | `[x]` |
 | R5 | Rodolfo | Interaction system | 2 | `[x]` |
 | R6 | Rodolfo | World events & triggers | 3 | `[x]` |
-| S3 | Rodolfo | Text overlay | 2 | `[ ]` |
+| S3 | Rodolfo | Text overlay | 2 | `[x]` |
 | S4 | Shared | Projectile system | 3 | `[ ]` |
 | S5 | Shared | Enemy AI | 3 | `[ ]` |
 | S6 | Rodolfo | Story / level flow | 3 | `[ ]` |

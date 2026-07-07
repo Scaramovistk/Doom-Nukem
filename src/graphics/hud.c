@@ -184,6 +184,10 @@ static void	draw_char(t_game *g, char c, t_coord pos, int scale)
 	const char	*pattern;
 	t_coord		cell;
 
+	if (c >= 'a' && c <= 'z')
+		c -= 32;
+	if (ft_isdigit(c))
+		return (draw_digit(g, c - '0', pos, scale));
 	pattern = letter_pattern(c);
 	if (!pattern)
 		return ;
@@ -202,6 +206,19 @@ static void	draw_char(t_game *g, char c, t_coord pos, int scale)
 	}
 }
 
+static void	draw_punctuation(t_game *g, char c, t_coord pos, int scale)
+{
+	if (c == '.' || c == '!' || c == ':')
+		hud_rect(g, (t_coord){pos.x + scale, pos.y + 4 * scale},
+			(t_coord){scale, scale}, WHITE);
+	if (c == '!' || c == ':')
+		hud_rect(g, (t_coord){pos.x + scale, pos.y},
+			(t_coord){scale, 3 * scale}, WHITE);
+	if (c == '-' || c == ':')
+		hud_rect(g, (t_coord){pos.x, pos.y + 2 * scale},
+			(t_coord){3 * scale, scale}, WHITE);
+}
+
 static void	draw_text(t_game *g, const char *text, t_coord pos, int scale)
 {
 	int	i;
@@ -210,6 +227,8 @@ static void	draw_text(t_game *g, const char *text, t_coord pos, int scale)
 	while (text[i])
 	{
 		draw_char(g, text[i], (t_coord){pos.x + i * scale * 4, pos.y}, scale);
+		draw_punctuation(g, text[i],
+			(t_coord){pos.x + i * scale * 4, pos.y}, scale);
 		i++;
 	}
 }
@@ -224,6 +243,8 @@ static void	draw_message(t_game *g)
 		return ;
 	scale = 3;
 	width = (int)ft_strlen(g->message.text) * scale * 4;
+	if (width > WIN_WIDTH - 80)
+		width = WIN_WIDTH - 80;
 	pos = (t_coord){(WIN_WIDTH - width) / 2, 90};
 	hud_rect(g, (t_coord){pos.x - 10, pos.y - 10},
 		(t_coord){width + 20, scale * 5 + 20}, HUD_BG);

@@ -40,15 +40,7 @@ static bool	apply_message(t_game *g, t_coord cell)
 {
 	if (in_zone(cell, g->map.message_zones, g->map.message_count))
 	{
-		ft_strlcpy(g->message.text, "MESSAGE ZONE", HUD_MESSAGE_LEN);
-		g->message.timer = MESSAGE_DISPLAY_TIME;
-		return (true);
-	}
-	if (g->message.timer > 0.0)
-	{
-		g->message.timer -= g->delta_time;
-		if (g->message.timer < 0.0)
-			g->message.timer = 0.0;
+		show_message(g, "MESSAGE ZONE", MESSAGE_DISPLAY_TIME);
 		return (true);
 	}
 	return (false);

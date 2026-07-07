@@ -75,6 +75,10 @@ bool		update_world_events(t_game *g);
 void		queue_world_event(t_game *g, t_world_event event);
 void		trigger_switch_sequence(t_game *g);
 
+// message.c
+void		show_message(t_game *g, const char *text, double duration);
+bool		update_message(t_game *g);
+
 // ----- GRAPHICS ----- //
 
 // load_game.c
