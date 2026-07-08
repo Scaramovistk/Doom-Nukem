@@ -131,6 +131,21 @@ void	ft_int_audio(t_audio *audio)
 	audio->music_path[0] = '\0';
 }
 
+void	ft_int_projectiles(t_projectile *projectiles)
+{
+	int	i;
+
+	i = 0;
+	while (i < PROJECTILE_MAX)
+	{
+		projectiles[i].pos = (t_position){0.0, 0.0};
+		projectiles[i].velocity = (t_position){0.0, 0.0};
+		projectiles[i].ttl = 0.0;
+		projectiles[i].active = false;
+		i++;
+	}
+}
+
 void	ft_int_events(t_world_event *events)
 {
 	int	i;
@@ -159,6 +174,7 @@ void	init_game_struct(t_game *g)
 	ft_int_message(&g->message);
 	ft_int_level_flow(&g->level);
 	ft_int_audio(&g->audio);
+	ft_int_projectiles(g->projectiles);
 	ft_int_events(g->events);
 	ft_int_assets(&g->assets);
 	ft_int_image(&g->img);

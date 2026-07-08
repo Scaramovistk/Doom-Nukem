@@ -26,6 +26,7 @@ void		setup_hooks(t_game *g);
 int			pressed(int keycode, t_game *g);
 int			released(int keycode, t_game *g);
 int			mouse_move(int x, int y, void *param);
+int			mouse_press(int button, int x, int y, void *param);
 
 // mlx_mouse_pos.c
 int			get_mouse_pos(void *mlx, void *win, int *x, int *y);
@@ -83,6 +84,10 @@ bool		update_message(t_game *g);
 void		start_level_flow(t_game *g);
 bool		update_level_flow(t_game *g);
 
+// projectile.c
+void		fire_projectile(t_game *g);
+bool		update_projectiles(t_game *g);
+
 // ----- GRAPHICS ----- //
 
 // load_game.c
@@ -130,6 +135,7 @@ void		draw_vertical_line(int x, t_dimensions dims, int color, t_game *g);
 
 // draw_sprites.c
 void		draw_sprites(t_game *g, double *z_buffer, t_ray *rays);
+void		draw_projectiles(t_game *g, double *z_buffer);
 
 // draw_wall.c
 void		draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g);
@@ -224,6 +230,7 @@ void		init_game_struct(t_game *g);
 void		ft_int_message(t_message *message);
 void		ft_int_level_flow(t_level_flow *level);
 void		ft_int_audio(t_audio *audio);
+void		ft_int_projectiles(t_projectile *projectiles);
 
 // allocation.c
 void		*s_alloc(void *pointer, t_game *g);

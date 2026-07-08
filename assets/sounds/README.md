@@ -5,6 +5,7 @@ you have custom sounds.
 Recognized event names:
 - `door.wav`, `door.ogg`, or `door.mp3`
 - `pickup.wav`, `pickup.ogg`, or `pickup.mp3`
+- `shoot.wav`, `shoot.ogg`, or `shoot.mp3`
 - `switch.wav`, `switch.ogg`, or `switch.mp3`
 - `mission_complete.wav`, `mission_complete.ogg`, or `mission_complete.mp3`
 - `mission_failed.wav`, `mission_failed.ogg`, or `mission_failed.mp3`

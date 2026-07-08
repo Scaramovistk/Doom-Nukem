@@ -27,6 +27,9 @@
 
 # define MOUSE_MOVE 6
 # define MOUSE_MOVE_MASK 64
+# define MOUSE_PRESS 4
+# define MOUSE_PRESS_MASK 4
+# define MOUSE_LEFT 1
 
 # ifdef __linux__
 #  define KEY_ESC 65307
@@ -43,6 +46,7 @@
 #  define KEY_SPACE 32
 #  define KEY_E 101
 #  define KEY_F 102
+#  define KEY_R 114
 #  define KEY_SHIFT 65505
 #  define KEY_CTRL 65507
 # elif defined(__APPLE__)
@@ -60,6 +64,7 @@
 #  define KEY_SPACE 49
 #  define KEY_E 14
 #  define KEY_F 3
+#  define KEY_R 15
 #  define KEY_SHIFT 257
 #  define KEY_CTRL 256
 # else

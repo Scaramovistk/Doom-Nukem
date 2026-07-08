@@ -72,6 +72,11 @@
 # define SWITCH_EVENT_DELAY 0.25
 # define SWITCH_DOOR_CLOSE_DELAY 5.0
 # define LEVEL_END_DELAY 3.0
+# define PROJECTILE_MAX 32
+# define PROJECTILE_SPEED 8.0
+# define PROJECTILE_TTL 1.25
+# define PROJECTILE_HIT_RADIUS 0.28
+# define PROJECTILE_SIZE 6
 # define SOUND_DIR "assets/sounds/"
 # define MUSIC_BASENAME "music"
 

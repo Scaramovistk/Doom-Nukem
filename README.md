@@ -32,6 +32,7 @@ This produces:
 - Space: jump, or ascend while flying/swimming
 - `F`: toggle fly mode
 - `E`: interact with doors
+- Left mouse or `R`: fire projectile
 - Esc or window close button: quit cleanly
 
 ## HUD
@@ -50,6 +51,12 @@ after a timer.
 
 Timed overlay messages are drawn over the frame for pickups, story/message
 zones, and scripted events.
+
+## Projectiles
+
+The player can fire physical projectiles that consume HUD ammo, travel forward,
+stop on solid walls/closed doors, leave wall decals, and hit non-item sprite
+targets.
 
 ## Level Flow
 

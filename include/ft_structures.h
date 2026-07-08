@@ -253,6 +253,14 @@ typedef struct s_audio
 	char			music_path[LINE_SIZE];
 }				t_audio;
 
+typedef struct s_projectile
+{
+	t_position		pos;
+	t_position		velocity;
+	double			ttl;
+	bool			active;
+}				t_projectile;
+
 // ----- GENERAL ----- //
 
 typedef struct s_game
@@ -272,6 +280,7 @@ typedef struct s_game
 	t_world_event	events[WORLD_EVENT_MAX];
 	t_level_flow	level;
 	t_audio		audio;
+	t_projectile	projectiles[PROJECTILE_MAX];
 
 	double		delta_time;
 

@@ -214,6 +214,57 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	sort_sprites(sprites, g->map.sprite_count);
 	i = 0;
 	while (i < g->map.sprite_count)
-		draw_one_sprite(&sprites[i++], g, z_buffer, rays);
+	draw_one_sprite(&sprites[i++], g, z_buffer, rays);
 	free(sprites);
+}
+
+static void	draw_projectile_dot(t_game *g, t_sprite_draw *s)
+{
+	int	x;
+	int	y;
+	int	radius;
+
+	radius = PROJECTILE_SIZE;
+	x = s->screen_x - radius;
+	while (x <= s->screen_x + radius)
+	{
+		y = s->top;
+		while (y <= s->bottom)
+		{
+			if (x >= 0 && x < WIN_WIDTH && y >= 0 && y < WIN_HEIGHT
+				&& pow(x - s->screen_x, 2) + pow(y - (s->top + radius), 2)
+				<= radius * radius)
+				put_pixel(&g->img, x, y, YELLOW);
+			y++;
+		}
+		x++;
+	}
+}
+
+static void	init_projectile_draw(t_sprite_draw *s, t_position pos, t_game *g)
+{
+	init_sprite_draw(s, pos, g);
+	s->height = PROJECTILE_SIZE * 2;
+	s->width = PROJECTILE_SIZE * 2;
+	s->top = (WIN_HEIGHT / 2) + (int)g->player.pitch - PROJECTILE_SIZE;
+	s->bottom = s->top + s->height;
+}
+
+void	draw_projectiles(t_game *g, double *z_buffer)
+{
+	t_sprite_draw	s;
+	int				i;
+
+	i = 0;
+	while (i < PROJECTILE_MAX)
+	{
+		if (g->projectiles[i].active)
+		{
+			init_projectile_draw(&s, g->projectiles[i].pos, g);
+			if (s.transform_y > 0 && s.screen_x >= 0 && s.screen_x < WIN_WIDTH
+				&& s.transform_y < z_buffer[s.screen_x])
+				draw_projectile_dot(g, &s);
+		}
+		i++;
+	}
 }

@@ -192,9 +192,12 @@ Fix:
 
 ### 🤝 Shared — Week 3, whoever is unblocked first
 
-#### S4 · Projectile system `[ ]`
+#### S4 · Projectile system `[✅]`
 - Shoot a ray or physical object (pos + velocity)
 - Wall collision → decal; sprite collision → damage
+- Current implementation fires fixed-pool physical projectiles with left mouse
+  or `R`, consumes HUD ammo, marks wall hits as decal walls, and removes
+  non-item sprite targets on hit.
 
 #### S5 · Enemy AI & characters `[ ]`
 - State machine: idle → patrol → alert → chase → attack
@@ -291,7 +294,7 @@ cub3D base
 | R5 | Rodolfo | Interaction system | 2 | `[x]` |
 | R6 | Rodolfo | World events & triggers | 3 | `[x]` |
 | S3 | Rodolfo | Text overlay | 2 | `[x]` |
-| S4 | Shared | Projectile system | 3 | `[ ]` |
+| S4 | Shared | Projectile system | 3 | `[x]` |
 | S5 | Shared | Enemy AI | 3 | `[ ]` |
 | S6 | Rodolfo | Story / level flow | 3 | `[x]` |
 | S7 | Rodolfo | Sound & music | 4 | `[x]` |

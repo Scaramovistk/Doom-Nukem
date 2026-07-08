@@ -16,6 +16,7 @@ void	setup_hooks(t_game *g)
 {
 	mlx_loop_hook(g->mlx, game_loop, g);
 	mlx_hook(g->mlx_win, MOUSE_MOVE, MOUSE_MOVE_MASK, mouse_move, g);
+	mlx_hook(g->mlx_win, MOUSE_PRESS, MOUSE_PRESS_MASK, mouse_press, g);
 	mlx_hook(g->mlx_win, CLIENT_MESSAGE, STRUCTURE_NOTIFY_MASK, stop_game, g);
 	mlx_hook(g->mlx_win, KEY_PRESS, KEY_PRESS_MASK, pressed, g);
 	mlx_hook(g->mlx_win, KEY_RELEASE, KEY_RELEASE_MASK, released, g);
@@ -61,6 +62,8 @@ int	pressed(int key, t_game *g)
 		interact(g);
 	else if (key == KEY_F)
 		toggle_fly_mode(&g->player);
+	else if (key == KEY_R)
+		fire_projectile(g);
 	return (0);
 }
 
@@ -105,5 +108,17 @@ int	mouse_move(int x, int y, void *param)
 	g->player.mouse.x = x;
 	g->player.mouse.y = y;
 	move_mouse(g->mlx, g->mlx_win);
+	return (0);
+}
+
+int	mouse_press(int button, int x, int y, void *param)
+{
+	t_game	*g;
+
+	(void)x;
+	(void)y;
+	g = (t_game *)param;
+	if (button == MOUSE_LEFT)
+		fire_projectile(g);
 	return (0);
 }
