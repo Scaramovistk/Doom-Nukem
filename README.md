@@ -33,13 +33,17 @@ This produces:
 - `F`: toggle fly mode
 - `E`: interact with doors
 - Left mouse or `R`: fire projectile
+- `Q`: switch weapon
+- `1` / `2` / `3` / `4`: select carried artifact slot
 - Esc or window close button: quit cleanly
 
 ## HUD
 
 The frame buffer HUD renders health, ammo, inventory slots, and score/currency
 as separate overlay elements. The minimap is shown in the top-left, score is
-centered at the top, and FPS is shown in the top-right.
+centered at the top, FPS is shown in the top-right, and the view includes a
+crosshair plus a bottom-center XPM weapon sprite. Ammo and inventory slots use
+the same HUD icon asset set as pickup items.
 
 ## Scripted Events
 
@@ -56,7 +60,13 @@ zones, and scripted events.
 
 The player can fire physical projectiles that consume HUD ammo, travel forward,
 stop on solid walls/closed doors, leave wall decals, and hit non-item sprite
-targets.
+targets. `Q` switches between pistol and blaster behavior.
+
+## Enemies
+
+Map `3` sprites act as simple enemies. They alert when the player is nearby,
+chase through legal floor cells, deal timed contact damage, take projectile
+damage, and award score when defeated.
 
 ## Level Flow
 

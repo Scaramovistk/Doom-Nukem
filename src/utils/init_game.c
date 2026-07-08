@@ -24,6 +24,7 @@ void	ft_int_image(t_img *img)
 void	ft_int_assets(t_assets *assets)
 {
 	int	i;
+	int	j;
 
 	i = TEXTURES_NB;
 	while (i--)
@@ -43,6 +44,35 @@ void	ft_int_assets(t_assets *assets)
 		ft_int_image(&assets->sprite_frames[i].img);
 		assets->sprite_frames[i].source = NULL;
 	}
+	i = 0;
+	while (i < WEAPON_NB)
+	{
+		j = 0;
+		while (j < WEAPON_STATE_NB)
+		{
+			ft_int_image(&assets->hud_weapons[i][j].img);
+			assets->hud_weapons[i][j].source = NULL;
+			j++;
+		}
+		i++;
+	}
+	assets->hud_weapons[0][0].source = HUD_PISTOL_IDLE;
+	assets->hud_weapons[0][1].source = HUD_PISTOL_FIRE;
+	assets->hud_weapons[1][0].source = HUD_BLASTER_IDLE;
+	assets->hud_weapons[1][1].source = HUD_BLASTER_FIRE;
+	ft_int_image(&assets->ammo_icon.img);
+	assets->ammo_icon.source = HUD_AMMO_ICON;
+	i = 0;
+	while (i < ITEM_TYPES_NB)
+	{
+		ft_int_image(&assets->item_icons[i].img);
+		assets->item_icons[i].source = NULL;
+		i++;
+	}
+	assets->item_icons[0].source = HUD_ITEM0_ICON;
+	assets->item_icons[1].source = HUD_ITEM1_ICON;
+	assets->item_icons[2].source = HUD_ITEM2_ICON;
+	assets->item_icons[3].source = HUD_ITEM3_ICON;
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -85,6 +115,9 @@ void	ft_int_hud(t_hud *hud)
 	hud->ammo = 30;
 	hud->score = 0;
 	hud->fps = 0;
+	hud->selected_item = 0;
+	hud->selected_weapon = 0;
+	hud->weapon_flash = 0.0;
 	i = 0;
 	while (i < 4)
 		hud->inventory[i++] = 0;
@@ -95,6 +128,8 @@ void	ft_init_map(t_map *map)
 	map->grid = NULL;
 	map->sprites = NULL;
 	map->sprite_count = 0;
+	map->enemies = NULL;
+	map->enemy_count = 0;
 	map->items = NULL;
 	map->item_count = 0;
 	map->switches = NULL;
@@ -141,6 +176,9 @@ void	ft_int_projectiles(t_projectile *projectiles)
 		projectiles[i].pos = (t_position){0.0, 0.0};
 		projectiles[i].velocity = (t_position){0.0, 0.0};
 		projectiles[i].ttl = 0.0;
+		projectiles[i].damage = 0;
+		projectiles[i].size = PROJECTILE_SIZE;
+		projectiles[i].color = YELLOW;
 		projectiles[i].active = false;
 		i++;
 	}

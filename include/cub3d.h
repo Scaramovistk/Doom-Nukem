@@ -84,6 +84,10 @@ bool		update_message(t_game *g);
 void		start_level_flow(t_game *g);
 bool		update_level_flow(t_game *g);
 
+// enemies.c
+bool		update_enemies(t_game *g);
+bool		damage_enemy_at_sprite(t_game *g, int sprite_index, int damage);
+
 // projectile.c
 void		fire_projectile(t_game *g);
 bool		update_projectiles(t_game *g);

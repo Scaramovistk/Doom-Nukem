@@ -36,7 +36,8 @@ static void	sort_sprites(t_sprite_draw *sprites, int count)
 	}
 }
 
-static void	init_sprite_draw(t_sprite_draw *s, t_position pos, t_game *g)
+static void	init_sprite_draw(t_sprite_draw *s, t_position pos, int index,
+		t_game *g)
 {
 	double	dir_x;
 	double	dir_y;
@@ -46,6 +47,7 @@ static void	init_sprite_draw(t_sprite_draw *s, t_position pos, t_game *g)
 	double	plane_len;
 
 	s->pos = pos;
+	s->sprite_index = index;
 	s->distance = pow(g->player.pos.x - pos.x, 2)
 		+ pow(g->player.pos.y - pos.y, 2);
 	dir_x = cos(g->player.orientation);
@@ -87,7 +89,18 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 {
 	double	angle;
 	int		frame;
+	int		i;
 
+	i = 0;
+	while (i < g->map.item_count)
+	{
+		if (g->map.items[i].active
+			&& g->map.items[i].sprite_index == s->sprite_index
+			&& g->map.items[i].type >= 0
+			&& g->map.items[i].type < ITEM_TYPES_NB)
+			return (&g->assets.item_icons[g->map.items[i].type]);
+		i++;
+	}
 	if (!g->assets.has_sprite_frames)
 		return (&g->assets.textures[SPRITE_T]);
 	angle = normalize_angle(atan2(g->player.pos.y - s->pos.y,
@@ -95,6 +108,20 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 	frame = (int)((angle + (M_PI / SPRITE_FRAME_NB))
 			/ (2 * M_PI / SPRITE_FRAME_NB)) % SPRITE_FRAME_NB;
 	return (&g->assets.sprite_frames[frame]);
+}
+
+static int	sprite_texture_size(t_texture *texture, t_game *g)
+{
+	int	i;
+
+	i = 0;
+	while (i < ITEM_TYPES_NB)
+	{
+		if (texture == &g->assets.item_icons[i])
+			return (32);
+		i++;
+	}
+	return (TEXTURE_SIZE);
 }
 
 static int	get_glass_pixel(t_transparent_hit *hit, int y, t_ray *ray, t_game *g)
@@ -155,15 +182,17 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
 	int	y;
 	int	color;
 	int	d;
+	int	texture_size;
 
+	texture_size = sprite_texture_size(texture, g);
 	tex_x = (int)(256 * (stripe - (-s->width / 2 + s->screen_x))
-			* TEXTURE_SIZE / s->width) / 256;
+			* texture_size / s->width) / 256;
 	y = s->top;
 	while (y < s->bottom)
 	{
 		d = (y - ((WIN_HEIGHT / 2) + (int)g->player.pitch)) * 256
 			+ s->height * 128;
-		tex_y = ((d * TEXTURE_SIZE) / s->height) / 256;
+		tex_y = ((d * texture_size) / s->height) / 256;
 		color = get_pixel(&texture->img, tex_x, tex_y);
 		if ((color & 0x00FFFFFF) != 0x00FF00FF)
 		{
@@ -199,8 +228,10 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	t_sprite_draw	*sprites;
 	int				i;
 
-	if (!g->map.sprite_count || (!g->assets.textures[SPRITE_T].img.ptr
-			&& !g->assets.has_sprite_frames))
+	if (!g->map.sprite_count)
+		return ;
+	if (!g->assets.textures[SPRITE_T].img.ptr && !g->assets.has_sprite_frames
+		&& !g->assets.item_icons[0].img.ptr)
 		return ;
 	sprites = malloc(g->map.sprite_count * sizeof(t_sprite_draw));
 	if (!sprites)
@@ -208,23 +239,23 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	i = 0;
 	while (i < g->map.sprite_count)
 	{
-		init_sprite_draw(&sprites[i], g->map.sprites[i], g);
+		init_sprite_draw(&sprites[i], g->map.sprites[i], i, g);
 		i++;
 	}
 	sort_sprites(sprites, g->map.sprite_count);
 	i = 0;
 	while (i < g->map.sprite_count)
-	draw_one_sprite(&sprites[i++], g, z_buffer, rays);
+		draw_one_sprite(&sprites[i++], g, z_buffer, rays);
 	free(sprites);
 }
 
-static void	draw_projectile_dot(t_game *g, t_sprite_draw *s)
+static void	draw_projectile_dot(t_game *g, t_sprite_draw *s, t_projectile *p)
 {
 	int	x;
 	int	y;
 	int	radius;
 
-	radius = PROJECTILE_SIZE;
+	radius = p->size;
 	x = s->screen_x - radius;
 	while (x <= s->screen_x + radius)
 	{
@@ -234,19 +265,19 @@ static void	draw_projectile_dot(t_game *g, t_sprite_draw *s)
 			if (x >= 0 && x < WIN_WIDTH && y >= 0 && y < WIN_HEIGHT
 				&& pow(x - s->screen_x, 2) + pow(y - (s->top + radius), 2)
 				<= radius * radius)
-				put_pixel(&g->img, x, y, YELLOW);
+				put_pixel(&g->img, x, y, p->color);
 			y++;
 		}
 		x++;
 	}
 }
 
-static void	init_projectile_draw(t_sprite_draw *s, t_position pos, t_game *g)
+static void	init_projectile_draw(t_sprite_draw *s, t_projectile *p, t_game *g)
 {
-	init_sprite_draw(s, pos, g);
-	s->height = PROJECTILE_SIZE * 2;
-	s->width = PROJECTILE_SIZE * 2;
-	s->top = (WIN_HEIGHT / 2) + (int)g->player.pitch - PROJECTILE_SIZE;
+	init_sprite_draw(s, p->pos, -1, g);
+	s->height = p->size * 2;
+	s->width = p->size * 2;
+	s->top = (WIN_HEIGHT / 2) + (int)g->player.pitch - p->size;
 	s->bottom = s->top + s->height;
 }
 
@@ -260,10 +291,10 @@ void	draw_projectiles(t_game *g, double *z_buffer)
 	{
 		if (g->projectiles[i].active)
 		{
-			init_projectile_draw(&s, g->projectiles[i].pos, g);
+			init_projectile_draw(&s, &g->projectiles[i], g);
 			if (s.transform_y > 0 && s.screen_x >= 0 && s.screen_x < WIN_WIDTH
 				&& s.transform_y < z_buffer[s.screen_x])
-				draw_projectile_dot(g, &s);
+				draw_projectile_dot(g, &s, &g->projectiles[i]);
 		}
 		i++;
 	}

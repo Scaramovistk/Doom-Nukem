@@ -15,6 +15,7 @@
 void	ft_destroy_textures(t_game *g)
 {
 	int		i;
+	int		j;
 	t_img	*img;
 
 	i = TEXTURES_NB;
@@ -37,6 +38,29 @@ void	ft_destroy_textures(t_game *g)
 	while (i--)
 	{
 		img = &g->assets.sprite_frames[i].img;
+		if (img->ptr)
+			mlx_destroy_image(g->mlx, img->ptr);
+	}
+	i = 0;
+	while (i < WEAPON_NB)
+	{
+		j = 0;
+		while (j < WEAPON_STATE_NB)
+		{
+			img = &g->assets.hud_weapons[i][j].img;
+			if (img->ptr)
+				mlx_destroy_image(g->mlx, img->ptr);
+			j++;
+		}
+		i++;
+	}
+	img = &g->assets.ammo_icon.img;
+	if (img->ptr)
+		mlx_destroy_image(g->mlx, img->ptr);
+	i = ITEM_TYPES_NB;
+	while (i--)
+	{
+		img = &g->assets.item_icons[i].img;
 		if (img->ptr)
 			mlx_destroy_image(g->mlx, img->ptr);
 	}

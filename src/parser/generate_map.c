@@ -94,11 +94,8 @@ static int	item_default_quantity(int type)
 
 static bool	item_default_blocks(int type)
 {
-	static const bool	blocking[ITEM_TYPES_NB] = {false, false, false, true};
-
-	if (type < 0 || type >= ITEM_TYPES_NB)
-		return (false);
-	return (blocking[type]);
+	(void)type;
+	return (false);
 }
 
 static void	add_items(char **map, int lines, int width, t_game *g, int deco)
@@ -133,6 +130,26 @@ static void	add_items(char **map, int lines, int width, t_game *g, int deco)
 	}
 }
 
+static void	add_enemies(int count, t_game *g)
+{
+	int	i;
+
+	g->map.enemy_count = count;
+	if (!count)
+		return ;
+	g->map.enemies = calloc_s(count, sizeof(t_enemy), g);
+	i = 0;
+	while (i < count)
+	{
+		g->map.enemies[i].pos = g->map.sprites[i];
+		g->map.enemies[i].health = ENEMY_HEALTH;
+		g->map.enemies[i].sprite_index = i;
+		g->map.enemies[i].attack_timer = 0.0;
+		g->map.enemies[i].active = true;
+		i++;
+	}
+}
+
 static void	add_sprites(char **map, int lines, int width, t_game *g)
 {
 	int	vert;
@@ -157,6 +174,7 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 				g->map.sprites[i++] = (t_position){hor + 0.5, vert + 0.5};
 		}
 	}
+	add_enemies(deco, g);
 	add_items(map, lines, width, g, deco);
 }
 

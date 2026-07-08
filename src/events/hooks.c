@@ -12,6 +12,24 @@
 
 #include "../../include/cub3d.h"
 
+static void	select_item(t_game *g, int item)
+{
+	g->hud.selected_item = item;
+	if (g->hud.inventory[item] > 0)
+		show_message(g, "ARTIFACT SELECTED", 1.0);
+	else
+		show_message(g, "EMPTY ARTIFACT SLOT", 1.0);
+}
+
+static void	cycle_weapon(t_game *g)
+{
+	g->hud.selected_weapon = (g->hud.selected_weapon + 1) % WEAPON_NB;
+	if (g->hud.selected_weapon == 0)
+		show_message(g, "PISTOL", 1.0);
+	else
+		show_message(g, "BLASTER", 1.0);
+}
+
 void	setup_hooks(t_game *g)
 {
 	mlx_loop_hook(g->mlx, game_loop, g);
@@ -62,8 +80,18 @@ int	pressed(int key, t_game *g)
 		interact(g);
 	else if (key == KEY_F)
 		toggle_fly_mode(&g->player);
+	else if (key == KEY_Q)
+		cycle_weapon(g);
 	else if (key == KEY_R)
 		fire_projectile(g);
+	else if (key == KEY_1)
+		select_item(g, 0);
+	else if (key == KEY_2)
+		select_item(g, 1);
+	else if (key == KEY_3)
+		select_item(g, 2);
+	else if (key == KEY_4)
+		select_item(g, 3);
 	return (0);
 }
 

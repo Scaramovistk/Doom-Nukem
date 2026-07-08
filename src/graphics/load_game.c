@@ -27,6 +27,7 @@ void	load_all_textures(t_game *g)
 {
 	int	size;
 	int	i;
+	int	j;
 
 	i = ft_check_amount();
 	while (i--)
@@ -50,6 +51,30 @@ void	load_all_textures(t_game *g)
 		size = TEXTURE_SIZE;
 		if (g->assets.sprite_frames[i].source)
 			load_texture(&g->assets.sprite_frames[i], &size, g);
+		i++;
+	}
+	i = 0;
+	while (i < WEAPON_NB)
+	{
+		j = 0;
+		while (j < WEAPON_STATE_NB)
+		{
+			size = 32;
+			if (g->assets.hud_weapons[i][j].source)
+				load_texture(&g->assets.hud_weapons[i][j], &size, g);
+			j++;
+		}
+		i++;
+	}
+	size = 32;
+	if (g->assets.ammo_icon.source)
+		load_texture(&g->assets.ammo_icon, &size, g);
+	i = 0;
+	while (i < ITEM_TYPES_NB)
+	{
+		size = 32;
+		if (g->assets.item_icons[i].source)
+			load_texture(&g->assets.item_icons[i], &size, g);
 		i++;
 	}
 }

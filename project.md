@@ -196,12 +196,15 @@ Fix:
 - Shoot a ray or physical object (pos + velocity)
 - Wall collision → decal; sprite collision → damage
 - Current implementation fires fixed-pool physical projectiles with left mouse
-  or `R`, consumes HUD ammo, marks wall hits as decal walls, and removes
-  non-item sprite targets on hit.
+  or `R`, consumes HUD ammo, supports pistol/blaster weapon behavior, marks wall
+  hits as decal walls, and removes non-item sprite targets on hit.
 
-#### S5 · Enemy AI & characters `[ ]`
+#### S5 · Enemy AI & characters `[✅]`
 - State machine: idle → patrol → alert → chase → attack
 - Uses G5 multi-angle sprites; line-of-sight ray; takes damage, has health
+- Current implementation treats map `3` world sprites as lightweight enemies:
+  they alert by distance, chase the player, deal timed contact damage, and take
+  projectile damage before being removed from the sprite list.
 
 ---
 
@@ -209,9 +212,11 @@ Fix:
 
 > Only evaluated if mandatory is perfect. Target: done by July 27 to leave buffer.
 
-### 🔵 Gabriel — B7 · Weapon view model sprite
+### 🔵 Gabriel — B7 · Weapon view model sprite `[✅]`
 - Draw a static or frame-animated sprite anchored to the bottom-center of the screen
 - Bob slightly with movement; swap sprite on fire
+- Current implementation draws XPM HUD weapon sprites, swaps to fire frames on
+  recoil/flash, adds a crosshair, and supports `Q` weapon switching.
 - **Why easy**: reuses the sprite rendering pipeline from G4 — just drawn at a fixed screen position instead of a world position. No raycasting involved.
 
 ### 🟠 Murillo — B6 · Multithreaded rendering (pthread)
@@ -295,9 +300,9 @@ cub3D base
 | R6 | Rodolfo | World events & triggers | 3 | `[x]` |
 | S3 | Rodolfo | Text overlay | 2 | `[x]` |
 | S4 | Shared | Projectile system | 3 | `[x]` |
-| S5 | Shared | Enemy AI | 3 | `[ ]` |
+| S5 | Shared | Enemy AI | 3 | `[x]` |
 | S6 | Rodolfo | Story / level flow | 3 | `[x]` |
 | S7 | Rodolfo | Sound & music | 4 | `[x]` |
-| B7 | Gabriel | Weapon view model (bonus) | 4 | `[ ]` |
+| B7 | Gabriel | Weapon view model (bonus) | 4 | `[x]` |
 | B6 | Murillo | Multithreaded rendering (bonus) | 4 | `[ ]` |
 | B1 | Rodolfo | Level select menu (bonus) | 4 | `[ ]` |

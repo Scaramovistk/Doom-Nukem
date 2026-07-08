@@ -46,7 +46,12 @@
 #  define KEY_SPACE 32
 #  define KEY_E 101
 #  define KEY_F 102
+#  define KEY_Q 113
 #  define KEY_R 114
+#  define KEY_1 49
+#  define KEY_2 50
+#  define KEY_3 51
+#  define KEY_4 52
 #  define KEY_SHIFT 65505
 #  define KEY_CTRL 65507
 # elif defined(__APPLE__)
@@ -64,7 +69,12 @@
 #  define KEY_SPACE 49
 #  define KEY_E 14
 #  define KEY_F 3
+#  define KEY_Q 12
 #  define KEY_R 15
+#  define KEY_1 18
+#  define KEY_2 19
+#  define KEY_3 20
+#  define KEY_4 21
 #  define KEY_SHIFT 257
 #  define KEY_CTRL 256
 # else

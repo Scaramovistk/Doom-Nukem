@@ -44,6 +44,9 @@ static void	hud_frame(t_game *g, t_coord pos, t_coord size, int color)
 		(t_coord){2, size.y}, color);
 }
 
+static void	draw_hud_texture(t_game *g, t_texture *texture, t_coord pos,
+		int scale);
+
 static const char	*digit_pattern(int digit)
 {
 	static const char	*patterns[10] = {
@@ -120,7 +123,8 @@ static void	draw_ammo(t_game *g)
 	pos = (t_coord){WIN_WIDTH - 142, WIN_HEIGHT - 76};
 	hud_rect(g, pos, (t_coord){118, 46}, HUD_BG);
 	hud_frame(g, pos, (t_coord){118, 46}, HUD_BORDER);
-	hud_rect(g, (t_coord){pos.x + 12, pos.y + 14}, (t_coord){18, 18}, ORANGE);
+	draw_hud_texture(g, &g->assets.ammo_icon,
+		(t_coord){pos.x + 8, pos.y + 7}, 1);
 	draw_number(g, g->hud.ammo, (t_coord){pos.x + 42, pos.y + 10}, 5);
 }
 
@@ -128,25 +132,36 @@ static void	draw_inventory(t_game *g)
 {
 	t_coord	pos;
 	int		i;
-	int		color;
 
 	pos = (t_coord){(WIN_WIDTH / 2) - 102, WIN_HEIGHT - 58};
 	i = 0;
 	while (i < 4)
 	{
-		color = DARK_GREY;
-		if (g->hud.inventory[i])
-			color = BLUE;
 		hud_rect(g, (t_coord){pos.x + i * 52, pos.y}, (t_coord){42, 42},
 			HUD_BG);
 		hud_frame(g, (t_coord){pos.x + i * 52, pos.y}, (t_coord){42, 42},
 			HUD_BORDER);
-		hud_rect(g, (t_coord){pos.x + 12 + i * 52, pos.y + 12},
-			(t_coord){18, 18}, color);
+		if (i == g->hud.selected_item)
+			hud_frame(g, (t_coord){pos.x + i * 52 + 4, pos.y + 4},
+				(t_coord){34, 34}, YELLOW);
+		draw_hud_texture(g, &g->assets.item_icons[i],
+			(t_coord){pos.x + 5 + i * 52, pos.y + 5}, 1);
 		draw_number(g, g->hud.inventory[i],
 			(t_coord){pos.x + 4 + i * 52, pos.y + 32}, 2);
 		i++;
 	}
+}
+
+static void	draw_crosshair(t_game *g)
+{
+	t_coord	center;
+
+	center = (t_coord){WIN_WIDTH / 2, WIN_HEIGHT / 2 + (int)g->player.pitch};
+	hud_rect(g, (t_coord){center.x - 14, center.y}, (t_coord){10, 2}, WHITE);
+	hud_rect(g, (t_coord){center.x + 5, center.y}, (t_coord){10, 2}, WHITE);
+	hud_rect(g, (t_coord){center.x, center.y - 14}, (t_coord){2, 10}, WHITE);
+	hud_rect(g, (t_coord){center.x, center.y + 5}, (t_coord){2, 10}, WHITE);
+	hud_rect(g, (t_coord){center.x, center.y}, (t_coord){2, 2}, RED);
 }
 
 static void	draw_score(t_game *g)
@@ -264,8 +279,72 @@ static void	draw_fps(t_game *g)
 	draw_number(g, g->hud.fps, (t_coord){pos.x + 58, pos.y + 9}, 4);
 }
 
+static void	draw_weapon_name(t_game *g, t_coord pos)
+{
+	if (g->hud.selected_weapon == 1)
+		draw_text(g, "BLASTER", (t_coord){pos.x + 22, pos.y + 164}, 2);
+	else
+		draw_text(g, "PISTOL", (t_coord){pos.x + 34, pos.y + 164}, 2);
+}
+
+static void	draw_hud_texture(t_game *g, t_texture *texture, t_coord pos,
+		int scale)
+{
+	t_coord	src;
+	t_coord	dst;
+	int		color;
+
+	if (!texture->img.ptr)
+		return ;
+	src.y = 0;
+	while (src.y < 32)
+	{
+		src.x = 0;
+		while (src.x < 32)
+		{
+			color = get_pixel(&texture->img, src.x, src.y);
+			if ((color & 0x00FFFFFF) != 0x00FF00FF)
+			{
+				dst.x = pos.x + src.x * scale;
+				dst.y = pos.y + src.y * scale;
+				hud_rect(g, dst, (t_coord){scale, scale}, color);
+			}
+			src.x++;
+		}
+		src.y++;
+	}
+}
+
+static t_texture	*weapon_texture(t_game *g)
+{
+	int	weapon;
+	int	state;
+
+	weapon = g->hud.selected_weapon;
+	if (weapon < 0 || weapon >= WEAPON_NB)
+		weapon = 0;
+	state = 0;
+	if (g->hud.weapon_flash > 0.0)
+		state = 1;
+	return (&g->assets.hud_weapons[weapon][state]);
+}
+
+static void	draw_weapon_view(t_game *g)
+{
+	t_coord	pos;
+	int		kick;
+
+	kick = (int)(g->hud.weapon_flash * 60.0);
+	pos = (t_coord){WIN_WIDTH / 2 - (32 * HUD_WEAPON_SCALE) / 2,
+		WIN_HEIGHT - (32 * HUD_WEAPON_SCALE) + kick};
+	draw_hud_texture(g, weapon_texture(g), pos, HUD_WEAPON_SCALE);
+	draw_weapon_name(g, pos);
+}
+
 void	draw_hud(t_game *g)
 {
+	draw_crosshair(g);
+	draw_weapon_view(g);
 	draw_health(g);
 	draw_ammo(g);
 	draw_inventory(g);

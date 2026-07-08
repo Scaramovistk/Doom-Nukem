@@ -52,12 +52,23 @@ typedef struct s_item
 	int			sprite_index;
 }				t_item;
 
+typedef struct s_enemy
+{
+	t_position	pos;
+	int			health;
+	int			sprite_index;
+	double		attack_timer;
+	bool		active;
+}				t_enemy;
+
 typedef struct s_map
 {
 	t_block		**grid;
 	t_door		**doors;
 	t_position	*sprites;
 	int			sprite_count;
+	t_enemy		*enemies;
+	int			enemy_count;
 	t_item		*items;
 	int			item_count;
 	t_coord		*switches;
@@ -127,6 +138,9 @@ typedef struct s_assets
 	t_texture	ceiling_texture;
 	t_texture	sky_texture;
 	t_texture	sprite_frames[SPRITE_FRAME_NB];
+	t_texture	hud_weapons[WEAPON_NB][WEAPON_STATE_NB];
+	t_texture	ammo_icon;
+	t_texture	item_icons[ITEM_TYPES_NB];
 	bool		has_sky;
 	bool		has_sprite_frames;
 	int			floor_color;
@@ -182,6 +196,7 @@ typedef struct s_sprite_draw
 	int			bottom;
 	int			left;
 	int			right;
+	int			sprite_index;
 }				t_sprite_draw;
 
 typedef struct s_dda
@@ -218,6 +233,9 @@ typedef struct s_hud
 	int			score;
 	int			fps;
 	int			inventory[4];
+	int			selected_item;
+	int			selected_weapon;
+	double		weapon_flash;
 }				t_hud;
 
 typedef struct s_message
@@ -258,6 +276,9 @@ typedef struct s_projectile
 	t_position		pos;
 	t_position		velocity;
 	double			ttl;
+	int				damage;
+	int				size;
+	int				color;
 	bool			active;
 }				t_projectile;
 
