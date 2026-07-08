@@ -86,6 +86,21 @@ static void	draw_minimap_items(t_game *g, t_coord origin)
 	}
 }
 
+static void	draw_minimap_exits(t_game *g, t_coord origin)
+{
+	int		i;
+	t_coord	pos;
+
+	i = 0;
+	while (i < g->map.exit_count)
+	{
+		pos.x = origin.x + g->map.exit_zones[i].x * MAP_SCALE + 2;
+		pos.y = origin.y + g->map.exit_zones[i].y * MAP_SCALE + 2;
+		minimap_rect(g, pos, (t_coord){MAP_SCALE - 4, MAP_SCALE - 4}, GREEN);
+		i++;
+	}
+}
+
 static void	draw_minimap_sprites(t_game *g, t_coord origin)
 {
 	int		i;
@@ -124,6 +139,7 @@ void	draw_minimap(t_game *g)
 	size.y = g->map.height * MAP_SCALE + 8;
 	minimap_rect(g, origin, size, HUD_BG);
 	draw_map_cells(g, (t_coord){origin.x + 4, origin.y + 4});
+	draw_minimap_exits(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_sprites(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_items(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_player_marker(g, (t_coord){origin.x + 4, origin.y + 4});

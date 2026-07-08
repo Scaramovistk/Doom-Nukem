@@ -19,6 +19,7 @@ void	load_game(t_game *g)
 	load_floor_ceiling_textures(g);
 	ft_adjust_player_view(g);
 	init_door_grid(g);
+	init_audio(g);
 	open_window(g);
 }
 

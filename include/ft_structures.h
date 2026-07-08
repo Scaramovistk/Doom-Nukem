@@ -66,6 +66,8 @@ typedef struct s_map
 	int			hazard_count;
 	t_coord		*message_zones;
 	int			message_count;
+	t_coord		*exit_zones;
+	int			exit_count;
 	int			width;
 	int			height;
 }				t_map;
@@ -235,6 +237,22 @@ typedef struct s_world_event
 	char			message[HUD_MESSAGE_LEN];
 }				t_world_event;
 
+typedef struct s_level_flow
+{
+	bool			started;
+	bool			completed;
+	bool			failed;
+	double			end_timer;
+	int				required_items;
+}				t_level_flow;
+
+typedef struct s_audio
+{
+	bool			enabled;
+	pid_t			music_pid;
+	char			music_path[LINE_SIZE];
+}				t_audio;
+
 // ----- GENERAL ----- //
 
 typedef struct s_game
@@ -252,6 +270,8 @@ typedef struct s_game
 	t_hud		hud;
 	t_message	message;
 	t_world_event	events[WORLD_EVENT_MAX];
+	t_level_flow	level;
+	t_audio		audio;
 
 	double		delta_time;
 

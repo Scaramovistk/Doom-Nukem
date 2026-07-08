@@ -156,8 +156,8 @@ Fix:
 - Actions: open door, toggle switch, pick up item, play sound, display text
 - Map chars: `T` switch (reuses `DECAL_WALL`), `H` hazard zone, `M` message zone.
   Switches enqueue the R6 timed sequence for doors/score/messages (no per-entity
-  linking yet — needs M1/M2 level format). `play_sound_effect()` is a
-  stderr/stdout stub pending S7's real audio backend.
+  linking yet — needs M1/M2 level format). `play_sound_effect()` now uses the
+  S7 file-backed audio backend and skips missing assets quietly.
 - **Week 2**
 
 #### R6 · Dynamic world events & scripted sequences `[✅]`
@@ -173,14 +173,19 @@ Fix:
   message zones, and scripted events.
 - **Week 2**
 
-#### S6 · Story, mission & level flow `[ ]`
+#### S6 · Story, mission & level flow `[✅]`
 - Objectives per level (reach exit, collect keys, kill boss)
 - Level start/end condition, transition to next level or game over
+- Current grid implementation adds `X` exit tiles, mission start messaging,
+  collect-items-before-exit objective checks, mission complete/fail states, and
+  delayed shutdown after the end message.
 - **Week 3**
 
-#### S7 · Sound effects & music `[ ]`
+#### S7 · Sound effects & music `[✅]`
 - WAV/OGG events (footstep, door, pickup, shoot, death) + looping music per level
 - Use miniaudio (single-header, no extra deps) or SDL_mixer
+- Current implementation plays event files from `assets/sounds/<event>.wav|ogg|mp3`
+  asynchronously and loops `assets/sounds/music.wav|ogg|mp3` when present.
 - **Week 4**
 
 ---
@@ -288,8 +293,8 @@ cub3D base
 | S3 | Rodolfo | Text overlay | 2 | `[x]` |
 | S4 | Shared | Projectile system | 3 | `[ ]` |
 | S5 | Shared | Enemy AI | 3 | `[ ]` |
-| S6 | Rodolfo | Story / level flow | 3 | `[ ]` |
-| S7 | Rodolfo | Sound & music | 4 | `[ ]` |
+| S6 | Rodolfo | Story / level flow | 3 | `[x]` |
+| S7 | Rodolfo | Sound & music | 4 | `[x]` |
 | B7 | Gabriel | Weapon view model (bonus) | 4 | `[ ]` |
 | B6 | Murillo | Multithreaded rendering (bonus) | 4 | `[ ]` |
 | B1 | Rodolfo | Level select menu (bonus) | 4 | `[ ]` |

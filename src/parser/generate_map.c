@@ -28,7 +28,7 @@ t_block	ft_convert_tblock(char c)
 		return (TRANSPARENT_WALL);
 	else if (c == '5' || c == 'T')
 		return (DECAL_WALL);
-	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M')
+	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M' || c == 'X')
 		return (EMPTY);
 	else
 		return (NULL_BLOCK);
@@ -245,11 +245,33 @@ static void	add_messages(char **map, int lines, int width, t_game *g)
 	}
 }
 
+static void	add_exits(char **map, int lines, int width, t_game *g)
+{
+	int	vert;
+	int	hor;
+	int	i;
+
+	g->map.exit_count = count_char(map, lines, width, 'X');
+	if (!g->map.exit_count)
+		return ;
+	g->map.exit_zones = calloc_s(g->map.exit_count, sizeof(t_coord), g);
+	i = 0;
+	vert = -1;
+	while (++vert < lines)
+	{
+		hor = -1;
+		while (++hor < width)
+			if (map[vert][hor] == 'X')
+				g->map.exit_zones[i++] = (t_coord){hor, vert};
+	}
+}
+
 static void	add_interactables(char **map, int lines, int width, t_game *g)
 {
 	add_switches(map, lines, width, g);
 	add_hazards(map, lines, width, g);
 	add_messages(map, lines, width, g);
+	add_exits(map, lines, width, g);
 }
 
 void	ft_populate_map(char **map, int *vals, t_game *g)

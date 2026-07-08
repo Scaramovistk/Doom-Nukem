@@ -71,5 +71,8 @@
 # define WORLD_EVENT_MAX 32
 # define SWITCH_EVENT_DELAY 0.25
 # define SWITCH_DOOR_CLOSE_DELAY 5.0
+# define LEVEL_END_DELAY 3.0
+# define SOUND_DIR "assets/sounds/"
+# define MUSIC_BASENAME "music"
 
 #endif

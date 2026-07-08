@@ -50,3 +50,16 @@ after a timer.
 
 Timed overlay messages are drawn over the frame for pickups, story/message
 zones, and scripted events.
+
+## Level Flow
+
+Levels can use `X` in the map as an exit tile. The current mission flow starts
+with an objective message, requires active pickup items to be collected, then
+completes when the player reaches an exit. Dropping health to zero fails the
+mission after a short message.
+
+## Audio
+
+Sound effects and looping music are loaded from `assets/sounds/` when matching
+`.wav`, `.ogg`, or `.mp3` files exist. Missing files are skipped without
+interrupting gameplay.

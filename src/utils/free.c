@@ -49,6 +49,7 @@ void	free_all(t_game *g)
 	mlx_loop_end(g->mlx);
 	if (!g)
 		return ;
+	stop_audio(g);
 	ft_lstclear(&g->allocated_pointers, &free);
 	ft_destroy_textures(g);
 	if (g->img.ptr)
@@ -68,6 +69,7 @@ void	free_all(t_game *g)
 {
 	if (!g)
 		return ;
+	stop_audio(g);
 	ft_lstclear(&g->allocated_pointers, &free);
 	ft_destroy_textures(g);
 	if (g->img.ptr)

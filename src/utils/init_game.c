@@ -103,6 +103,8 @@ void	ft_init_map(t_map *map)
 	map->hazard_count = 0;
 	map->message_zones = NULL;
 	map->message_count = 0;
+	map->exit_zones = NULL;
+	map->exit_count = 0;
 	map->width = 0;
 	map->height = 0;
 }
@@ -111,6 +113,22 @@ void	ft_int_message(t_message *message)
 {
 	message->text[0] = '\0';
 	message->timer = 0.0;
+}
+
+void	ft_int_level_flow(t_level_flow *level)
+{
+	level->started = false;
+	level->completed = false;
+	level->failed = false;
+	level->end_timer = 0.0;
+	level->required_items = 0;
+}
+
+void	ft_int_audio(t_audio *audio)
+{
+	audio->enabled = true;
+	audio->music_pid = -1;
+	audio->music_path[0] = '\0';
 }
 
 void	ft_int_events(t_world_event *events)
@@ -139,6 +157,8 @@ void	init_game_struct(t_game *g)
 	ft_int_player(&g->player);
 	ft_int_hud(&g->hud);
 	ft_int_message(&g->message);
+	ft_int_level_flow(&g->level);
+	ft_int_audio(&g->audio);
 	ft_int_events(g->events);
 	ft_int_assets(&g->assets);
 	ft_int_image(&g->img);

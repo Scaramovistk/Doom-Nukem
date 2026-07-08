@@ -79,6 +79,10 @@ void		trigger_switch_sequence(t_game *g);
 void		show_message(t_game *g, const char *text, double duration);
 bool		update_message(t_game *g);
 
+// level_flow.c
+void		start_level_flow(t_game *g);
+bool		update_level_flow(t_game *g);
+
 // ----- GRAPHICS ----- //
 
 // load_game.c
@@ -218,6 +222,8 @@ int			ft_hallway(char **map, int *vals);
 // init_game.c
 void		init_game_struct(t_game *g);
 void		ft_int_message(t_message *message);
+void		ft_int_level_flow(t_level_flow *level);
+void		ft_int_audio(t_audio *audio);
 
 // allocation.c
 void		*s_alloc(void *pointer, t_game *g);
@@ -232,5 +238,9 @@ void		free_all(t_game *g);
 
 // sound.c
 void		play_sound_effect(const char *name);
+void		init_audio(t_game *g);
+void		start_background_music(t_game *g);
+void		stop_audio(t_game *g);
+void		update_audio(void);
 
 #endif
