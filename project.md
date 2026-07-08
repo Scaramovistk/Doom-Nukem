@@ -219,15 +219,20 @@ Fix:
   recoil/flash, adds a crosshair, and supports `Q` weapon switching.
 - **Why easy**: reuses the sprite rendering pipeline from G4 — just drawn at a fixed screen position instead of a world position. No raycasting involved.
 
-### 🟠 Murillo — B6 · Multithreaded rendering (pthread)
+### 🟠 Murillo — B6 · Multithreaded rendering (pthread) `[✅]`
 - Divide screen columns into N equal bands (one per core)
 - Spawn N pthreads, each renders its band independently, join before blit
+- Current implementation uses up to `RENDER_THREADS_MAX` pthread workers for
+  the ray/wall column pass, then joins before sprites, projectiles, HUD, and blit.
 - **Why easy**: the renderer already writes to a pixel buffer — just partition the column loop. No shared state between bands except the read-only world data.
 
-### 🟣 Rodolfo — B1 · Level select menu
+### 🟣 Rodolfo — B1 · Level select menu `[✅]`
 - Add a `MENU` game state before the main loop
 - Render a simple screen: game title, list of available level files, difficulty selector
 - Arrow keys navigate, Enter loads the selected level
+- Current implementation starts in `STATE_MENU` when no map path is passed,
+  scans `tests/maps` for `.cub` files, supports Easy/Normal/Hard selection, and
+  loads the chosen level into `STATE_PLAYING`.
 - **Why easy**: it's a state machine with a few lines of text drawn to the screen. No new engine work — just reads the level file list and passes the chosen path to the existing loader.
 
 ---
@@ -304,5 +309,5 @@ cub3D base
 | S6 | Rodolfo | Story / level flow | 3 | `[x]` |
 | S7 | Rodolfo | Sound & music | 4 | `[x]` |
 | B7 | Gabriel | Weapon view model (bonus) | 4 | `[x]` |
-| B6 | Murillo | Multithreaded rendering (bonus) | 4 | `[ ]` |
-| B1 | Rodolfo | Level select menu (bonus) | 4 | `[ ]` |
+| B6 | Murillo | Multithreaded rendering (bonus) | 4 | `[x]` |
+| B1 | Rodolfo | Level select menu (bonus) | 4 | `[x]` |

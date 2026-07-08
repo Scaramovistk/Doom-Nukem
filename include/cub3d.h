@@ -60,6 +60,11 @@ void		activate_door(t_coord pos, t_game *g);
 // stop_game.c
 int			stop_game(void *param);
 
+// menu.c
+void		init_menu(t_game *g);
+void		render_menu(t_game *g);
+int			menu_key(int key, t_game *g);
+
 // pickup.c
 void		update_item_pickups(t_game *g);
 bool		is_item_blocking(t_coord cell, t_game *g);
@@ -134,6 +139,7 @@ void		apply_cross_distance(t_dda *dda, double *dist, int side, t_game *g);
 void		draw_scene(t_game *g);
 void		draw_floor_ceiling(t_game *g);
 void		draw_all_rays(t_ray *rays, t_game *g, double *z_buffer);
+void		draw_all_rays_threaded(t_ray *rays, t_game *g, double *z_buffer);
 void		draw_one_ray(t_ray *ray, t_game *g);
 void		draw_vertical_line(int x, t_dimensions dims, int color, t_game *g);
 

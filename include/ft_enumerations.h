@@ -54,4 +54,10 @@ typedef enum e_event_action
 	EVENT_SHOW_MESSAGE
 }		t_event_action;
 
+typedef enum e_game_state
+{
+	STATE_MENU,
+	STATE_PLAYING
+}		t_game_state;
+
 #endif

@@ -44,6 +44,8 @@ int	pressed(int key, t_game *g)
 {
 	if (key == KEY_ESC)
 		stop_game(g);
+	if (g->state == STATE_MENU)
+		return (menu_key(key, g));
 	if (key == KEY_W)
 		g->player.vertical_move = 1;
 	else if (key == KEY_S)
@@ -97,6 +99,8 @@ int	pressed(int key, t_game *g)
 
 int	released(int key, t_game *g)
 {
+	if (g->state == STATE_MENU)
+		return (0);
 	if (key == KEY_W || key == KEY_S)
 		g->player.vertical_move = 0;
 	else if (key == KEY_A || key == KEY_D)
@@ -126,6 +130,8 @@ int	mouse_move(int x, int y, void *param)
 	int		delta_y;
 
 	g = (t_game *)param;
+	if (g->state == STATE_MENU)
+		return (0);
 	delta_x = x - (WIN_WIDTH / 2);
 	delta_y = y - (WIN_HEIGHT / 2);
 	if (delta_x == 0 && delta_y == 0)
@@ -146,6 +152,8 @@ int	mouse_press(int button, int x, int y, void *param)
 	(void)x;
 	(void)y;
 	g = (t_game *)param;
+	if (g->state == STATE_MENU)
+		return (0);
 	if (button == MOUSE_LEFT)
 		fire_projectile(g);
 	return (0);

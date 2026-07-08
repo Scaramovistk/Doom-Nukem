@@ -23,10 +23,79 @@ void	draw_scene(t_game *g)
 	double	z_buffer[WIN_WIDTH];
 
 	draw_floor_ceiling(g);
-	cast_all_rays(rays, g);
-	draw_all_rays(rays, g, z_buffer);
+	draw_all_rays_threaded(rays, g, z_buffer);
 	draw_sprites(g, z_buffer, rays);
 	draw_projectiles(g, z_buffer);
+}
+
+static int	render_thread_count(void)
+{
+	long	cores;
+
+	cores = sysconf(_SC_NPROCESSORS_ONLN);
+	if (cores < 1)
+		cores = 1;
+	if (cores > RENDER_THREADS_MAX)
+		cores = RENDER_THREADS_MAX;
+	if (cores > WIN_WIDTH)
+		cores = WIN_WIDTH;
+	return ((int)cores);
+}
+
+static void	*render_band(void *param)
+{
+	t_render_band	*band;
+	t_game			*g;
+	double			start_angle;
+	double			angle_step;
+	int				x;
+
+	band = (t_render_band *)param;
+	g = (t_game *)band->g;
+	start_angle = g->player.orientation - deg_to_rad(FOV / 2);
+	angle_step = deg_to_rad(FOV) / WIN_WIDTH;
+	x = band->x_start;
+	while (x < band->x_end)
+	{
+		cast_one_ray(&band->rays[x], start_angle + x * angle_step, g);
+		band->rays[x].x = x;
+		draw_one_ray(&band->rays[x], g);
+		band->z_buffer[x] = band->rays[x].distance;
+		x++;
+	}
+	return (NULL);
+}
+
+void	draw_all_rays_threaded(t_ray *rays, t_game *g, double *z_buffer)
+{
+	pthread_t		threads[RENDER_THREADS_MAX];
+	t_render_band	bands[RENDER_THREADS_MAX];
+	int				count;
+	int				i;
+
+	count = render_thread_count();
+	i = 0;
+	while (i < count)
+	{
+		bands[i].g = g;
+		bands[i].rays = rays;
+		bands[i].z_buffer = z_buffer;
+		bands[i].x_start = i * WIN_WIDTH / count;
+		bands[i].x_end = (i + 1) * WIN_WIDTH / count;
+		if (pthread_create(&threads[i], NULL, render_band, &bands[i]) != 0)
+		{
+			render_band(&bands[i]);
+			threads[i] = 0;
+		}
+		i++;
+	}
+	i = 0;
+	while (i < count)
+	{
+		if (threads[i])
+			pthread_join(threads[i], NULL);
+		i++;
+	}
 }
 
 static void	init_floor_cast(t_floor_cast *cast, t_game *g)

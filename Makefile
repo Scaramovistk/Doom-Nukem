@@ -40,14 +40,14 @@ MLX_FILE		=	$(MLX_DIR)$(MLX)
 # Include directories
 INC_DIRS		=	include src $(LIBFT_DIR)/include $(MLX_DIR)
 CFLAGS			+=	$(addprefix -I, $(INC_DIRS))
-LDFLAGS			=	-L$(LIBFT_DIR) -L$(MLX_DIR) -lft -lmlx $(MLX_LNK)
+LDFLAGS			=	-L$(LIBFT_DIR) -L$(MLX_DIR) -lft -lmlx $(MLX_LNK) -pthread
 
 # Source and Object Files
 VPATH			=	src src/events src/graphics src/parser src/parser/utils src/utils
 
 # Source Files
 SRC_MAIN		=	main.c
-SRC_EVENTS		=	door_bonus.c enemies.c events.c game_loop.c hooks.c hooks_door_bonus.c interact.c level_flow.c message.c \
+SRC_EVENTS		=	door_bonus.c enemies.c events.c game_loop.c hooks.c hooks_door_bonus.c interact.c level_flow.c menu.c message.c \
 					mlx_mouse_pos_bonus.c pickup.c projectile.c stop_game.c triggers.c update_player_pos.c
 SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_scene.c draw_sprites.c draw_utils.c draw_wall.c graphics_utils.c \
 					hud.c load_game.c minimap.c ray_casting.c render.c time_bonus.c

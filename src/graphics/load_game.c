@@ -14,13 +14,20 @@
 
 void	load_game(t_game *g)
 {
-	g->mlx = mlx_init();
+	if (!g->mlx)
+		g->mlx = mlx_init();
 	load_all_textures(g);
 	load_floor_ceiling_textures(g);
 	ft_adjust_player_view(g);
 	init_door_grid(g);
 	init_audio(g);
-	open_window(g);
+	if (!g->mlx_win)
+		open_window(g);
+	else
+	{
+		hide_mouse(g->mlx, g->mlx_win);
+		move_mouse(g->mlx, g->mlx_win);
+	}
 }
 
 void	load_all_textures(t_game *g)

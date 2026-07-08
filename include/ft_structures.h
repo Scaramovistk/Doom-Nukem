@@ -223,6 +223,15 @@ typedef struct s_texture_slice
 	double		texture_step;
 }				t_texture_slice;
 
+typedef struct s_render_band
+{
+	void			*g;
+	t_ray			*rays;
+	double			*z_buffer;
+	int				x_start;
+	int				x_end;
+}				t_render_band;
+
 // ----- GAMEPLAY ----- //
 
 typedef struct s_hud
@@ -282,12 +291,23 @@ typedef struct s_projectile
 	bool			active;
 }				t_projectile;
 
+typedef struct s_menu
+{
+	char			levels[MENU_MAX_LEVELS][LINE_SIZE];
+	int				level_count;
+	int				selected;
+	int				difficulty;
+	bool			active;
+}				t_menu;
+
 // ----- GENERAL ----- //
 
 typedef struct s_game
 {
 	t_list		*allocated_pointers;
 	int			exit_status;
+	t_game_state	state;
+	t_menu		menu;
 
 	t_map		map;
 	t_player	player;

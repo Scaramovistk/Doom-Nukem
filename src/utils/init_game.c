@@ -184,6 +184,19 @@ void	ft_int_projectiles(t_projectile *projectiles)
 	}
 }
 
+static void	ft_int_menu(t_menu *menu)
+{
+	int	i;
+
+	menu->level_count = 0;
+	menu->selected = 0;
+	menu->difficulty = 1;
+	menu->active = false;
+	i = 0;
+	while (i < MENU_MAX_LEVELS)
+		menu->levels[i++][0] = '\0';
+}
+
 void	ft_int_events(t_world_event *events)
 {
 	int	i;
@@ -206,6 +219,8 @@ void	init_game_struct(t_game *g)
 {
 	g->allocated_pointers = NULL;
 	g->exit_status = EXIT_SUCCESS;
+	g->state = STATE_PLAYING;
+	ft_int_menu(&g->menu);
 	ft_init_map(&g->map);
 	ft_int_player(&g->player);
 	ft_int_hud(&g->hud);

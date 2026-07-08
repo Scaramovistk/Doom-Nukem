@@ -14,9 +14,14 @@
 
 void	start_game(t_game *g)
 {
-	start_level_flow(g);
-	start_background_music(g);
-	render(g);
+	if (g->state == STATE_MENU)
+		render_menu(g);
+	else
+	{
+		start_level_flow(g);
+		start_background_music(g);
+		render(g);
+	}
 	mlx_loop(g->mlx);
 	return ;
 }
@@ -42,6 +47,8 @@ int	game_loop(t_game *g)
 	bool	weapon_active;
 	bool	enemy_active;
 
+	if (g->state == STATE_MENU)
+		return (EXIT_SUCCESS);
 	update_doors(&door_updated, g);
 	update_audio();
 	projectile_active = update_projectiles(g);

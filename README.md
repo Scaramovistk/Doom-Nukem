@@ -20,6 +20,12 @@ This produces:
 ./doom-nukem tests/maps/simple_map.cub
 ```
 
+Or open the level select menu:
+
+```sh
+./doom-nukem
+```
+
 ## Controls
 
 - `W` / `S`: move forward and backward
@@ -36,6 +42,12 @@ This produces:
 - `Q`: switch weapon
 - `1` / `2` / `3` / `4`: select carried artifact slot
 - Esc or window close button: quit cleanly
+
+## Menu
+
+Launching without a map opens the level select menu. Up/Down chooses a level
+from `tests/maps`, Left/Right changes difficulty, and Enter starts the selected
+level.
 
 ## HUD
 
@@ -67,6 +79,11 @@ targets. `Q` switches between pistol and blaster behavior.
 Map `3` sprites act as simple enemies. They alert when the player is nearby,
 chase through legal floor cells, deal timed contact damage, take projectile
 damage, and award score when defeated.
+
+## Rendering
+
+The wall/ray column pass is split into pthread bands based on available CPU
+cores, then joined before sprites, projectiles, HUD, and the final blit.
 
 ## Level Flow
 
