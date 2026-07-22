@@ -2,3 +2,7 @@
 lib/libft/build/*
 cub3D
 cub3D_bonus
+doom-nukem
+lib/libft/libft.a
+lib/Minilbx_mac/*.o
+lib/Minilbx_mac/libmlx.a

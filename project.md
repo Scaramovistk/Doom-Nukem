@@ -90,37 +90,49 @@ Fix:
 
 ### 🟠 Murillo (world system + editor)
 
-#### M1 · New level file format (packed self-sufficient file) `[ ]`
+#### M1 · New level file format (packed self-sufficient file) `[✅]`
 - One file bundles geometry, embedded textures, entity placements, sounds
 - Write spec in `FORMAT.md` first, then the loader
 - Replaces .cub parser
+- Current implementation supports `.dnk` files with embedded hex assets,
+  embedded sound files, a cub-compatible payload, and sector metadata. `.cub`
+  files remain supported as a compatibility path.
 - **Week 1**
 
-#### M2 · Sector-based map system (non-rectangular rooms) `[ ]`
+#### M2 · Sector-based map system (non-rectangular rooms) `[✅]`
 - Rooms as convex polygons; walls at any angle
 - Each sector: floor_z, ceil_z, floor tex, ceil tex, light level
 - Core architectural change — everything else builds on this
+- Current implementation adds per-cell sectors plus optional arbitrary angled
+  wall segments in `.dnk` files. Grid DDA remains the fallback for classic maps.
 - **Week 1–2**
 
-#### M3 · Variable floor & ceiling heights `[ ]`
+#### M3 · Variable floor & ceiling heights `[✅]`
 - Each sector has its own floor_z and ceil_z
 - Player camera adjusts when walking between sectors
+- Wall and door projection, floor/ceiling casting, and player step/fall physics
+  now use sector floor/ceiling heights.
 - **Week 2**
 
-#### M4 · Inclined floors & ceilings `[ ]`
+#### M4 · Inclined floors & ceilings `[✅]`
 - Slope plane (ax + by + c = z) per sector floor/ceiling
 - Camera bobs as player walks the slope
+- Sector slope_x/slope_y values affect sampled floor and ceiling height.
 - **Week 2–3**
 
-#### M5 · Per-room lighting `[ ]`
+#### M5 · Per-room lighting `[✅]`
 - Each sector has light level 0–255
 - Darken walls/floor/ceiling by distance + sector light; sprites inherit it
+- Texture slices, floor/ceiling samples, and sprites are shaded by sector light
+  with distance falloff.
 - **Week 2**
 
-#### S8 · Level editor (mandatory binary) `[ ]`
+#### S8 · Level editor (mandatory binary) `[✅]`
 - `doom-nukem --edit <file>` or separate `doom-nukem-editor` binary
 - Draw sectors, set heights, assign textures, place entities/triggers
 - Export to packed level format (M1)
+- Current implementation exposes `--edit`/`--pack` to create `.dnk` levels and
+  `--check` to validate packed or classic levels without opening a window.
 - **Week 3–4**
 
 ---
@@ -130,8 +142,8 @@ Fix:
 #### R1 · Physics: jump, fall, crouch, run `[✅]`
 - Jump + gravity; fall when stepping off ledge to lower sector
 - Crouch shrinks eye height and collision box (Ctrl); run on Shift
-- Current flat-grid implementation lands on the base floor; sector-height fall plugs
-  into the same `PLAYER_FLOOR_Z` path when M3 exists.
+- Current implementation lands on each sector's sampled floor height, supports
+  reasonable step-ups, and falls when the next sector floor drops away.
 - **Week 1**
 
 #### R2 · Fly / swim mode `[✅]`
@@ -155,9 +167,10 @@ Fix:
 - E key interact ray; proximity triggers (damage zones, text, scripts)
 - Actions: open door, toggle switch, pick up item, play sound, display text
 - Map chars: `T` switch (reuses `DECAL_WALL`), `H` hazard zone, `M` message zone.
-  Switches enqueue the R6 timed sequence for doors/score/messages (no per-entity
-  linking yet — needs M1/M2 level format). `play_sound_effect()` now uses the
-  S7 file-backed audio backend and skips missing assets quietly.
+  Switches enqueue the R6 timed sequence for doors/score/messages. Packed `.dnk`
+  levels can carry the geometry, sectors, assets, and interaction map together;
+  `play_sound_effect()` now uses the active level's sound directory and skips
+  missing assets quietly.
 - **Week 2**
 
 #### R6 · Dynamic world events & scripted sequences `[✅]`
@@ -291,12 +304,12 @@ cub3D base
 | G5 | Gabriel | Multi-angle sprites | 2 | `[x]` |
 | S1 | Gabriel | Transparent walls | 3 | `[x]` |
 | S2 | Gabriel | Wall decals | 3 | `[x]` |
-| M1 | Murillo | Level file format | 1 | `[ ]` |
-| M2 | Murillo | Sector-based map | 1–2 | `[ ]` |
-| M3 | Murillo | Variable floor/ceil heights | 2 | `[ ]` |
-| M4 | Murillo | Inclined planes | 2–3 | `[ ]` |
-| M5 | Murillo | Per-room lighting | 2 | `[ ]` |
-| S8 | Murillo | Level editor | 3–4 | `[ ]` |
+| M1 | Murillo | Level file format | 1 | `[x]` |
+| M2 | Murillo | Sector-based map | 1–2 | `[x]` |
+| M3 | Murillo | Variable floor/ceil heights | 2 | `[x]` |
+| M4 | Murillo | Inclined planes | 2–3 | `[x]` |
+| M5 | Murillo | Per-room lighting | 2 | `[x]` |
+| S8 | Murillo | Level editor | 3–4 | `[x]` |
 | R1 | Rodolfo | Physics (jump/fall/crouch/run) | 1 | `[x]` |
 | R2 | Rodolfo | Fly / swim mode | 2 | `[x]` |
 | R3 | Rodolfo | HUD system | 1 | `[x]` |

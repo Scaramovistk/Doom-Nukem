@@ -20,11 +20,34 @@ This produces:
 ./doom-nukem tests/maps/simple_map.cub
 ```
 
+Packed, self-contained `.dnk` levels are also supported:
+
+```sh
+./doom-nukem tests/maps/door_map.dnk
+```
+
 Or open the level select menu:
 
 ```sh
 ./doom-nukem
 ```
+
+## Editor / Packing
+
+Create or refresh a self-contained packed level:
+
+```sh
+./doom-nukem --edit tests/maps/door_map.cub tests/maps/door_map.dnk
+```
+
+Validate a level without opening a window:
+
+```sh
+./doom-nukem --check tests/maps/door_map.dnk
+```
+
+The packed format embeds XPM textures and sound assets, carries sector height,
+slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 
 ## Controls
 
@@ -45,9 +68,9 @@ Or open the level select menu:
 
 ## Menu
 
-Launching without a map opens the level select menu. Up/Down chooses a level
-from `tests/maps`, Left/Right changes difficulty, and Enter starts the selected
-level.
+Launching without a map opens the level select menu. Up/Down chooses a `.cub`
+or `.dnk` level from `tests/maps`, Left/Right changes difficulty, and Enter
+starts the selected level.
 
 ## HUD
 
@@ -84,6 +107,8 @@ damage, and award score when defeated.
 
 The wall/ray column pass is split into pthread bands based on available CPU
 cores, then joined before sprites, projectiles, HUD, and the final blit.
+Packed levels can add sector floor and ceiling heights, slopes, room lighting,
+and arbitrary angled wall segments on top of the grid fallback.
 
 ## Level Flow
 
@@ -94,6 +119,6 @@ mission after a short message.
 
 ## Audio
 
-Sound effects and looping music are loaded from `assets/sounds/` when matching
-`.wav`, `.ogg`, or `.mp3` files exist. Missing files are skipped without
-interrupting gameplay.
+Sound effects and looping music are loaded from the active level's unpacked
+sound directory for `.dnk` files, or from `assets/sounds/` for classic `.cub`
+files. Missing files are skipped without interrupting gameplay.
