@@ -60,7 +60,7 @@ static void	complete_level(t_game *g)
 	g->level.end_timer = LEVEL_END_DELAY;
 	g->hud.score += 100;
 	show_message(g, "MISSION COMPLETE", LEVEL_END_DELAY);
-	play_sound_effect("mission_complete");
+	play_sound_effect(g, "mission_complete");
 }
 
 static void	fail_level(t_game *g)
@@ -68,7 +68,7 @@ static void	fail_level(t_game *g)
 	g->level.failed = true;
 	g->level.end_timer = LEVEL_END_DELAY;
 	show_message(g, "MISSION FAILED", LEVEL_END_DELAY);
-	play_sound_effect("mission_failed");
+	play_sound_effect(g, "mission_failed");
 }
 
 static bool	update_end_state(t_game *g)

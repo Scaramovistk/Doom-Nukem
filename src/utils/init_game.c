@@ -125,7 +125,24 @@ void	ft_int_hud(t_hud *hud)
 
 void	ft_init_map(t_map *map)
 {
+	int	i;
+
 	map->grid = NULL;
+	map->doors = NULL;
+	map->sector_grid = NULL;
+	map->sector_count = 0;
+	map->segment_count = 0;
+	i = 0;
+	while (i < SECTOR_MAX)
+	{
+		map->sectors[i].floor_z = PLAYER_FLOOR_Z;
+		map->sectors[i].ceil_z = 1.0;
+		map->sectors[i].slope_x = 0.0;
+		map->sectors[i].slope_y = 0.0;
+		map->sectors[i].light = DNK_DEFAULT_LIGHT;
+		map->sectors[i].active = false;
+		i++;
+	}
 	map->sprites = NULL;
 	map->sprite_count = 0;
 	map->enemies = NULL;
@@ -164,6 +181,7 @@ void	ft_int_audio(t_audio *audio)
 	audio->enabled = true;
 	audio->music_pid = -1;
 	audio->music_path[0] = '\0';
+	ft_strlcpy(audio->sound_dir, SOUND_DIR, LINE_SIZE);
 }
 
 void	ft_int_projectiles(t_projectile *projectiles)
@@ -233,4 +251,8 @@ void	init_game_struct(t_game *g)
 	ft_int_image(&g->img);
 	g->mlx = NULL;
 	g->mlx_win = NULL;
+	g->unpacked_level = false;
+	g->unpack_dir[0] = '\0';
+	g->level_source[0] = '\0';
+	g->delta_time = 0.0;
 }

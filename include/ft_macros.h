@@ -53,6 +53,7 @@
 # define PLAYER_GRAVITY 0.012
 # define PLAYER_MIN_Z 0.0
 # define PLAYER_MAX_Z 2.5
+# define PLAYER_STEP_HEIGHT 0.35
 # define FLY_VERTICAL_SPEED 0.08
 # define FLY_PITCH_CLIMB_RATIO 0.85
 # define COLLISION_SAFETY 0.1
@@ -102,5 +103,13 @@
 # define ENEMY_MOVE_SPEED 1.2
 # define SOUND_DIR "assets/sounds/"
 # define MUSIC_BASENAME "music"
+# define SECTOR_MAX 36
+# define SEGMENT_WALL_MAX 128
+# define DNK_MAGIC "DNK1"
+# define DNK_MAX_LINES 2048
+# define DNK_MAX_ASSETS 64
+# define DNK_HEX_LINE 96
+# define DNK_DEFAULT_LIGHT 255
+# define DNK_UNPACK_ROOT "build/unpacked"
 
 #endif

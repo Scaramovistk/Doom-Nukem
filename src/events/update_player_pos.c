@@ -35,25 +35,33 @@ static bool	has_free_movement(t_player *p)
 	return (p->is_flying || p->is_swimming);
 }
 
-static void	clamp_player_z(t_player *p)
+static void	clamp_player_z(t_player *p, t_game *g)
 {
-	if (p->z < PLAYER_MIN_Z)
-		p->z = PLAYER_MIN_Z;
-	else if (p->z > PLAYER_MAX_Z)
-		p->z = PLAYER_MAX_Z;
+	double	floor_z;
+	double	max_z;
+
+	floor_z = get_floor_z_at(g, p->pos);
+	max_z = floor_z + PLAYER_MAX_Z;
+	if (p->z < floor_z)
+		p->z = floor_z;
+	else if (p->z > max_z)
+		p->z = max_z;
 }
 
-void	toggle_fly_mode(t_player *p)
+void	toggle_fly_mode(t_player *p, t_game *g)
 {
+	double	floor_z;
+
+	floor_z = get_floor_z_at(g, p->pos);
 	p->is_flying = !p->is_flying;
 	p->z_velocity = 0;
 	p->on_ground = !p->is_flying;
 	if (!p->is_flying)
 	{
 		p->fly_move = 0;
-		if (p->z <= PLAYER_FLOOR_Z)
+		if (p->z <= floor_z)
 		{
-			p->z = PLAYER_FLOOR_Z;
+			p->z = floor_z;
 			p->on_ground = true;
 		}
 		else
@@ -69,23 +77,37 @@ void	jump_player(t_player *p)
 	p->on_ground = false;
 }
 
-static void	update_vertical_physics(t_player *p)
+static void	update_vertical_physics(t_player *p, t_game *g)
 {
+	double	floor_z;
+	double	ceiling_z;
+
+	floor_z = get_floor_z_at(g, p->pos);
+	ceiling_z = get_ceiling_z_at(g, p->pos);
 	if (has_free_movement(p))
 	{
 		p->z += p->fly_move * FLY_VERTICAL_SPEED;
-		clamp_player_z(p);
+		clamp_player_z(p, g);
 		p->z_velocity = 0;
 		p->on_ground = false;
 		return ;
 	}
+	if (p->on_ground && p->z > floor_z + PLAYER_STEP_HEIGHT)
+		p->on_ground = false;
+	else if (p->on_ground)
+		p->z = floor_z;
 	if (!p->on_ground)
 	{
 		p->z += p->z_velocity;
 		p->z_velocity -= PLAYER_GRAVITY;
-		if (p->z <= PLAYER_FLOOR_Z)
+		if (p->z + p->eye_height > ceiling_z)
 		{
-			p->z = PLAYER_FLOOR_Z;
+			p->z = ceiling_z - p->eye_height;
+			p->z_velocity = 0;
+		}
+		if (p->z <= floor_z)
+		{
+			p->z = floor_z;
 			p->z_velocity = 0;
 			p->on_ground = true;
 		}
@@ -125,12 +147,12 @@ void	update_player_pos(t_player *p, t_game *g)
 	if (has_free_movement(p))
 	{
 		p->z += get_pitch_climb(p, vertical_move_step);
-		clamp_player_z(p);
+		clamp_player_z(p, g);
 	}
 	p->orientation = normalize_angle(p->orientation + (p->key_rotation_move
 				+ p->rotation_move) * ROTATION_SPEED);
 	update_pitch(p);
-	update_vertical_physics(p);
+	update_vertical_physics(p, g);
 	clear_mouse_move(p);
 }
 
@@ -140,7 +162,17 @@ bool	is_position_legal(t_position pos, t_game *g)
 	t_coord				cell;
 	t_block				block;
 	int					i;
+	double				current_floor;
+	double				target_floor;
 
+	current_floor = get_floor_z_at(g, g->player.pos);
+	target_floor = get_floor_z_at(g, pos);
+	if (segment_blocks_position(g, pos))
+		return (false);
+	if (target_floor > current_floor + PLAYER_STEP_HEIGHT)
+		return (false);
+	if (get_ceiling_z_at(g, pos) - target_floor < g->player.eye_height)
+		return (false);
 	i = 0;
 	while (i < 4)
 	{

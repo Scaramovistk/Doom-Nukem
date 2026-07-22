@@ -81,7 +81,7 @@ int	pressed(int key, t_game *g)
 	else if (key == KEY_E)
 		interact(g);
 	else if (key == KEY_F)
-		toggle_fly_mode(&g->player);
+		toggle_fly_mode(&g->player, g);
 	else if (key == KEY_Q)
 		cycle_weapon(g);
 	else if (key == KEY_R)

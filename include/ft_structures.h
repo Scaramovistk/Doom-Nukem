@@ -61,10 +61,34 @@ typedef struct s_enemy
 	bool		active;
 }				t_enemy;
 
+typedef struct s_sector
+{
+	double		floor_z;
+	double		ceil_z;
+	double		slope_x;
+	double		slope_y;
+	int			light;
+	bool		active;
+}				t_sector;
+
+typedef struct s_wall_segment
+{
+	t_position	a;
+	t_position	b;
+	int			texture;
+	int			sector;
+	bool		transparent;
+}				t_wall_segment;
+
 typedef struct s_map
 {
 	t_block		**grid;
 	t_door		**doors;
+	int			**sector_grid;
+	t_sector	sectors[SECTOR_MAX];
+	int			sector_count;
+	t_wall_segment	segments[SEGMENT_WALL_MAX];
+	int			segment_count;
 	t_position	*sprites;
 	int			sprite_count;
 	t_enemy		*enemies;
@@ -179,6 +203,11 @@ typedef struct s_ray
 	t_door		*hit_door;
 	double		door_distance;
 	int			door_side;
+	bool		hit_segment;
+	double		segment_u;
+	double		segment_distance;
+	int			segment_texture;
+	int			segment_sector;
 	t_transparent_hit	transparent_hits[TRANSPARENT_HIT_MAX];
 	int					transparent_count;
 }				t_ray;
@@ -217,6 +246,7 @@ typedef struct s_texture_slice
 	t_texture	*texture;
 	double		texture_x;
 	double		viewer_distance;
+	int			light;
 
 	int			texture_x_size;
 	double		height;
@@ -278,6 +308,7 @@ typedef struct s_audio
 	bool			enabled;
 	pid_t			music_pid;
 	char			music_path[LINE_SIZE];
+	char			sound_dir[LINE_SIZE];
 }				t_audio;
 
 typedef struct s_projectile
@@ -322,6 +353,9 @@ typedef struct s_game
 	t_level_flow	level;
 	t_audio		audio;
 	t_projectile	projectiles[PROJECTILE_MAX];
+	bool		unpacked_level;
+	char		unpack_dir[LINE_SIZE];
+	char		level_source[LINE_SIZE];
 
 	double		delta_time;
 

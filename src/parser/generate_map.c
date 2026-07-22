@@ -319,6 +319,7 @@ void	ft_populate_map(char **map, int *vals, t_game *g)
 	}
 	g->map.height = lines - vals[2];
 	g->map.width = width;
+	init_default_sectors(g);
 	ft_free_map(map, lines);
 }
 

@@ -18,6 +18,8 @@
 
 // main.c
 int			main(int argc, char *argv[]);
+int			run_editor(int argc, char *argv[]);
+int			check_level_file(char *path);
 
 // ----- EVENTS ----- //
 
@@ -40,10 +42,21 @@ int			game_loop(t_game *g);
 // update_player_pos.c
 void		update_player_pos(t_player *p, t_game *g);
 void		jump_player(t_player *p);
-void		toggle_fly_mode(t_player *p);
+void		toggle_fly_mode(t_player *p, t_game *g);
 bool		is_position_legal(t_position pos, t_game *g);
 t_coord		get_adjacent_cell(t_position pos, const t_position check_pos);
 bool		is_door_open(t_coord pos, t_door **doors);
+double		get_floor_z_at(t_game *g, t_position pos);
+double		get_ceiling_z_at(t_game *g, t_position pos);
+double		get_floor_z_at_cell(t_game *g, t_coord cell);
+int			get_light_at(t_game *g, t_position pos);
+int			get_light_at_cell(t_game *g, t_coord cell);
+int			apply_light(int color, int light, double distance);
+void		init_default_sectors(t_game *g);
+bool		set_sector_cell(t_game *g, int x, int y, int sector);
+bool		set_sector_info(t_game *g, int id, t_sector sector);
+bool		add_wall_segment(t_game *g, t_wall_segment segment);
+bool		segment_blocks_position(t_game *g, t_position pos);
 
 // door.c
 void		init_door_grid(t_game *g);
@@ -121,6 +134,7 @@ void		draw_minimap(t_game *g);
 // ray_casting.c
 void		cast_all_rays(t_ray *rays, t_game *g);
 void		cast_one_ray(t_ray *ray, double angle, t_game *g);
+void		cast_segment_walls(t_ray *ray, t_game *g);
 
 // dda.c
 void		perform_dda(t_dda *dda, t_ray *ray, t_game *g);
@@ -201,6 +215,11 @@ int			ft_get_map(char *mapfile, int *vals, int *succes, t_game *g);
 int			ft_is_file(char *path);
 int			ft_parse_file(int argc, char *argv[], t_game *g);
 int			ft_amount_of_commas(char **rgbs, int *values, char *line);
+int			ft_parse_packed_file(int argc, char *argv[], t_game *g);
+int			pack_level_file(char *src, char *dst);
+int			ft_cub_extension(char *path);
+int			ft_dnk_extension(char *path);
+int			ft_xpm_extension(const char *path);
 
 // valid_header.c
 int			ft_get_header(char *map, int *ok, t_header *p);
@@ -254,7 +273,7 @@ void		error(char *description, t_game *g);
 void		free_all(t_game *g);
 
 // sound.c
-void		play_sound_effect(const char *name);
+void		play_sound_effect(t_game *g, const char *name);
 void		init_audio(t_game *g);
 void		start_background_music(t_game *g);
 void		stop_audio(t_game *g);

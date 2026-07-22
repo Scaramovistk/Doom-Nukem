@@ -12,6 +12,50 @@
 
 #include "../../include/cub3d.h"
 
+static bool	is_unpack_dir(t_game *g)
+{
+	if (!g->unpacked_level || !g->unpack_dir[0])
+		return (false);
+	return (ft_strncmp(g->unpack_dir, DNK_UNPACK_ROOT,
+			ft_strlen(DNK_UNPACK_ROOT)) == 0);
+}
+
+static void	remove_tree(char *path)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+	char			child[LINE_SIZE];
+	struct stat		st;
+
+	dir = opendir(path);
+	if (!dir)
+	{
+		unlink(path);
+		return ;
+	}
+	entry = readdir(dir);
+	while (entry)
+	{
+		if (ft_strcmp(entry->d_name, ".") && ft_strcmp(entry->d_name, ".."))
+		{
+			snprintf(child, LINE_SIZE, "%s/%s", path, entry->d_name);
+			if (!stat(child, &st) && S_ISDIR(st.st_mode))
+				remove_tree(child);
+			else
+				unlink(child);
+		}
+		entry = readdir(dir);
+	}
+	closedir(dir);
+	rmdir(path);
+}
+
+static void	cleanup_unpacked_level(t_game *g)
+{
+	if (is_unpack_dir(g))
+		remove_tree(g->unpack_dir);
+}
+
 void	ft_destroy_textures(t_game *g)
 {
 	int		i;
@@ -70,9 +114,10 @@ void	ft_destroy_textures(t_game *g)
 
 void	free_all(t_game *g)
 {
-	mlx_loop_end(g->mlx);
 	if (!g)
 		return ;
+	if (g->mlx)
+		mlx_loop_end(g->mlx);
 	stop_audio(g);
 	ft_lstclear(&g->allocated_pointers, &free);
 	ft_destroy_textures(g);
@@ -85,6 +130,7 @@ void	free_all(t_game *g)
 	}
 	if (g->mlx)
 		free(g->mlx);
+	cleanup_unpacked_level(g);
 }
 
 #elif defined(__APPLE__)
@@ -102,6 +148,7 @@ void	free_all(t_game *g)
 		mlx_destroy_window(g->mlx, g->mlx_win);
 	if (g->mlx)
 		free(g->mlx);
+	cleanup_unpacked_level(g);
 }
 
 #else

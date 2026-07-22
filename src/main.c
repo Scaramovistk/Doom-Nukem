@@ -16,6 +16,11 @@ int	main(int argc, char *argv[])
 {
 	t_game	g;
 
+	if (argc >= 2 && (!ft_strcmp(argv[1], "--edit")
+			|| !ft_strcmp(argv[1], "--pack")))
+		return (run_editor(argc, argv));
+	if (argc == 3 && !ft_strcmp(argv[1], "--check"))
+		return (check_level_file(argv[2]));
 	init_game_struct(&g);
 	if (argc == 1)
 	{

@@ -147,5 +147,5 @@ void	trigger_switch_sequence(t_game *g)
 	queue_world_event(g, make_event(EVENT_TOGGLE_DOORS, SWITCH_EVENT_DELAY, 0));
 	queue_world_event(g, make_event(EVENT_CLOSE_DOORS,
 			SWITCH_DOOR_CLOSE_DELAY, 0));
-	play_sound_effect("switch");
+	play_sound_effect(g, "switch");
 }

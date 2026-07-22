@@ -16,6 +16,8 @@ double	get_texture_x(t_ray *ray, double distance, int side, t_game *g)
 {
 	double	tex_x;
 
+	if (ray->hit_segment && distance == ray->distance)
+		return (ray->segment_u);
 	distance /= cos(g->player.orientation - ray->angle);
 	if (side == 0)
 		tex_x = g->player.pos.y + distance * ray->dir.y;
@@ -47,6 +49,7 @@ void	draw_texture_slice(t_texture_slice *s, t_game *g)
 		texture_y = ((int)(texture_y_pos)) & (TEXTURE_SIZE - 1);
 		texture_y_pos += s->texture_step;
 		pixel_color = get_pixel(&s->texture->img, s->texture_x_size, texture_y);
+		pixel_color = apply_light(pixel_color, s->light, s->viewer_distance);
 		put_pixel(&g->img, s->screen_x, screen_y, pixel_color);
 		screen_y++;
 	}
@@ -87,9 +90,13 @@ void	draw_texture_slice_alpha(t_texture_slice *s, t_game *g)
 		texture_y_pos += s->texture_step;
 		pixel_color = get_pixel(&s->texture->img, s->texture_x_size, texture_y);
 		if ((pixel_color & 0x00FFFFFF) != 0x00FF00FF)
+		{
+			pixel_color = apply_light(pixel_color, s->light,
+					s->viewer_distance);
 			put_pixel(&g->img, s->screen_x, screen_y,
 				blend_color(get_pixel(&g->img, s->screen_x, screen_y),
 					pixel_color, 0.45));
+		}
 		screen_y++;
 	}
 }

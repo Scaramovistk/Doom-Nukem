@@ -39,6 +39,22 @@ int	ft_cub_extension(char *path)
 	return (0);
 }
 
+int	ft_dnk_extension(char *path)
+{
+	int				len;
+	const char		*dnk = ".dnk";
+	const size_t	size = ft_strlen(dnk);
+
+	len = ft_strlen(path);
+	if (size <= (size_t)len)
+	{
+		path += len - 4;
+		if (ft_strcmp(path, dnk) == 0)
+			return (1);
+	}
+	return (0);
+}
+
 int	ft_parse_arg(char *map)
 {
 	int	fd;
@@ -61,6 +77,8 @@ int	ft_parse_file(int argc, char *argv[], t_game *g)
 
 	if (argc != 2)
 		return (ft_parsing_error(ARGSP, 0));
+	if (ft_dnk_extension(argv[1]))
+		return (ft_parse_packed_file(argc, argv, g));
 	ft_setup_header(&header);
 	ft_values_setup(values);
 	values[6] = 1;

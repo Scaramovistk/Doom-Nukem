@@ -196,6 +196,7 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
 		color = get_pixel(&texture->img, tex_x, tex_y);
 		if ((color & 0x00FFFFFF) != 0x00FF00FF)
 		{
+			color = apply_light(color, get_light_at(g, s->pos), s->transform_y);
 			color = blend_sprite_glass(color, y, s->transform_y, ray, g);
 			put_pixel(&g->img, stripe, y, color);
 		}

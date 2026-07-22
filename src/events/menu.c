@@ -12,12 +12,13 @@
 
 #include "../../include/cub3d.h"
 
-static bool	is_cub_file(const char *name)
+static bool	is_level_file(const char *name)
 {
 	int	len;
 
 	len = ft_strlen(name);
-	return (len > 4 && ft_strcmp((char *)name + len - 4, ".cub") == 0);
+	return (len > 4 && (ft_strcmp((char *)name + len - 4, ".cub") == 0
+			|| ft_strcmp((char *)name + len - 4, ".dnk") == 0));
 }
 
 static void	add_level(t_menu *menu, const char *name)
@@ -41,7 +42,7 @@ static void	load_menu_levels(t_menu *menu)
 	entry = readdir(dir);
 	while (entry)
 	{
-		if (is_cub_file(entry->d_name))
+		if (is_level_file(entry->d_name))
 			add_level(menu, entry->d_name);
 		entry = readdir(dir);
 	}
@@ -105,7 +106,7 @@ void	render_menu(t_game *g)
 	}
 	if (!g->menu.level_count)
 		mlx_string_put(g->mlx, g->mlx_win, 470, y, RED,
-			"No .cub files found in tests/maps");
+			"No .cub or .dnk files found in tests/maps");
 	ft_strlcpy(line, "Difficulty: ", LINE_SIZE);
 	ft_strlcat(line, difficulty_name(g->menu.difficulty), LINE_SIZE);
 	mlx_string_put(g->mlx, g->mlx_win, 500, 690, GREEN, line);

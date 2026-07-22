@@ -119,6 +119,8 @@ static void	draw_surface_row(int y, int horizon, t_floor_cast cast, t_game *g)
 	int			x;
 	int			tex_x;
 	int			tex_y;
+	int			color;
+	t_position	sample;
 
 	texture = &g->assets.floor_texture;
 	if (y < horizon)
@@ -130,7 +132,10 @@ static void	draw_surface_row(int y, int horizon, t_floor_cast cast, t_game *g)
 			& (TEXTURE_SIZE - 1);
 		tex_y = (int)(TEXTURE_SIZE * (cast.floor_y - floor(cast.floor_y)))
 			& (TEXTURE_SIZE - 1);
-		put_pixel(&g->img, x, y, get_pixel(&texture->img, tex_x, tex_y));
+		sample = (t_position){cast.floor_x, cast.floor_y};
+		color = get_pixel(&texture->img, tex_x, tex_y);
+		color = apply_light(color, get_light_at(g, sample), cast.row_distance);
+		put_pixel(&g->img, x, y, color);
 		cast.floor_x += cast.step_x;
 		cast.floor_y += cast.step_y;
 		x++;
@@ -162,14 +167,18 @@ static void	set_surface_row(int y, int horizon, t_floor_cast *cast, t_game *g)
 {
 	int	row_offset;
 	double	camera_height;
+	double	eye_z;
 
 	row_offset = y - horizon;
 	if (row_offset < 0)
 		row_offset = -row_offset;
+	eye_z = get_eye_z(&g->player);
 	if (y > horizon)
-		camera_height = get_eye_z(&g->player);
+		camera_height = eye_z - get_floor_z_at(g, g->player.pos);
 	else
-		camera_height = 1.0 - get_eye_z(&g->player);
+		camera_height = get_ceiling_z_at(g, g->player.pos) - eye_z;
+	if (camera_height < 0.05)
+		camera_height = 0.05;
 	cast->row_distance = (camera_height * WIN_HEIGHT) / row_offset;
 	cast->step_x = cast->row_distance * (cast->ray_dir_x1
 			- cast->ray_dir_x0) / WIN_WIDTH;

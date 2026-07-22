@@ -32,7 +32,8 @@ static bool	file_exists(const char *path)
 	return (true);
 }
 
-static bool	sound_path(char *dst, size_t size, const char *name)
+static bool	sound_path(char *dst, size_t size, const char *dir,
+	const char *name)
 {
 	static const char	*exts[3] = {".wav", ".ogg", ".mp3"};
 	int					i;
@@ -40,7 +41,7 @@ static bool	sound_path(char *dst, size_t size, const char *name)
 	i = 0;
 	while (i < 3)
 	{
-		ft_strlcpy(dst, SOUND_DIR, size);
+		ft_strlcpy(dst, dir, size);
 		ft_strlcat(dst, name, size);
 		ft_strlcat(dst, exts[i], size);
 		if (file_exists(dst))
@@ -68,12 +69,12 @@ void	update_audio(void)
 		;
 }
 
-void	play_sound_effect(const char *name)
+void	play_sound_effect(t_game *g, const char *name)
 {
 	char	path[LINE_SIZE];
 	pid_t	pid;
 
-	if (!sound_path(path, sizeof(path), name))
+	if (!sound_path(path, sizeof(path), g->audio.sound_dir, name))
 		return ;
 	pid = fork();
 	if (pid == 0)
@@ -84,7 +85,10 @@ void	init_audio(t_game *g)
 {
 	g->audio.enabled = true;
 	g->audio.music_pid = -1;
-	sound_path(g->audio.music_path, sizeof(g->audio.music_path), MUSIC_BASENAME);
+	if (!g->audio.sound_dir[0])
+		ft_strlcpy(g->audio.sound_dir, SOUND_DIR, LINE_SIZE);
+	sound_path(g->audio.music_path, sizeof(g->audio.music_path),
+		g->audio.sound_dir, MUSIC_BASENAME);
 }
 
 static void	music_loop(const char *path)

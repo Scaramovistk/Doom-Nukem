@@ -155,7 +155,7 @@ void	fire_projectile(t_game *g)
 	p->active = true;
 	g->hud.ammo -= ammo_cost;
 	g->hud.weapon_flash = WEAPON_FLASH_TIME;
-	play_sound_effect("shoot");
+	play_sound_effect(g, "shoot");
 }
 
 static void	update_one_projectile(t_projectile *p, t_game *g, double step)

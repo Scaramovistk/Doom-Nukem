@@ -58,7 +58,7 @@ void	collect_item(t_item *item, t_game *g)
 	item->active = false;
 	remove_item_sprite(item, g);
 	show_message(g, "ITEM PICKED UP", MESSAGE_DISPLAY_TIME);
-	play_sound_effect("pickup");
+	play_sound_effect(g, "pickup");
 }
 
 void	update_item_pickups(t_game *g)

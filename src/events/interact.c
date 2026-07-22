@@ -73,7 +73,7 @@ void	interact(t_game *g)
 		if (is_door(check, g) && !is_on_player(check, g))
 		{
 			activate_door(check, g);
-			play_sound_effect("door");
+			play_sound_effect(g, "door");
 			return ;
 		}
 		check_distance += 0.1;
