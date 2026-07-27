@@ -101,6 +101,17 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 			return (&g->assets.item_icons[g->map.items[i].type]);
 		i++;
 	}
+	i = 0;
+	while (i < g->map.enemy_count)
+	{
+		if (g->map.enemies[i].active
+			&& g->map.enemies[i].sprite_index == s->sprite_index
+			&& g->map.enemies[i].type >= 0
+			&& g->map.enemies[i].type < ENEMY_TYPES_NB
+			&& g->assets.enemy_icons[g->map.enemies[i].type].img.ptr)
+			return (&g->assets.enemy_icons[g->map.enemies[i].type]);
+		i++;
+	}
 	if (!g->assets.has_sprite_frames)
 		return (&g->assets.textures[SPRITE_T]);
 	angle = normalize_angle(atan2(g->player.pos.y - s->pos.y,
@@ -131,19 +142,16 @@ static int	get_glass_pixel(t_transparent_hit *hit, int y, t_ray *ray, t_game *g)
 	double			wall_height;
 	int				tex_x;
 	int				tex_y;
-	int				horizon;
 
 	ray->distance = hit->distance;
 	ray->side = hit->side;
 	get_wall_top_bottom(&wall, ray, g);
 	if (y < wall.top || y >= wall.bottom)
 		return (-1);
-	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
 	wall_height = WIN_HEIGHT / hit->distance;
 	tex_x = (int)(get_texture_x(ray, hit->distance, hit->side, g)
 			* (double)TEXTURE_SIZE);
-	tex_y_pos = (y - horizon + wall_height / 2)
-		* (1.0 * TEXTURE_SIZE / wall_height);
+	tex_y_pos = (y - wall.raw_top) * (1.0 * TEXTURE_SIZE / wall_height);
 	tex_y = ((int)tex_y_pos) & (TEXTURE_SIZE - 1);
 	return (get_pixel(&g->assets.textures[TRANSPARENT_T].img, tex_x, tex_y));
 }
@@ -232,7 +240,8 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	if (!g->map.sprite_count)
 		return ;
 	if (!g->assets.textures[SPRITE_T].img.ptr && !g->assets.has_sprite_frames
-		&& !g->assets.item_icons[0].img.ptr)
+		&& !g->assets.item_icons[0].img.ptr
+		&& !g->assets.enemy_icons[0].img.ptr)
 		return ;
 	sprites = malloc(g->map.sprite_count * sizeof(t_sprite_draw));
 	if (!sprites)

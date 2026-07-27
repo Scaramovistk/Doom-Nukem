@@ -17,7 +17,7 @@ static double	get_eye_z(t_player *p)
 	return (p->z + p->eye_height);
 }
 
-static t_position	ray_world_pos(t_ray *ray, double distance, t_game *g)
+t_position	ray_world_pos(t_ray *ray, double distance, t_game *g)
 {
 	t_position	pos;
 	double		true_distance;
@@ -30,7 +30,7 @@ static t_position	ray_world_pos(t_ray *ray, double distance, t_game *g)
 	return (pos);
 }
 
-static int	project_world_z(double world_z, double distance, t_game *g)
+int	project_world_z(double world_z, double distance, t_game *g)
 {
 	int		horizon;
 	double	eye_z;
@@ -47,10 +47,12 @@ void	draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g)
 	slice.screen_x = ray->x;
 	slice.y_start = wall.top;
 	slice.y_end = wall.bottom;
+	slice.raw_top = wall.raw_top;
 	slice.texture = get_wall_texture(ray, g);
 	slice.texture_x = get_texture_x(ray, ray->distance, ray->side, g);
 	slice.viewer_distance = ray->distance;
-	slice.light = get_light_at(g, ray_world_pos(ray, ray->distance, g));
+	slice.light = wall_light(ray->side, get_light_at(g,
+				ray_world_pos(ray, ray->distance, g)), ray->hit_segment);
 	draw_texture_slice(&slice, g);
 }
 
@@ -69,10 +71,12 @@ static void	draw_transparent_hit(t_transparent_hit *hit, t_ray *ray, t_game *g)
 	slice.screen_x = ray->x;
 	slice.y_start = wall.top;
 	slice.y_end = wall.bottom;
+	slice.raw_top = wall.raw_top;
 	slice.texture = &g->assets.textures[TRANSPARENT_T];
 	slice.texture_x = get_texture_x(ray, hit->distance, hit->side, g);
 	slice.viewer_distance = hit->distance;
-	slice.light = get_light_at(g, ray_world_pos(ray, hit->distance, g));
+	slice.light = wall_light(hit->side, get_light_at(g,
+				ray_world_pos(ray, hit->distance, g)), false);
 	draw_texture_slice_alpha(&slice, g);
 	ray->distance = save_distance;
 	ray->side = save_side;
@@ -102,10 +106,12 @@ void	draw_wall_decal(t_dimensions wall, t_ray *ray, t_game *g)
 	slice.screen_x = ray->x;
 	slice.y_start = wall.top + margin;
 	slice.y_end = wall.bottom - margin;
+	slice.raw_top = wall.raw_top;
 	slice.texture = &g->assets.textures[DECAL_T];
 	slice.texture_x = get_texture_x(ray, ray->distance, ray->side, g);
 	slice.viewer_distance = ray->distance;
-	slice.light = get_light_at(g, ray_world_pos(ray, ray->distance, g));
+	slice.light = wall_light(ray->side, get_light_at(g,
+				ray_world_pos(ray, ray->distance, g)), ray->hit_segment);
 	draw_texture_slice_alpha(&slice, g);
 }
 
@@ -139,7 +145,8 @@ void	get_wall_top_bottom(t_dimensions *wall, t_ray *ray, t_game *g)
 	hit_pos = ray_world_pos(ray, ray->distance, g);
 	floor_z = get_floor_z_at(g, hit_pos);
 	ceil_z = get_ceiling_z_at(g, hit_pos);
-	wall->top = project_world_z(ceil_z, ray->distance, g);
+	wall->raw_top = project_world_z(ceil_z, ray->distance, g);
+	wall->top = wall->raw_top;
 	wall->bottom = project_world_z(floor_z, ray->distance, g);
 	if (wall->top < 0)
 		wall->top = 0;

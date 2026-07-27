@@ -12,11 +12,6 @@
 
 #include "../../include/cub3d.h"
 
-static double	get_eye_z(t_player *p)
-{
-	return (p->z + p->eye_height);
-}
-
 static t_position	door_world_pos(t_ray *ray, t_game *g)
 {
 	t_position	pos;
@@ -31,26 +26,18 @@ static t_position	door_world_pos(t_ray *ray, t_game *g)
 	return (pos);
 }
 
-static int	project_world_z(double world_z, double distance, t_game *g)
-{
-	int		horizon;
-	double	eye_z;
-
-	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
-	eye_z = get_eye_z(&g->player);
-	return (horizon - (int)((world_z - eye_z) * WIN_HEIGHT / distance));
-}
-
 void	draw_door_slice(t_ray *ray, t_game *g)
 {
 	t_texture_slice	slice;
 	int				door_top;
 	int				door_bottom;
+	int				raw_top;
 
-	get_door_top_bottom(&door_top, &door_bottom, ray, g);
+	get_door_top_bottom(&door_top, &door_bottom, &raw_top, ray, g);
 	slice.screen_x = ray->x;
 	slice.y_start = door_top;
 	slice.y_end = door_bottom;
+	slice.raw_top = raw_top;
 	slice.texture = &g->assets.textures[DOOR_T];
 	slice.texture_x = get_texture_x(ray, ray->door_distance, ray->door_side, g);
 	slice.viewer_distance = ray->door_distance;
@@ -59,7 +46,7 @@ void	draw_door_slice(t_ray *ray, t_game *g)
 }
 
 void	get_door_top_bottom(int *door_top, int *door_bottom,
-		t_ray *ray, t_game *g)
+		int *raw_top, t_ray *ray, t_game *g)
 {
 	int	visible_door_height;
 	int	full_top;
@@ -77,6 +64,7 @@ void	get_door_top_bottom(int *door_top, int *door_bottom,
 			- ray->hit_door->opening_state);
 	*door_bottom = full_bottom;
 	*door_top = *door_bottom - visible_door_height;
+	*raw_top = full_top;
 	if (*door_top < 0)
 		*door_top = 0;
 	if (*door_bottom > WIN_HEIGHT)

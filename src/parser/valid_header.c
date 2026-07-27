@@ -141,6 +141,33 @@ static int	ft_good_sprite_frames(t_header *header, int *ok)
 	return (1);
 }
 
+static int	ft_good_enemy_textures(t_header *header, int *ok)
+{
+	int	i;
+
+	i = 0;
+	while (i < ENEMY_TYPES_NB)
+	{
+		if (!ft_good_optional_xpm(header->enemy_texture[i], ok))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+static int	ft_good_next_level(t_header *header, int *ok)
+{
+	if (!header->next_level[0])
+		return (1);
+	if (!ft_cub_extension(header->next_level)
+		&& !ft_dnk_extension(header->next_level))
+	{
+		*ok = ft_parsing_error(PATHS, 0);
+		return (0);
+	}
+	return (1);
+}
+
 void	ft_ok(int *vals, int *ok, t_header *header)
 {
 	int	values[9];
@@ -167,6 +194,10 @@ void	ft_ok(int *vals, int *ok, t_header *header)
 	if (!ft_good_optional_xpm(header->decal_texture, ok))
 		return ;
 	if (!ft_good_sprite_frames(header, ok))
+		return ;
+	if (!ft_good_enemy_textures(header, ok))
+		return ;
+	if (!ft_good_next_level(header, ok))
 		return ;
 	if (!ft_good_rgb(header, ok))
 		return ;

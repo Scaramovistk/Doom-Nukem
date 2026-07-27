@@ -73,6 +73,13 @@ void	ft_int_assets(t_assets *assets)
 	assets->item_icons[1].source = HUD_ITEM1_ICON;
 	assets->item_icons[2].source = HUD_ITEM2_ICON;
 	assets->item_icons[3].source = HUD_ITEM3_ICON;
+	i = 0;
+	while (i < ENEMY_TYPES_NB)
+	{
+		ft_int_image(&assets->enemy_icons[i].img);
+		assets->enemy_icons[i].source = NULL;
+		i++;
+	}
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -141,6 +148,7 @@ void	ft_init_map(t_map *map)
 		map->sectors[i].slope_y = 0.0;
 		map->sectors[i].light = DNK_DEFAULT_LIGHT;
 		map->sectors[i].active = false;
+		map->sectors[i].elevator_raised = false;
 		i++;
 	}
 	map->sprites = NULL;
@@ -151,6 +159,10 @@ void	ft_init_map(t_map *map)
 	map->item_count = 0;
 	map->switches = NULL;
 	map->switch_count = 0;
+	map->elevators = NULL;
+	map->elevator_count = 0;
+	map->secrets = NULL;
+	map->secret_count = 0;
 	map->hazard_zones = NULL;
 	map->hazard_count = 0;
 	map->message_zones = NULL;
@@ -174,12 +186,27 @@ void	ft_int_level_flow(t_level_flow *level)
 	level->failed = false;
 	level->end_timer = 0.0;
 	level->required_items = 0;
+	level->next_level[0] = '\0';
+}
+
+static void	ft_int_channel(t_channel *channel)
+{
+	channel->device = 0;
+	channel->buf = NULL;
+	channel->len = 0;
+	channel->pos = 0;
+	channel->loop = false;
 }
 
 void	ft_int_audio(t_audio *audio)
 {
+	int	i;
+
 	audio->enabled = true;
-	audio->music_pid = -1;
+	ft_int_channel(&audio->music);
+	i = 0;
+	while (i < SFX_CHANNELS_NB)
+		ft_int_channel(&audio->sfx[i++]);
 	audio->music_path[0] = '\0';
 	ft_strlcpy(audio->sound_dir, SOUND_DIR, LINE_SIZE);
 }
@@ -198,6 +225,7 @@ void	ft_int_projectiles(t_projectile *projectiles)
 		projectiles[i].size = PROJECTILE_SIZE;
 		projectiles[i].color = YELLOW;
 		projectiles[i].active = false;
+		projectiles[i].from_enemy = false;
 		i++;
 	}
 }
@@ -226,6 +254,10 @@ void	ft_int_events(t_world_event *events)
 		events[i].timer = 0.0;
 		events[i].reload = 0.0;
 		events[i].value = 0;
+		events[i].target = 0;
+		events[i].from_value = 0.0;
+		events[i].to_value = 0.0;
+		events[i].door_target = (t_coord){0, 0};
 		events[i].repeat = false;
 		events[i].active = false;
 		events[i].message[0] = '\0';

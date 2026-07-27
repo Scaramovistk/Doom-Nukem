@@ -72,6 +72,8 @@ static void	run_event_action(t_game *g, t_world_event *event)
 	}
 	else if (event->action == EVENT_SHOW_MESSAGE)
 		show_event_message(g, event);
+	else if (event->action == EVENT_OPEN_ONE_DOOR)
+		open_one_door(g, event->door_target);
 }
 
 void	queue_world_event(t_game *g, t_world_event event)
@@ -95,6 +97,8 @@ static bool	update_one_event(t_game *g, t_world_event *event)
 {
 	if (!event->active)
 		return (false);
+	if (event->action == EVENT_SECTOR_ANIMATE)
+		return (animate_sector_event(g, event));
 	event->timer -= g->delta_time;
 	if (event->timer > 0.0)
 		return (true);

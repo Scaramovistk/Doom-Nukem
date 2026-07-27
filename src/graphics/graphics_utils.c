@@ -45,3 +45,12 @@ void	put_pixel(t_img *img, int x, int y, int color)
 	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
 	*(unsigned int *)dst = color;
 }
+
+int	wall_light(int side, int light, bool hit_segment)
+{
+	if (hit_segment)
+		return (light);
+	if (side == 1)
+		return ((int)(light * 0.72));
+	return (light);
+}

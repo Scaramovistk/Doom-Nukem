@@ -47,13 +47,15 @@ static bool	starts_with(const char *text, const char *prefix)
 
 static void	make_unpack_dir(t_dnk *dnk, t_game *g)
 {
-	char	sound_dir[LINE_SIZE];
+	char	sub_dir[LINE_SIZE];
 
 	mkdir("build", 0775);
 	snprintf(dnk->dir, LINE_SIZE, "%s_%d", DNK_UNPACK_ROOT, getpid());
 	mkdir(dnk->dir, 0775);
-	snprintf(sound_dir, LINE_SIZE, "%s/sounds", dnk->dir);
-	mkdir(sound_dir, 0775);
+	snprintf(sub_dir, LINE_SIZE, "%s/sounds", dnk->dir);
+	mkdir(sub_dir, 0775);
+	snprintf(sub_dir, LINE_SIZE, "%s/hud", dnk->dir);
+	mkdir(sub_dir, 0775);
 	snprintf(dnk->cub_path, LINE_SIZE, "%s/level.cub", dnk->dir);
 	ft_strlcpy(g->unpack_dir, dnk->dir, LINE_SIZE);
 	g->unpacked_level = true;
@@ -99,6 +101,11 @@ static bool	is_sound_asset(const char *key)
 	return (starts_with(key, "sound_"));
 }
 
+static bool	is_hud_asset(const char *key)
+{
+	return (starts_with(key, "hud_"));
+}
+
 static void	asset_path(t_dnk *dnk, t_dnk_asset *asset, t_game *g)
 {
 	if (is_sound_asset(asset->key))
@@ -107,6 +114,9 @@ static void	asset_path(t_dnk *dnk, t_dnk_asset *asset, t_game *g)
 			asset->key + 6, asset->ext);
 		snprintf(g->audio.sound_dir, LINE_SIZE, "%s/sounds/", dnk->dir);
 	}
+	else if (is_hud_asset(asset->key))
+		snprintf(asset->path, LINE_SIZE, "%s/hud/%s.%s", dnk->dir,
+			asset->key + 4, asset->ext);
 	else
 		snprintf(asset->path, LINE_SIZE, "%s/%s.%s", dnk->dir,
 			asset->key, asset->ext);
@@ -311,6 +321,7 @@ static void	parse_sector_line(t_game *g, char *line, int *grid_y)
 	if (starts_with(line, "SECTOR "))
 	{
 		sector.active = true;
+		sector.elevator_raised = false;
 		if (sscanf(line, "SECTOR %d %lf %lf %lf %lf %d", &id,
 				&sector.floor_z, &sector.ceil_z, &sector.slope_x,
 				&sector.slope_y, &sector.light) == 6)
@@ -348,6 +359,33 @@ static void	apply_packed_sectors(t_dnk *dnk, t_game *g)
 		parse_sector_line(g, dnk->sector_lines[i++], &grid_y);
 }
 
+static void	set_hud_source(char **field, const char *key, t_dnk *dnk,
+				t_game *g)
+{
+	const char	*path;
+
+	path = find_asset_path(dnk, key);
+	if (path)
+		*field = s_alloc(ft_strdup(path), g);
+}
+
+static void	apply_packed_hud(t_dnk *dnk, t_game *g)
+{
+	set_hud_source(&g->assets.hud_weapons[0][0].source, "hud_pistol_idle",
+		dnk, g);
+	set_hud_source(&g->assets.hud_weapons[0][1].source, "hud_pistol_fire",
+		dnk, g);
+	set_hud_source(&g->assets.hud_weapons[1][0].source, "hud_blaster_idle",
+		dnk, g);
+	set_hud_source(&g->assets.hud_weapons[1][1].source, "hud_blaster_fire",
+		dnk, g);
+	set_hud_source(&g->assets.ammo_icon.source, "hud_ammo", dnk, g);
+	set_hud_source(&g->assets.item_icons[0].source, "hud_item0", dnk, g);
+	set_hud_source(&g->assets.item_icons[1].source, "hud_item1", dnk, g);
+	set_hud_source(&g->assets.item_icons[2].source, "hud_item2", dnk, g);
+	set_hud_source(&g->assets.item_icons[3].source, "hud_item3", dnk, g);
+}
+
 int	ft_parse_packed_file(int argc, char *argv[], t_game *g)
 {
 	t_dnk	dnk;
@@ -363,6 +401,7 @@ int	ft_parse_packed_file(int argc, char *argv[], t_game *g)
 	if (!ft_parse_file(2, cub_argv, g))
 		return (0);
 	apply_packed_sectors(&dnk, g);
+	apply_packed_hud(&dnk, g);
 	ft_strlcpy(g->level_source, argv[1], LINE_SIZE);
 	return (1);
 }
@@ -460,6 +499,25 @@ static void	write_sound_assets(FILE *out)
 	closedir(dir);
 }
 
+static void	write_hud_assets(FILE *out)
+{
+	static const char	*keys[HUD_ASSET_NB] = {"hud_pistol_idle",
+		"hud_pistol_fire", "hud_blaster_idle", "hud_blaster_fire",
+		"hud_ammo", "hud_item0", "hud_item1", "hud_item2", "hud_item3"};
+	static const char	*paths[HUD_ASSET_NB] = {HUD_PISTOL_IDLE,
+		HUD_PISTOL_FIRE, HUD_BLASTER_IDLE, HUD_BLASTER_FIRE,
+		HUD_AMMO_ICON, HUD_ITEM0_ICON, HUD_ITEM1_ICON, HUD_ITEM2_ICON,
+		HUD_ITEM3_ICON};
+	int					i;
+
+	i = 0;
+	while (i < HUD_ASSET_NB)
+	{
+		write_asset_block(out, keys[i], paths[i]);
+		i++;
+	}
+}
+
 static void	write_cub_assets(FILE *out, char *src)
 {
 	int		fd;
@@ -490,7 +548,7 @@ static bool	is_map_source_line(char *line)
 	has_map_char = 0;
 	while (line[i] && line[i] != '\n' && line[i] != '\r')
 	{
-		if (!ft_strchr("0123456789 NWSETHMX", line[i]))
+		if (!ft_strchr("0123456789 NWSETHMXKLPIDC", line[i]))
 			return (false);
 		if (line[i] != ' ')
 			has_map_char = 1;
@@ -538,7 +596,7 @@ static void	write_default_sector_grid(FILE *out, char **lines, int count)
 			map_count++;
 	fprintf(out, "BEGIN_SECTORS\n");
 	fprintf(out, "SECTOR 0 0.00 1.00 0.00 0.00 255\n");
-	fprintf(out, "SECTOR 1 0.35 1.35 0.03 0.00 190\n");
+	fprintf(out, "SECTOR 1 0.20 1.20 0.00 0.00 190\n");
 	fprintf(out, "GRID\n");
 	i = 0;
 	map_y = 0;
@@ -574,6 +632,13 @@ static bool	load_cub_text(char *src, char **lines, int *count)
 	return (*count > 0);
 }
 
+static void	write_all_assets(FILE *out, char *src)
+{
+	write_cub_assets(out, src);
+	write_sound_assets(out);
+	write_hud_assets(out);
+}
+
 int	pack_level_file(char *src, char *dst)
 {
 	FILE	*out;
@@ -588,8 +653,7 @@ int	pack_level_file(char *src, char *dst)
 	if (!out)
 		return (ft_parsing_error("Unable to write packed level.", 0));
 	fprintf(out, "%s\n", DNK_MAGIC);
-	write_cub_assets(out, src);
-	write_sound_assets(out);
+	write_all_assets(out, src);
 	fprintf(out, "BEGIN_CUB\n");
 	i = 0;
 	while (i < count)

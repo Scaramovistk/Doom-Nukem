@@ -14,7 +14,7 @@
 
 void	progress_dda(t_dda *dda)
 {
-	if (dda->side_dist.x < dda->side_dist.y)
+	if (dda->side_dist.x < dda->side_dist.y - DDA_CORNER_EPSILON)
 	{
 		dda->side_dist.x += dda->delta_dist.x;
 		dda->map.x += dda->step.x;
@@ -82,14 +82,20 @@ bool	door_collision(t_dda *dda, t_ray *ray, t_game *g)
 void	perform_dda(t_dda *dda, t_ray *ray, t_game *g)
 {
 	bool	hit;
+	int		prev_sector;
 
 	hit = false;
 	ray->hit_door = NULL;
 	ray->transparent_count = 0;
+	ray->height_step_count = 0;
 	ray->hit_block = WALL;
+	prev_sector = get_sector_id_at_cell(g, dda->map);
 	while (!hit)
 	{
 		progress_dda(dda);
+		if (g->map.grid[dda->map.y][dda->map.x] != WALL
+			&& g->map.grid[dda->map.y][dda->map.x] != DECAL_WALL)
+			record_height_step(dda, ray, g, &prev_sector);
 		door_collision(dda, ray, g);
 		transparent_collision(dda, ray, g);
 		if (wall_collision(dda, ray, g))

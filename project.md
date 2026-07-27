@@ -95,8 +95,10 @@ Fix:
 - Write spec in `FORMAT.md` first, then the loader
 - Replaces .cub parser
 - Current implementation supports `.dnk` files with embedded hex assets,
-  embedded sound files, a cub-compatible payload, and sector metadata. `.cub`
-  files remain supported as a compatibility path.
+  embedded sound files, embedded HUD weapon/ammo/item icons (`hud_*` keys,
+  falling back to built-in sprites for `.dnk` files packed before this), a
+  cub-compatible payload, and sector metadata. `.cub` files remain supported
+  as a compatibility path.
 - **Week 1**
 
 #### M2 · Sector-based map system (non-rectangular rooms) `[✅]`
@@ -104,7 +106,11 @@ Fix:
 - Each sector: floor_z, ceil_z, floor tex, ceil tex, light level
 - Core architectural change — everything else builds on this
 - Current implementation adds per-cell sectors plus optional arbitrary angled
-  wall segments in `.dnk` files. Grid DDA remains the fallback for classic maps.
+  wall segments in `.dnk` files, letting a room's visible geometry be defined
+  entirely by non-grid `WALL` segments over empty backing cells. The minimap
+  draws these segments, and `--check` warns (without aborting) if a segment
+  chain doesn't form a closed loop. Grid DDA remains the fallback for classic
+  maps.
 - **Week 1–2**
 
 #### M3 · Variable floor & ceiling heights `[✅]`
@@ -176,8 +182,12 @@ Fix:
 #### R6 · Dynamic world events & scripted sequences `[✅]`
 - Trigger → action map per level; timers, repeatable vs one-shot
 - Supports elevators, texture swaps, height changes, secret passages
-- Current grid implementation has a generic event queue and switch-driven timed
-  sequences: message, score, delayed door toggle, and timed auto-close.
+- Current implementation has a generic event queue and switch-driven timed
+  sequences: message, score, delayed door toggle, and timed auto-close (`T`
+  switch), plus two targeted device types: an `L` elevator switch that
+  animates one sector's floor height between two levels over time, and a `P`
+  secret-passage switch that opens a single specific door rather than every
+  door on the map.
 - **Week 3**
 
 #### S3 · Text messages overlay `[✅]`
@@ -195,10 +205,11 @@ Fix:
 - **Week 3**
 
 #### S7 · Sound effects & music `[✅]`
-- WAV/OGG events (footstep, door, pickup, shoot, death) + looping music per level
-- Use miniaudio (single-header, no extra deps) or SDL_mixer
-- Current implementation plays event files from `assets/sounds/<event>.wav|ogg|mp3`
-  asynchronously and loops `assets/sounds/music.wav|ogg|mp3` when present.
+- WAV events (footstep, door, pickup, shoot, death) + looping music per level
+- Current implementation uses SDL2 audio directly (`SDL_OpenAudioDevice` +
+  `SDL_QueueAudio`) with a small pool of effect channels for overlapping
+  sounds and a dedicated looping music device, with no process-spawning to an
+  external media player.
 - **Week 4**
 
 ---
@@ -210,14 +221,19 @@ Fix:
 - Wall collision → decal; sprite collision → damage
 - Current implementation fires fixed-pool physical projectiles with left mouse
   or `R`, consumes HUD ammo, supports pistol/blaster weapon behavior, marks wall
-  hits as decal walls, and removes non-item sprite targets on hit.
+  hits as decal walls, and removes non-item sprite targets on hit. Enemies can
+  fire the same projectile type at the player (see S5); a strict `from_enemy`
+  flag keeps player shots from ever hitting the player and enemy shots from
+  ever hitting other sprites.
 
 #### S5 · Enemy AI & characters `[✅]`
 - State machine: idle → patrol → alert → chase → attack
 - Uses G5 multi-angle sprites; line-of-sight ray; takes damage, has health
-- Current implementation treats map `3` world sprites as lightweight enemies:
-  they alert by distance, chase the player, deal timed contact damage, and take
-  projectile damage before being removed from the sprite list.
+- Current implementation has two enemy types built on map sprites: `3` is a
+  melee enemy that alerts by distance, chases the player, and deals timed
+  contact damage; `K` is a ranged enemy that fires a projectile at the player
+  on a cooldown once in range and falls back to chasing outside that range.
+  Both take projectile damage and are removed from the sprite list on death.
 
 ---
 

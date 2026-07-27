@@ -51,7 +51,9 @@ typedef enum e_event_action
 	EVENT_CLOSE_DOORS,
 	EVENT_ADD_SCORE,
 	EVENT_DAMAGE_PLAYER,
-	EVENT_SHOW_MESSAGE
+	EVENT_SHOW_MESSAGE,
+	EVENT_SECTOR_ANIMATE,
+	EVENT_OPEN_ONE_DOOR
 }		t_event_action;
 
 typedef enum e_game_state

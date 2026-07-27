@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_libraries.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 21:58:14 by rperez-t          #+#    #+#             */
-/*   Updated: 2024/07/16 21:58:16 by rperez-t         ###   ########.fr       */
+/*   Updated: 2026/07/24 10:44:02 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,17 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# if defined(__has_include)
+#  if __has_include(<SDL2/SDL.h>)
+#   include <SDL2/SDL.h>
+#  elif __has_include(<SDL.h>)
+#   include <SDL.h>
+#  else
+#   error "SDL2 header not found"
+#  endif
+# else
+#  include <SDL2/SDL.h>
+# endif
 
 // Mlx
 # ifdef __linux__

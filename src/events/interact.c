@@ -12,14 +12,14 @@
 
 #include "../../include/cub3d.h"
 
-static bool	is_switch(t_coord pos, t_game *g)
+static bool	in_coord_list(t_coord pos, t_coord *list, int count)
 {
 	int	i;
 
 	i = 0;
-	while (i < g->map.switch_count)
+	while (i < count)
 	{
-		if (g->map.switches[i].x == pos.x && g->map.switches[i].y == pos.y)
+		if (list[i].x == pos.x && list[i].y == pos.y)
 			return (true);
 		i++;
 	}
@@ -49,6 +49,29 @@ static bool	try_pickup_item_at(t_coord pos, t_game *g)
 	return (false);
 }
 
+static bool	try_switches_at(t_coord check, t_game *g)
+{
+	if (in_coord_list(check, g->map.switches, g->map.switch_count))
+	{
+		trigger_switch_sequence(g);
+		return (true);
+	}
+	if (in_coord_list(check, g->map.elevators, g->map.elevator_count))
+	{
+		trigger_elevator_switch(g, check);
+		return (true);
+	}
+	if (in_coord_list(check, g->map.secrets, g->map.secret_count))
+	{
+		if (consume_key(g))
+			trigger_secret_switch(g, check);
+		else
+			show_message(g, "NEED A KEY", MESSAGE_DISPLAY_TIME);
+		return (true);
+	}
+	return (false);
+}
+
 void	interact(t_game *g)
 {
 	t_position	dir;
@@ -65,11 +88,8 @@ void	interact(t_game *g)
 			return ;
 		if (try_pickup_item_at(check, g))
 			return ;
-		if (is_switch(check, g))
-		{
-			trigger_switch_sequence(g);
+		if (try_switches_at(check, g))
 			return ;
-		}
 		if (is_door(check, g) && !is_on_player(check, g))
 		{
 			activate_door(check, g);

@@ -42,6 +42,13 @@ static int	render_thread_count(void)
 	return ((int)cores);
 }
 
+static double	ray_occluder_distance(t_ray *ray)
+{
+	if (ray->height_step_count > 0)
+		return (ray->height_steps[0].distance);
+	return (ray->distance);
+}
+
 static void	*render_band(void *param)
 {
 	t_render_band	*band;
@@ -60,7 +67,7 @@ static void	*render_band(void *param)
 		cast_one_ray(&band->rays[x], start_angle + x * angle_step, g);
 		band->rays[x].x = x;
 		draw_one_ray(&band->rays[x], g);
-		band->z_buffer[x] = band->rays[x].distance;
+		band->z_buffer[x] = ray_occluder_distance(&band->rays[x]);
 		x++;
 	}
 	return (NULL);
@@ -221,7 +228,7 @@ void	draw_all_rays(t_ray *rays, t_game *g, double *z_buffer)
 	{
 		rays[x].x = x;
 		draw_one_ray(&rays[x], g);
-		z_buffer[x] = rays[x].distance;
+		z_buffer[x] = ray_occluder_distance(&rays[x]);
 		x++;
 	}
 }
@@ -230,6 +237,7 @@ void	draw_one_ray(t_ray *ray, t_game *g)
 {
 	t_dimensions	wall;
 
+	draw_height_steps(ray, g);
 	get_wall_top_bottom(&wall, ray, g);
 	draw_wall_slice(wall, ray, g);
 	if (ray->hit_block == DECAL_WALL)

@@ -103,6 +103,7 @@ int	check_level_file(char *path)
 	printf("  angled walls: %d\n", g.map.segment_count);
 	printf("  sprites: %d\n", g.map.sprite_count);
 	printf("  items: %d\n", g.map.item_count);
+	check_segment_loops(&g);
 	free_all(&g);
 	return (EXIT_SUCCESS);
 }

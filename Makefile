@@ -42,18 +42,24 @@ INC_DIRS		=	include src $(LIBFT_DIR)/include $(MLX_DIR)
 CFLAGS			+=	$(addprefix -I, $(INC_DIRS))
 LDFLAGS			=	-L$(LIBFT_DIR) -L$(MLX_DIR) -lft -lmlx $(MLX_LNK) -pthread
 
+# SDL2 (sound and music handling)
+SDL_CFLAGS		:=	$(shell sdl2-config --cflags)
+SDL_LIBS		:=	$(shell sdl2-config --libs)
+CFLAGS			+=	$(SDL_CFLAGS)
+LDFLAGS			+=	$(SDL_LIBS)
+
 # Source and Object Files
 VPATH			=	src src/events src/graphics src/parser src/parser/utils src/utils
 
 # Source Files
 SRC_MAIN		=	main.c
-SRC_EVENTS		=	door_bonus.c editor.c enemies.c events.c game_loop.c hooks.c hooks_door_bonus.c interact.c level_flow.c menu.c message.c \
-					mlx_mouse_pos_bonus.c pickup.c projectile.c stop_game.c triggers.c update_player_pos.c
-SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_scene.c draw_sprites.c draw_utils.c draw_wall.c graphics_utils.c \
-					hud.c load_game.c minimap.c ray_casting.c render.c time_bonus.c
-SRC_PARSER		=	generate_map.c get_header.c get_map.c packed_level.c parser.c valid_header.c valid_map.c \
-					parsing_error.c header.c map.c security.c valid_header_check_bonus.c
-SRC_UTILS		=	allocation.c error.c free.c init_game.c sectors.c sound.c
+SRC_EVENTS		=	door_bonus.c editor.c enemies.c enemy_ranged.c enemy_update.c events.c game_loop.c hooks.c hooks_door_bonus.c interact.c item_effects.c level_flow.c level_loader.c menu.c message.c \
+					mlx_mouse_pos_bonus.c pickup.c projectile.c projectile_fire.c projectile_update.c sector_events.c stop_game.c switch_targets.c triggers.c update_player_pos.c
+SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_risers.c draw_scene.c draw_sprites.c draw_step_bands.c draw_utils.c draw_wall.c graphics_utils.c \
+					height_step.c hud.c load_game.c minimap.c minimap_utils.c ray_casting.c render.c time_bonus.c
+SRC_PARSER		=	generate_map.c generate_map_utils.c get_header.c get_map.c packed_level.c parser.c valid_header.c valid_map.c \
+					parsing_error.c header.c map.c security.c valid_header_check_bonus.c segment_check.c
+SRC_UTILS		=	allocation.c error.c free.c init_game.c sectors.c sector_origin.c sound.c sound_utils.c
 
 SRC				=	$(SRC_MAIN) $(SRC_EVENTS) $(SRC_GRAPHICS) $(SRC_PARSER) $(SRC_UTILS)
 

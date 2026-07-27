@@ -34,6 +34,7 @@ typedef struct s_dimensions
 {
 	int			top;
 	int			bottom;
+	int			raw_top;
 }				t_dimensions;
 
 typedef struct s_door
@@ -56,9 +57,22 @@ typedef struct s_enemy
 {
 	t_position	pos;
 	int			health;
+	int			max_health;
 	int			sprite_index;
 	double		attack_timer;
+	int			type;
+	bool		is_ranged;
+	double		fire_timer;
 	bool		active;
+	double		move_speed;
+	int			contact_damage;
+	double		attack_delay;
+	double		attack_range_sq;
+	double		alert_range_sq;
+	double		fire_delay;
+	double		ranged_range_sq;
+	int			projectile_damage;
+	int			score_value;
 }				t_enemy;
 
 typedef struct s_sector
@@ -69,6 +83,9 @@ typedef struct s_sector
 	double		slope_y;
 	int			light;
 	bool		active;
+	bool		elevator_raised;
+	int			origin_x;
+	int			origin_y;
 }				t_sector;
 
 typedef struct s_wall_segment
@@ -97,6 +114,10 @@ typedef struct s_map
 	int			item_count;
 	t_coord		*switches;
 	int			switch_count;
+	t_coord		*elevators;
+	int			elevator_count;
+	t_coord		*secrets;
+	int			secret_count;
 	t_coord		*hazard_zones;
 	int			hazard_count;
 	t_coord		*message_zones;
@@ -165,6 +186,7 @@ typedef struct s_assets
 	t_texture	hud_weapons[WEAPON_NB][WEAPON_STATE_NB];
 	t_texture	ammo_icon;
 	t_texture	item_icons[ITEM_TYPES_NB];
+	t_texture	enemy_icons[ENEMY_TYPES_NB];
 	bool		has_sky;
 	bool		has_sprite_frames;
 	int			floor_color;
@@ -190,6 +212,14 @@ typedef struct s_transparent_hit
 	int		side;
 }			t_transparent_hit;
 
+typedef struct s_height_step
+{
+	double	distance;
+	int		side;
+	int		near_sector;
+	int		far_sector;
+}			t_height_step;
+
 typedef struct s_ray
 {
 	int			x;
@@ -210,6 +240,8 @@ typedef struct s_ray
 	int			segment_sector;
 	t_transparent_hit	transparent_hits[TRANSPARENT_HIT_MAX];
 	int					transparent_count;
+	t_height_step		height_steps[HEIGHT_STEP_MAX];
+	int					height_step_count;
 }				t_ray;
 
 typedef struct s_sprite_draw
@@ -238,6 +270,22 @@ typedef struct s_dda
 	t_ray		*ray;
 }				t_dda;
 
+typedef struct s_step_ctx
+{
+	t_ray	*ray;
+	double	camera_height;
+	double	near_d;
+	double	far_d;
+	double	inv_cos;
+	bool	is_floor;
+}			t_step_ctx;
+
+typedef struct s_z_range
+{
+	double	lo;
+	double	hi;
+}			t_z_range;
+
 typedef struct s_texture_slice
 {
 	int			screen_x;
@@ -247,6 +295,7 @@ typedef struct s_texture_slice
 	double		texture_x;
 	double		viewer_distance;
 	int			light;
+	int			raw_top;
 
 	int			texture_x_size;
 	double		height;
@@ -289,6 +338,10 @@ typedef struct s_world_event
 	double			timer;
 	double			reload;
 	int				value;
+	int				target;
+	double			from_value;
+	double			to_value;
+	t_coord			door_target;
 	bool			repeat;
 	bool			active;
 	char			message[HUD_MESSAGE_LEN];
@@ -301,12 +354,23 @@ typedef struct s_level_flow
 	bool			failed;
 	double			end_timer;
 	int				required_items;
+	char			next_level[LINE_SIZE];
 }				t_level_flow;
+
+typedef struct s_audio_channel
+{
+	unsigned int	device;
+	unsigned char	*buf;
+	unsigned int	len;
+	unsigned int	pos;
+	bool			loop;
+}				t_channel;
 
 typedef struct s_audio
 {
 	bool			enabled;
-	pid_t			music_pid;
+	t_channel		music;
+	t_channel		sfx[SFX_CHANNELS_NB];
 	char			music_path[LINE_SIZE];
 	char			sound_dir[LINE_SIZE];
 }				t_audio;
@@ -320,7 +384,23 @@ typedef struct s_projectile
 	int				size;
 	int				color;
 	bool			active;
+	bool			from_enemy;
 }				t_projectile;
+
+typedef struct s_shot_spec
+{
+	t_position		origin;
+	double			angle;
+	int				damage;
+	bool			from_enemy;
+}				t_shot_spec;
+
+typedef struct s_door_search
+{
+	t_coord			pos;
+	t_coord			best;
+	long			best_dist;
+}				t_door_search;
 
 typedef struct s_menu
 {
@@ -375,6 +455,8 @@ typedef struct s_header
 	char		transparent_texture[LINE_SIZE];
 	char		decal_texture[LINE_SIZE];
 	char		sprite_frame_textures[SPRITE_FRAME_NB][LINE_SIZE];
+	char		enemy_texture[ENEMY_TYPES_NB][LINE_SIZE];
+	char		next_level[LINE_SIZE];
 	int			floor[3];
 	int			ceiling[3];
 }				t_header;

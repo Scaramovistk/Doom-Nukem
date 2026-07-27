@@ -31,6 +31,22 @@ static void	add_level(t_menu *menu, const char *name)
 	menu->level_count++;
 }
 
+static bool	is_new_game_entry(const char *name)
+{
+	return (ft_strcmp((char *)name, "e1m1.dnk") == 0);
+}
+
+static bool	file_exists(const char *path)
+{
+	int	fd;
+
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+		return (false);
+	close(fd);
+	return (true);
+}
+
 static void	load_menu_levels(t_menu *menu)
 {
 	DIR				*dir;
@@ -39,10 +55,12 @@ static void	load_menu_levels(t_menu *menu)
 	dir = opendir(MENU_LEVEL_DIR);
 	if (!dir)
 		return ;
+	if (file_exists(MENU_LEVEL_DIR "/e1m1.dnk"))
+		add_level(menu, "e1m1.dnk");
 	entry = readdir(dir);
 	while (entry)
 	{
-		if (is_level_file(entry->d_name))
+		if (is_level_file(entry->d_name) && !is_new_game_entry(entry->d_name))
 			add_level(menu, entry->d_name);
 		entry = readdir(dir);
 	}
@@ -79,6 +97,13 @@ static char	*level_basename(char *path)
 	return (slash + 1);
 }
 
+static char	*menu_entry_label(t_menu *menu, int i)
+{
+	if (i == 0 && is_new_game_entry(level_basename(menu->levels[0])))
+		return ("New Game (Doom E1M1-E1M5)");
+	return (level_basename(menu->levels[i]));
+}
+
 void	render_menu(t_game *g)
 {
 	int		i;
@@ -100,7 +125,7 @@ void	render_menu(t_game *g)
 		ft_strlcpy(line, "  ", LINE_SIZE);
 		if (i == g->menu.selected)
 			ft_strlcpy(line, "> ", LINE_SIZE);
-		ft_strlcat(line, level_basename(g->menu.levels[i]), LINE_SIZE);
+		ft_strlcat(line, menu_entry_label(&g->menu, i), LINE_SIZE);
 		mlx_string_put(g->mlx, g->mlx_win, 470, y + i * 28, color, line);
 		i++;
 	}
@@ -116,38 +141,13 @@ void	render_menu(t_game *g)
 
 static void	start_selected_level(t_game *g)
 {
-	char	*argv[2];
-
 	if (!g->menu.level_count)
 		return ;
-	argv[0] = "doom-nukem";
-	argv[1] = g->menu.levels[g->menu.selected];
-	if (!ft_parse_file(2, argv, g))
+	if (!load_level_path(g, g->menu.levels[g->menu.selected]))
 	{
 		show_message(g, "LEVEL LOAD FAILED", MESSAGE_DISPLAY_TIME);
 		render_menu(g);
-		return ;
 	}
-	g->state = STATE_PLAYING;
-	g->menu.active = false;
-	load_game(g);
-	if (g->menu.difficulty == 0)
-	{
-		g->hud.health = 150;
-		g->hud.max_health = 150;
-		g->hud.ammo += 20;
-	}
-	else if (g->menu.difficulty == 2)
-	{
-		g->hud.health = 75;
-		g->hud.max_health = 75;
-		if (g->hud.ammo > 10)
-			g->hud.ammo -= 10;
-	}
-	setup_hooks(g);
-	start_level_flow(g);
-	start_background_music(g);
-	render(g);
 }
 
 int	menu_key(int key, t_game *g)

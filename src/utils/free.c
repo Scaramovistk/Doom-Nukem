@@ -50,7 +50,7 @@ static void	remove_tree(char *path)
 	rmdir(path);
 }
 
-static void	cleanup_unpacked_level(t_game *g)
+void	cleanup_unpacked_level(t_game *g)
 {
 	if (is_unpack_dir(g))
 		remove_tree(g->unpack_dir);
@@ -105,6 +105,13 @@ void	ft_destroy_textures(t_game *g)
 	while (i--)
 	{
 		img = &g->assets.item_icons[i].img;
+		if (img->ptr)
+			mlx_destroy_image(g->mlx, img->ptr);
+	}
+	i = ENEMY_TYPES_NB;
+	while (i--)
+	{
+		img = &g->assets.enemy_icons[i].img;
 		if (img->ptr)
 			mlx_destroy_image(g->mlx, img->ptr);
 	}

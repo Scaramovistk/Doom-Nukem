@@ -2,6 +2,13 @@
 
 Single-executable Doom-Nukem raycaster built from the cub3D base.
 
+## Dependencies
+
+- MinilibX (bundled under `lib/`)
+- SDL2 (sound and music playback) — install via `brew install sdl2` on macOS or
+  `apt install libsdl2-dev` on Linux. The Makefile picks up flags from
+  `sdl2-config`.
+
 ## Build
 
 ```sh
@@ -82,9 +89,17 @@ the same HUD icon asset set as pickup items.
 
 ## Scripted Events
 
-Switch interactions enqueue timed world events. The current sequence shows a
-message, adds score, toggles doors after a short delay, then closes doors again
-after a timer.
+Switch interactions enqueue timed world events. Map `T` is the default switch:
+it shows a message, adds score, toggles doors after a short delay, then closes
+doors again after a timer. Two additional switch types target a single
+specific device instead of every door on the map:
+
+- `L` — elevator switch. Animates the floor of the sector beneath it between
+  its resting height and a raised height over `ELEVATOR_DURATION` seconds,
+  clamped so it can never rise into the ceiling. Triggering it again lowers it
+  back down.
+- `P` — secret-passage switch. Opens the single nearest `2` door tile after a
+  short delay, leaving every other door on the map untouched.
 
 ## Text Overlay
 
@@ -95,13 +110,17 @@ zones, and scripted events.
 
 The player can fire physical projectiles that consume HUD ammo, travel forward,
 stop on solid walls/closed doors, leave wall decals, and hit non-item sprite
-targets. `Q` switches between pistol and blaster behavior.
+targets. `Q` switches between pistol and blaster behavior. Enemy-fired
+projectiles use the same travel/collision code but can only damage the player,
+never other sprites, and player-fired projectiles can never hit the player.
 
 ## Enemies
 
-Map `3` sprites act as simple enemies. They alert when the player is nearby,
-chase through legal floor cells, deal timed contact damage, take projectile
-damage, and award score when defeated.
+Map `3` sprites are melee enemies: they alert when the player is nearby, chase
+through legal floor cells, deal timed contact damage, take projectile damage,
+and award score when defeated. Map `K` sprites are ranged enemies: instead of
+contact damage they fire a projectile at the player on a cooldown once in
+range, and fall back to melee-style chasing outside that range.
 
 ## Rendering
 
@@ -121,4 +140,6 @@ mission after a short message.
 
 Sound effects and looping music are loaded from the active level's unpacked
 sound directory for `.dnk` files, or from `assets/sounds/` for classic `.cub`
-files. Missing files are skipped without interrupting gameplay.
+files. Missing files are skipped without interrupting gameplay. Playback uses
+SDL2's audio queueing API: a dedicated device loops the music buffer, and a
+small fixed pool of channels lets sound effects overlap.

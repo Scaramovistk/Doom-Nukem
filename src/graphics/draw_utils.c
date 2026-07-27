@@ -35,14 +35,11 @@ void	draw_texture_slice(t_texture_slice *s, t_game *g)
 	int		texture_y;
 	int		pixel_color;
 	int		screen_y;
-	int		horizon;
 
-	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
 	s->texture_x_size = (int)(s->texture_x * (double)TEXTURE_SIZE);
 	s->height = WIN_HEIGHT / s->viewer_distance;
 	s->texture_step = 1.0 * TEXTURE_SIZE / s->height;
-	texture_y_pos = (s->y_start - horizon + s->height / 2)
-		* s->texture_step;
+	texture_y_pos = (s->y_start - s->raw_top) * s->texture_step;
 	screen_y = s->y_start;
 	while (screen_y < s->y_end)
 	{
@@ -75,14 +72,11 @@ void	draw_texture_slice_alpha(t_texture_slice *s, t_game *g)
 	int		texture_y;
 	int		pixel_color;
 	int		screen_y;
-	int		horizon;
 
-	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
 	s->texture_x_size = (int)(s->texture_x * (double)TEXTURE_SIZE);
 	s->height = WIN_HEIGHT / s->viewer_distance;
 	s->texture_step = 1.0 * TEXTURE_SIZE / s->height;
-	texture_y_pos = (s->y_start - horizon + s->height / 2)
-		* s->texture_step;
+	texture_y_pos = (s->y_start - s->raw_top) * s->texture_step;
 	screen_y = s->y_start;
 	while (screen_y < s->y_end)
 	{

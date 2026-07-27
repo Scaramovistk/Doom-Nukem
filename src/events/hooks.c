@@ -94,6 +94,8 @@ int	pressed(int key, t_game *g)
 		select_item(g, 2);
 	else if (key == KEY_4)
 		select_item(g, 3);
+	else if (key == KEY_ENTER)
+		use_selected_item(g);
 	return (0);
 }
 

@@ -81,3 +81,13 @@ bool	update_one_door(t_door *door, double delta_time)
 	}
 	return (updated);
 }
+
+void	open_one_door(t_game *g, t_coord target)
+{
+	if (target.x < 0 || target.y < 0 || target.x >= g->map.width
+		|| target.y >= g->map.height)
+		return ;
+	if (g->map.grid[target.y][target.x] != DOOR)
+		return ;
+	g->map.doors[target.y][target.x].is_opening = true;
+}

@@ -61,6 +61,10 @@ void	cast_segment_walls(t_ray *ray, t_game *g)
 			ray->hit_block = WALL;
 			ray->hit_door = NULL;
 			ray->transparent_count = 0;
+			while (ray->height_step_count > 0
+				&& ray->height_steps[ray->height_step_count - 1].distance
+				>= distance)
+				ray->height_step_count--;
 		}
 		i++;
 	}

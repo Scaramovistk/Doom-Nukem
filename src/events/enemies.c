@@ -12,16 +12,6 @@
 
 #include "../../include/cub3d.h"
 
-static double	dist_sq(t_position a, t_position b)
-{
-	double	dx;
-	double	dy;
-
-	dx = a.x - b.x;
-	dy = a.y - b.y;
-	return (dx * dx + dy * dy);
-}
-
 static bool	enemy_cell_legal(t_game *g, t_position pos)
 {
 	t_coord	cell;
@@ -86,7 +76,7 @@ bool	damage_enemy_at_sprite(t_game *g, int sprite_index, int damage)
 			{
 				enemy->active = false;
 				remove_enemy_sprite(g, enemy);
-				g->hud.score += 25;
+				g->hud.score += enemy->score_value;
 				show_message(g, "TARGET DOWN", 1.2);
 			}
 			return (true);
@@ -96,34 +86,34 @@ bool	damage_enemy_at_sprite(t_game *g, int sprite_index, int damage)
 	return (false);
 }
 
-static bool	enemy_attack(t_enemy *enemy, t_game *g, double distance)
+bool	enemy_attack(t_enemy *enemy, t_game *g, double distance)
 {
-	if (distance > ENEMY_ATTACK_RANGE * ENEMY_ATTACK_RANGE)
+	if (distance > enemy->attack_range_sq)
 		return (false);
 	enemy->attack_timer -= g->delta_time;
 	if (enemy->attack_timer <= 0.0)
 	{
-		g->hud.health -= ENEMY_ATTACK_DAMAGE;
+		g->hud.health -= enemy->contact_damage;
 		if (g->hud.health < 0)
 			g->hud.health = 0;
-		enemy->attack_timer = ENEMY_ATTACK_DELAY;
+		enemy->attack_timer = enemy->attack_delay;
 		return (true);
 	}
 	return (false);
 }
 
-static bool	enemy_chase(t_enemy *enemy, t_game *g, double distance)
+bool	enemy_chase(t_enemy *enemy, t_game *g, double distance)
 {
 	t_position	next;
 	double		len;
 	double		step;
 
-	if (distance > ENEMY_ALERT_RANGE * ENEMY_ALERT_RANGE)
+	if (distance > enemy->alert_range_sq)
 		return (false);
 	len = sqrt(distance);
 	if (len <= 0.001)
 		return (false);
-	step = ENEMY_MOVE_SPEED * g->delta_time;
+	step = enemy->move_speed * g->delta_time;
 	next.x = enemy->pos.x + ((g->player.pos.x - enemy->pos.x) / len) * step;
 	next.y = enemy->pos.y + ((g->player.pos.y - enemy->pos.y) / len) * step;
 	if (!enemy_cell_legal(g, next))
@@ -132,27 +122,4 @@ static bool	enemy_chase(t_enemy *enemy, t_game *g, double distance)
 	if (enemy->sprite_index >= 0 && enemy->sprite_index < g->map.sprite_count)
 		g->map.sprites[enemy->sprite_index] = enemy->pos;
 	return (true);
-}
-
-bool	update_enemies(t_game *g)
-{
-	bool	updated;
-	double	distance;
-	int		i;
-
-	updated = false;
-	i = 0;
-	while (i < g->map.enemy_count)
-	{
-		if (g->map.enemies[i].active)
-		{
-			distance = dist_sq(g->map.enemies[i].pos, g->player.pos);
-			if (enemy_attack(&g->map.enemies[i], g, distance))
-				updated = true;
-			else if (enemy_chase(&g->map.enemies[i], g, distance))
-				updated = true;
-		}
-		i++;
-	}
-	return (updated);
 }

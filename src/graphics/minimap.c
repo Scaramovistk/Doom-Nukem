@@ -12,7 +12,7 @@
 
 #include "../../include/cub3d.h"
 
-static void	minimap_pixel(t_game *g, int x, int y, int color)
+void	minimap_pixel(t_game *g, int x, int y, int color)
 {
 	if (x < 0 || y < 0 || x >= WIN_WIDTH || y >= WIN_HEIGHT)
 		return ;
@@ -139,6 +139,7 @@ void	draw_minimap(t_game *g)
 	size.y = g->map.height * MAP_SCALE + 8;
 	minimap_rect(g, origin, size, HUD_BG);
 	draw_map_cells(g, (t_coord){origin.x + 4, origin.y + 4});
+	draw_map_segments(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_exits(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_sprites(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_items(g, (t_coord){origin.x + 4, origin.y + 4});

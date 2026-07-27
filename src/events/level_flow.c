@@ -77,8 +77,22 @@ static bool	update_end_state(t_game *g)
 		return (false);
 	g->level.end_timer -= g->delta_time;
 	if (g->level.end_timer <= 0.0)
-		stop_game(g);
+	{
+		if (g->level.completed && g->level.next_level[0])
+			load_next_level(g);
+		else
+			stop_game(g);
+	}
 	return (true);
+}
+
+void	load_next_level(t_game *g)
+{
+	char	path[LINE_SIZE];
+
+	ft_strlcpy(path, g->level.next_level, LINE_SIZE);
+	if (!load_level_path(g, path))
+		stop_game(g);
 }
 
 bool	update_level_flow(t_game *g)

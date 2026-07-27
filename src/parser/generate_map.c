@@ -22,16 +22,35 @@ t_block	ft_convert_tblock(char c)
 		return (PLAYER);
 	else if (c == '2')
 		return (DOOR);
-	else if (c == '3')
+	else if (c == '3' || c == 'K' || c == 'I' || c == 'D' || c == 'C')
 		return (SPRITE);
 	else if (c == '4')
 		return (TRANSPARENT_WALL);
 	else if (c == '5' || c == 'T')
 		return (DECAL_WALL);
-	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M' || c == 'X')
+	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M' || c == 'X'
+		|| c == 'L' || c == 'P')
 		return (EMPTY);
 	else
 		return (NULL_BLOCK);
+}
+
+static bool	ft_is_enemy_char(char c)
+{
+	return (c == '3' || c == 'K' || c == 'I' || c == 'D' || c == 'C');
+}
+
+static int	enemy_type_from_char(char c)
+{
+	if (c == 'K')
+		return (1);
+	if (c == 'I')
+		return (2);
+	if (c == 'D')
+		return (3);
+	if (c == 'C')
+		return (4);
+	return (0);
 }
 
 static int	count_sprites(char **map, int lines, int width)
@@ -47,7 +66,7 @@ static int	count_sprites(char **map, int lines, int width)
 		hor = 0;
 		while (hor < width)
 		{
-			if (map[vert][hor] == '3')
+			if (ft_is_enemy_char(map[vert][hor]))
 				count++;
 			hor++;
 		}
@@ -130,9 +149,45 @@ static void	add_items(char **map, int lines, int width, t_game *g, int deco)
 	}
 }
 
-static void	add_enemies(int count, t_game *g)
+typedef struct s_enemy_stats
 {
-	int	i;
+	int		health;
+	bool	is_ranged;
+	double	move_speed;
+	int		contact_damage;
+	double	attack_delay;
+	double	attack_range;
+	double	alert_range;
+	double	fire_delay;
+	double	ranged_range;
+	int		projectile_damage;
+	int		score_value;
+}				t_enemy_stats;
+
+static const t_enemy_stats	*enemy_stats_for_type(int type)
+{
+	static const t_enemy_stats	table[5] = {
+	{20, false, ENEMY_MOVE_SPEED, 6, ENEMY_ATTACK_DELAY,
+		ENEMY_ATTACK_RANGE, ENEMY_ALERT_RANGE, 0.0, 0.0, 0, 10},
+	{30, true, ENEMY_MOVE_SPEED, 0, 0.0,
+		0.0, ENEMY_ALERT_RANGE, ENEMY_FIRE_DELAY, ENEMY_RANGED_RANGE, 6, 25},
+	{45, true, ENEMY_MOVE_SPEED, 0, 0.0,
+		0.0, ENEMY_ALERT_RANGE, 1.3, ENEMY_RANGED_RANGE, 8, 35},
+	{60, false, ENEMY_MOVE_SPEED * 1.6, 12, 0.6,
+		ENEMY_ATTACK_RANGE, ENEMY_ALERT_RANGE * 1.3, 0.0, 0.0, 0, 45},
+	{120, true, ENEMY_MOVE_SPEED * 0.5, 0, 0.0,
+		0.0, ENEMY_ALERT_RANGE, 1.8, ENEMY_RANGED_RANGE * 1.2, 12, 60},
+	};
+
+	if (type < 0 || type >= 5)
+		type = 0;
+	return (&table[type]);
+}
+
+static void	add_enemies(int count, int *types, t_game *g)
+{
+	int						i;
+	const t_enemy_stats	*stats;
 
 	g->map.enemy_count = count;
 	if (!count)
@@ -141,21 +196,39 @@ static void	add_enemies(int count, t_game *g)
 	i = 0;
 	while (i < count)
 	{
+		stats = enemy_stats_for_type(types[i]);
 		g->map.enemies[i].pos = g->map.sprites[i];
-		g->map.enemies[i].health = ENEMY_HEALTH;
+		g->map.enemies[i].health = stats->health;
+		g->map.enemies[i].max_health = stats->health;
 		g->map.enemies[i].sprite_index = i;
 		g->map.enemies[i].attack_timer = 0.0;
+		g->map.enemies[i].fire_timer = 0.0;
+		g->map.enemies[i].type = types[i];
+		g->map.enemies[i].is_ranged = stats->is_ranged;
 		g->map.enemies[i].active = true;
+		g->map.enemies[i].move_speed = stats->move_speed;
+		g->map.enemies[i].contact_damage = stats->contact_damage;
+		g->map.enemies[i].attack_delay = stats->attack_delay;
+		g->map.enemies[i].attack_range_sq = stats->attack_range
+			* stats->attack_range;
+		g->map.enemies[i].alert_range_sq = stats->alert_range
+			* stats->alert_range;
+		g->map.enemies[i].fire_delay = stats->fire_delay;
+		g->map.enemies[i].ranged_range_sq = stats->ranged_range
+			* stats->ranged_range;
+		g->map.enemies[i].projectile_damage = stats->projectile_damage;
+		g->map.enemies[i].score_value = stats->score_value;
 		i++;
 	}
 }
 
 static void	add_sprites(char **map, int lines, int width, t_game *g)
 {
-	int	vert;
-	int	hor;
-	int	i;
-	int	deco;
+	int		vert;
+	int		hor;
+	int		i;
+	int		deco;
+	int		*types;
 
 	deco = count_sprites(map, lines, width);
 	g->map.item_count = count_items(map, lines, width);
@@ -163,6 +236,9 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 	if (!g->map.sprite_count)
 		return ;
 	g->map.sprites = calloc_s(g->map.sprite_count, sizeof(t_position), g);
+	types = NULL;
+	if (deco)
+		types = calloc_s(deco, sizeof(int), g);
 	i = 0;
 	vert = -1;
 	while (++vert < lines)
@@ -170,11 +246,14 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 		hor = -1;
 		while (++hor < width)
 		{
-			if (map[vert][hor] == '3')
+			if (ft_is_enemy_char(map[vert][hor]))
+			{
+				types[i] = enemy_type_from_char(map[vert][hor]);
 				g->map.sprites[i++] = (t_position){hor + 0.5, vert + 0.5};
+			}
 		}
 	}
-	add_enemies(deco, g);
+	add_enemies(deco, types, g);
 	add_items(map, lines, width, g, deco);
 }
 
@@ -290,6 +369,8 @@ static void	add_interactables(char **map, int lines, int width, t_game *g)
 	add_hazards(map, lines, width, g);
 	add_messages(map, lines, width, g);
 	add_exits(map, lines, width, g);
+	add_elevators(map, lines, width, g);
+	add_secrets(map, lines, width, g);
 }
 
 void	ft_populate_map(char **map, int *vals, t_game *g)
@@ -375,4 +456,14 @@ void	ft_populate_info(t_header *h, t_game *g)
 	}
 	if (i == SPRITE_FRAME_NB)
 		g->assets.has_sprite_frames = true;
+	i = 0;
+	while (i < ENEMY_TYPES_NB)
+	{
+		if (h->enemy_texture[i][0])
+			g->assets.enemy_icons[i].source = s_alloc(
+					ft_strdup(h->enemy_texture[i]), g);
+		i++;
+	}
+	if (h->next_level[0])
+		ft_strlcpy(g->level.next_level, h->next_level, LINE_SIZE);
 }

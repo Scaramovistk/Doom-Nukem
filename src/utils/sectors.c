@@ -22,6 +22,9 @@ static t_sector	default_sector(void)
 	sector.slope_y = 0.0;
 	sector.light = DNK_DEFAULT_LIGHT;
 	sector.active = true;
+	sector.elevator_raised = false;
+	sector.origin_x = 0;
+	sector.origin_y = 0;
 	return (sector);
 }
 
@@ -106,8 +109,8 @@ double	get_floor_z_at(t_game *g, t_position pos)
 
 	cell = cell_from_pos(pos);
 	sector = sector_at_cell(g, cell);
-	local_x = pos.x - cell.x - 0.5;
-	local_y = pos.y - cell.y - 0.5;
+	local_x = pos.x - sector->origin_x;
+	local_y = pos.y - sector->origin_y;
 	return (sector->floor_z + sector->slope_x * local_x
 		+ sector->slope_y * local_y);
 }
@@ -123,8 +126,8 @@ double	get_ceiling_z_at(t_game *g, t_position pos)
 
 	cell = cell_from_pos(pos);
 	sector = sector_at_cell(g, cell);
-	local_x = pos.x - cell.x - 0.5;
-	local_y = pos.y - cell.y - 0.5;
+	local_x = pos.x - sector->origin_x;
+	local_y = pos.y - sector->origin_y;
 	ceil_z = sector->ceil_z + sector->slope_x * local_x
 		+ sector->slope_y * local_y;
 	floor_z = get_floor_z_at(g, pos);
