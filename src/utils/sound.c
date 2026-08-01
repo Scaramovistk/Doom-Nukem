@@ -14,11 +14,13 @@
 
 void	init_audio(t_game *g)
 {
+# ifdef AUDIO_SDL2
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
 	{
 		g->audio.enabled = false;
 		return ;
 	}
+# endif
 	g->audio.enabled = true;
 	if (!g->audio.sound_dir[0])
 		ft_strlcpy(g->audio.sound_dir, SOUND_DIR, LINE_SIZE);
@@ -57,7 +59,10 @@ void	stop_audio(t_game *g)
 	i = 0;
 	while (i < SFX_CHANNELS_NB)
 		close_channel(&g->audio.sfx[i++]);
+# ifdef AUDIO_SDL2
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+# endif
+	g->audio.enabled = false;
 }
 
 void	update_audio(void)

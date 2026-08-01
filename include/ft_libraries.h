@@ -27,16 +27,22 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# if defined(__has_include)
-#  if __has_include(<SDL2/SDL.h>)
-#   include <SDL2/SDL.h>
-#  elif __has_include(<SDL.h>)
-#   include <SDL.h>
+# if defined(AUDIO_SDL2)
+#  if defined(__has_include)
+#   if __has_include(<SDL2/SDL.h>)
+#    include <SDL2/SDL.h>
+#   elif __has_include(<SDL.h>)
+#    include <SDL.h>
+#   else
+#    error "SDL2 audio backend selected but its header was not found"
+#   endif
 #  else
-#   error "SDL2 header not found"
+#   include <SDL2/SDL.h>
 #  endif
+# elif defined(AUDIO_ALSA)
+#  include <alsa/asoundlib.h>
 # else
-#  include <SDL2/SDL.h>
+#  error "No audio backend selected by the Makefile"
 # endif
 
 // Mlx

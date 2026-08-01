@@ -364,6 +364,16 @@ typedef struct s_audio_channel
 	unsigned int	len;
 	unsigned int	pos;
 	bool			loop;
+# ifdef AUDIO_ALSA
+	snd_pcm_t		*pcm;
+	pthread_t		thread;
+	unsigned int	rate;
+	unsigned int	channels;
+	unsigned int	bits;
+	unsigned int	frame_size;
+	bool			stop;
+	bool			thread_started;
+# endif
 }				t_channel;
 
 typedef struct s_audio

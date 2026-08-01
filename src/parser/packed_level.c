@@ -45,6 +45,15 @@ static bool	starts_with(const char *text, const char *prefix)
 	return (ft_strncmp(text, prefix, ft_strlen(prefix)) == 0);
 }
 
+static void	append_path(char *dst, const char *part)
+{
+	if (ft_strlcat(dst, part, LINE_SIZE) >= LINE_SIZE)
+	{
+		perror("Packed level path is too long");
+		exit(EXIT_FAILURE);
+	}
+}
+
 static void	make_unpack_dir(t_dnk *dnk, t_game *g)
 {
 	char	sub_dir[LINE_SIZE];
@@ -52,11 +61,14 @@ static void	make_unpack_dir(t_dnk *dnk, t_game *g)
 	mkdir("build", 0775);
 	snprintf(dnk->dir, LINE_SIZE, "%s_%d", DNK_UNPACK_ROOT, getpid());
 	mkdir(dnk->dir, 0775);
-	snprintf(sub_dir, LINE_SIZE, "%s/sounds", dnk->dir);
+	ft_strlcpy(sub_dir, dnk->dir, LINE_SIZE);
+	append_path(sub_dir, "/sounds");
 	mkdir(sub_dir, 0775);
-	snprintf(sub_dir, LINE_SIZE, "%s/hud", dnk->dir);
+	ft_strlcpy(sub_dir, dnk->dir, LINE_SIZE);
+	append_path(sub_dir, "/hud");
 	mkdir(sub_dir, 0775);
-	snprintf(dnk->cub_path, LINE_SIZE, "%s/level.cub", dnk->dir);
+	ft_strlcpy(dnk->cub_path, dnk->dir, LINE_SIZE);
+	append_path(dnk->cub_path, "/level.cub");
 	ft_strlcpy(g->unpack_dir, dnk->dir, LINE_SIZE);
 	g->unpacked_level = true;
 }
@@ -108,18 +120,26 @@ static bool	is_hud_asset(const char *key)
 
 static void	asset_path(t_dnk *dnk, t_dnk_asset *asset, t_game *g)
 {
+	ft_strlcpy(asset->path, dnk->dir, LINE_SIZE);
 	if (is_sound_asset(asset->key))
 	{
-		snprintf(asset->path, LINE_SIZE, "%s/sounds/%s.%s", dnk->dir,
-			asset->key + 6, asset->ext);
-		snprintf(g->audio.sound_dir, LINE_SIZE, "%s/sounds/", dnk->dir);
+		append_path(asset->path, "/sounds/");
+		append_path(asset->path, asset->key + 6);
+		ft_strlcpy(g->audio.sound_dir, dnk->dir, LINE_SIZE);
+		append_path(g->audio.sound_dir, "/sounds/");
 	}
 	else if (is_hud_asset(asset->key))
-		snprintf(asset->path, LINE_SIZE, "%s/hud/%s.%s", dnk->dir,
-			asset->key + 4, asset->ext);
+	{
+		append_path(asset->path, "/hud/");
+		append_path(asset->path, asset->key + 4);
+	}
 	else
-		snprintf(asset->path, LINE_SIZE, "%s/%s.%s", dnk->dir,
-			asset->key, asset->ext);
+	{
+		append_path(asset->path, "/");
+		append_path(asset->path, asset->key);
+	}
+	append_path(asset->path, ".");
+	append_path(asset->path, asset->ext);
 }
 
 static bool	extract_asset(int fd, char *header, t_dnk *dnk, t_game *g)

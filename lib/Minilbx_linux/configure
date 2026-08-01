@@ -119,8 +119,8 @@ main(){
 
 	log_info 'Execute "make all" from file "makefile.gen"'
 		${MAKE} -f Makefile.gen all
-	log_info 'Execute "make all" from file "test/makefile.gen"'
-		(cd test ; ${MAKE} -f Makefile.gen all )
+	# The bundled demo links libbsd, which is not a MiniLibX runtime dependency.
+	# Building the library must not require optional packages used only by tests.
 }
 
 main "$@"

@@ -191,11 +191,7 @@ void	ft_int_level_flow(t_level_flow *level)
 
 static void	ft_int_channel(t_channel *channel)
 {
-	channel->device = 0;
-	channel->buf = NULL;
-	channel->len = 0;
-	channel->pos = 0;
-	channel->loop = false;
+	ft_bzero(channel, sizeof(*channel));
 }
 
 void	ft_int_audio(t_audio *audio)

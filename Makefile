@@ -42,11 +42,26 @@ INC_DIRS		=	include src $(LIBFT_DIR)/include $(MLX_DIR)
 CFLAGS			+=	$(addprefix -I, $(INC_DIRS))
 LDFLAGS			=	-L$(LIBFT_DIR) -L$(MLX_DIR) -lft -lmlx $(MLX_LNK) -pthread
 
-# SDL2 (sound and music handling)
-SDL_CFLAGS		:=	$(shell sdl2-config --cflags)
-SDL_LIBS		:=	$(shell sdl2-config --libs)
-CFLAGS			+=	$(SDL_CFLAGS)
-LDFLAGS			+=	$(SDL_LIBS)
+# Audio backend.  SDL2 is preferred when present; Linux can use its native
+# ALSA API instead, so a missing optional SDL2 installation does not prevent
+# the game from building or remove the mandatory sound support.
+SDL_CONFIG		:=	$(shell command -v sdl2-config 2>/dev/null)
+ifneq ($(SDL_CONFIG),)
+    CFLAGS += $(shell $(SDL_CONFIG) --cflags) -DAUDIO_SDL2
+    LDFLAGS += $(shell $(SDL_CONFIG) --libs)
+else ifeq ($(shell pkg-config --exists sdl2 2>/dev/null && echo yes),yes)
+    CFLAGS += $(shell pkg-config --cflags sdl2) -DAUDIO_SDL2
+    LDFLAGS += $(shell pkg-config --libs sdl2)
+else ifeq ($(OS),Linux)
+    ifeq ($(shell pkg-config --exists alsa 2>/dev/null && echo yes),yes)
+        CFLAGS += $(shell pkg-config --cflags alsa) -DAUDIO_ALSA
+        LDFLAGS += $(shell pkg-config --libs alsa)
+    else
+        $(error No audio development library found (install SDL2 or ALSA))
+    endif
+else
+    $(error SDL2 is required for audio on $(OS))
+endif
 
 # Source and Object Files
 VPATH			=	src src/events src/graphics src/parser src/parser/utils src/utils

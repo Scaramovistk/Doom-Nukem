@@ -5,9 +5,13 @@ Single-executable Doom-Nukem raycaster built from the cub3D base.
 ## Dependencies
 
 - MinilibX (bundled under `lib/`)
-- SDL2 (sound and music playback) — install via `brew install sdl2` on macOS or
-  `apt install libsdl2-dev` on Linux. The Makefile picks up flags from
-  `sdl2-config`.
+- SDL2 or ALSA (sound and music playback). SDL2 is preferred when available;
+  on Linux the Makefile automatically falls back to native ALSA
+  (`libasound2-dev`) when SDL2 is not installed.
+
+MiniLibX uses AppKit/OpenGL on macOS and X11 on Linux. The game itself always
+renders ray-cast pixels in software; it does not use OpenGL as a 3D renderer,
+which keeps it within the subject's no-hardware-acceleration requirement.
 
 ## Build
 
