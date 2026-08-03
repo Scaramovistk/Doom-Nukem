@@ -25,7 +25,12 @@ void	fire_enemy_projectile(t_game *g, t_enemy *enemy)
 
 bool	enemy_ranged_attack(t_enemy *enemy, t_game *g, double distance)
 {
+	double	shot_z;
+
 	if (distance > enemy->ranged_range_sq)
+		return (false);
+	shot_z = get_floor_z_at(g, enemy->pos) + PLAYER_STAND_HEIGHT;
+	if (projectile_path_is_blocked(g, enemy->pos, g->player.pos, shot_z))
 		return (false);
 	enemy->fire_timer -= g->delta_time;
 	if (enemy->fire_timer <= 0.0)

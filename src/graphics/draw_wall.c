@@ -53,6 +53,7 @@ void	draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g)
 	slice.viewer_distance = ray->distance;
 	slice.light = wall_light(ray->side, get_light_at(g,
 				ray_world_pos(ray, ray->distance, g)), ray->hit_segment);
+	slice.ray = ray;
 	draw_texture_slice(&slice, g);
 }
 
@@ -77,6 +78,7 @@ static void	draw_transparent_hit(t_transparent_hit *hit, t_ray *ray, t_game *g)
 	slice.viewer_distance = hit->distance;
 	slice.light = wall_light(hit->side, get_light_at(g,
 				ray_world_pos(ray, hit->distance, g)), false);
+	slice.ray = ray;
 	draw_texture_slice_alpha(&slice, g);
 	ray->distance = save_distance;
 	ray->side = save_side;
@@ -112,6 +114,7 @@ void	draw_wall_decal(t_dimensions wall, t_ray *ray, t_game *g)
 	slice.viewer_distance = ray->distance;
 	slice.light = wall_light(ray->side, get_light_at(g,
 				ray_world_pos(ray, ray->distance, g)), ray->hit_segment);
+	slice.ray = ray;
 	draw_texture_slice_alpha(&slice, g);
 }
 

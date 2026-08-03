@@ -35,7 +35,8 @@ static void	update_one_projectile(t_projectile *p, t_game *g, double step)
 
 	next.x = p->pos.x + p->velocity.x * step;
 	next.y = p->pos.y + p->velocity.y * step;
-	if (hit_player(g, p, next) || hit_sprite(g, p, next) || hit_wall(g, next))
+	if (hit_wall(g, p, next) || hit_player(g, p, next)
+		|| hit_sprite(g, p, next))
 	{
 		p->active = false;
 		return ;

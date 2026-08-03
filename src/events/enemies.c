@@ -107,6 +107,8 @@ bool	enemy_chase(t_enemy *enemy, t_game *g, double distance)
 	t_position	next;
 	double		len;
 	double		step;
+	double		dx;
+	double		dy;
 
 	if (distance > enemy->alert_range_sq)
 		return (false);
@@ -116,6 +118,10 @@ bool	enemy_chase(t_enemy *enemy, t_game *g, double distance)
 	step = enemy->move_speed * g->delta_time;
 	next.x = enemy->pos.x + ((g->player.pos.x - enemy->pos.x) / len) * step;
 	next.y = enemy->pos.y + ((g->player.pos.y - enemy->pos.y) / len) * step;
+	dx = g->player.pos.x - next.x;
+	dy = g->player.pos.y - next.y;
+	if (dx * dx + dy * dy < ENEMY_MIN_DISTANCE * ENEMY_MIN_DISTANCE)
+		return (false);
 	if (!enemy_cell_legal(g, next))
 		return (false);
 	enemy->pos = next;

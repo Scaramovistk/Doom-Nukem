@@ -92,6 +92,14 @@ void	load_all_textures(t_game *g)
 			load_texture(&g->assets.enemy_icons[i], &size, g);
 		i++;
 	}
+	i = 0;
+	while (i < DECORATION_TYPES_NB)
+	{
+		size = TEXTURE_SIZE;
+		if (g->assets.decoration_icons[i].source)
+			load_texture(&g->assets.decoration_icons[i], &size, g);
+		i++;
+	}
 }
 
 void	load_texture(t_texture *t, int *size, t_game *g)

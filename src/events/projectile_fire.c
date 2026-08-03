@@ -49,6 +49,9 @@ int	fire_projectile_from(t_game *g, t_shot_spec spec)
 		return (-1);
 	p = &g->projectiles[i];
 	p->pos = spec.origin;
+	p->z = get_floor_z_at(g, spec.origin) + PLAYER_STAND_HEIGHT;
+	if (!spec.from_enemy)
+		p->z = g->player.z + g->player.eye_height;
 	p->pos.x += cos(spec.angle) * 0.35;
 	p->pos.y += sin(spec.angle) * 0.35;
 	p->velocity.x = cos(spec.angle) * PROJECTILE_SPEED;

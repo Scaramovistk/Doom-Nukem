@@ -80,6 +80,13 @@ void	ft_int_assets(t_assets *assets)
 		assets->enemy_icons[i].source = NULL;
 		i++;
 	}
+	i = 0;
+	while (i < DECORATION_TYPES_NB)
+	{
+		ft_int_image(&assets->decoration_icons[i].img);
+		assets->decoration_icons[i].source = NULL;
+		i++;
+	}
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -157,6 +164,8 @@ void	ft_init_map(t_map *map)
 	map->enemy_count = 0;
 	map->items = NULL;
 	map->item_count = 0;
+	map->decorations = NULL;
+	map->decoration_count = 0;
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;
@@ -216,6 +225,7 @@ void	ft_int_projectiles(t_projectile *projectiles)
 	{
 		projectiles[i].pos = (t_position){0.0, 0.0};
 		projectiles[i].velocity = (t_position){0.0, 0.0};
+		projectiles[i].z = 0.0;
 		projectiles[i].ttl = 0.0;
 		projectiles[i].damage = 0;
 		projectiles[i].size = PROJECTILE_SIZE;
@@ -265,6 +275,10 @@ void	init_game_struct(t_game *g)
 {
 	g->allocated_pointers = NULL;
 	g->exit_status = EXIT_SUCCESS;
+	g->campaign_mode = false;
+	g->story_visible = false;
+	g->story_is_debrief = false;
+	g->campaign_level = 0;
 	g->state = STATE_PLAYING;
 	ft_int_menu(&g->menu);
 	ft_init_map(&g->map);

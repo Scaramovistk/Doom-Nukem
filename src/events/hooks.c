@@ -46,6 +46,23 @@ int	pressed(int key, t_game *g)
 		stop_game(g);
 	if (g->state == STATE_MENU)
 		return (menu_key(key, g));
+	if (g->story_visible)
+	{
+		if (key == KEY_ENTER)
+		{
+			if (g->story_is_debrief)
+			{
+				g->story_visible = false;
+				if (g->level.next_level[0])
+					load_next_level(g);
+				else
+					stop_game(g);
+			}
+			else
+				g->story_visible = false;
+		}
+		return (0);
+	}
 	if (key == KEY_W)
 		g->player.vertical_move = 1;
 	else if (key == KEY_S)
@@ -138,8 +155,8 @@ int	mouse_move(int x, int y, void *param)
 	delta_y = y - (WIN_HEIGHT / 2);
 	if (delta_x == 0 && delta_y == 0)
 		return (0);
-	g->player.rotation_move = (double)delta_x;
-	g->player.pitch_move = (double)-delta_y;
+	g->player.rotation_move = (double)delta_x * MOUSE_SENSITIVITY;
+	g->player.pitch_move = (double)-delta_y * MOUSE_SENSITIVITY;
 	g->player.mouse_move_pending = true;
 	g->player.mouse.x = x;
 	g->player.mouse.y = y;

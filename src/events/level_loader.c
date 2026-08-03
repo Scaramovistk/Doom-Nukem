@@ -47,6 +47,22 @@ static void	apply_difficulty(t_game *g)
 	}
 }
 
+static int	campaign_level_from_path(char *path)
+{
+	char	*name;
+
+	name = ft_strrchr(path, '/');
+	if (name)
+		name++;
+	else
+		name = path;
+	if (ft_strlen(name) == 8 && name[0] == 'e' && name[1] == '1'
+		&& name[2] == 'm' && name[3] >= '1' && name[3] <= '5'
+		&& !ft_strcmp(name + 4, ".dnk"))
+		return (name[3] - '0');
+	return (0);
+}
+
 bool	load_level_path(t_game *g, char *path)
 {
 	char	*argv[2];
@@ -62,6 +78,11 @@ bool	load_level_path(t_game *g, char *path)
 		return (false);
 	g->state = STATE_PLAYING;
 	g->menu.active = false;
+	g->campaign_level = campaign_level_from_path(path);
+	if (!g->campaign_level)
+		g->campaign_mode = false;
+	g->story_visible = g->campaign_mode;
+	g->story_is_debrief = false;
 	compute_sector_origins(g);
 	load_game(g);
 	apply_difficulty(g);

@@ -143,9 +143,17 @@ static t_world_event	make_event(t_event_action action, double timer, int value)
 void	trigger_switch_sequence(t_game *g)
 {
 	t_world_event	event;
+	static const char	*messages[5] = {
+		"HANGAR POWER ROUTED", "LAB LOCKDOWN OVERRIDDEN",
+		"INFERNAL SEAL UNLATCHED", "TELEPORTER COORDINATES SET",
+		"EARTH GATE CHARGING"
+	};
 
 	event = make_event(EVENT_SHOW_MESSAGE, 0.0, 0);
-	ft_strlcpy(event.message, "SWITCH ACTIVE", HUD_MESSAGE_LEN);
+	if (g->campaign_level >= 1 && g->campaign_level <= 5)
+		ft_strlcpy(event.message, messages[g->campaign_level - 1], HUD_MESSAGE_LEN);
+	else
+		ft_strlcpy(event.message, "SWITCH ACTIVE", HUD_MESSAGE_LEN);
 	queue_world_event(g, event);
 	queue_world_event(g, make_event(EVENT_ADD_SCORE, 0.0, 25));
 	queue_world_event(g, make_event(EVENT_TOGGLE_DOORS, SWITCH_EVENT_DELAY, 0));

@@ -83,7 +83,7 @@ bool	hit_sprite(t_game *g, t_projectile *p, t_position pos)
 	return (false);
 }
 
-bool	hit_wall(t_game *g, t_position pos)
+static bool	projectile_cell_is_blocked(t_game *g, t_position pos, double z)
 {
 	t_coord	cell;
 	t_block	block;
@@ -94,12 +94,48 @@ bool	hit_wall(t_game *g, t_position pos)
 		return (true);
 	block = g->map.grid[cell.y][cell.x];
 	if (block == WALL || block == DECAL_WALL || block == TRANSPARENT_WALL)
-	{
-		if (block == WALL)
-			g->map.grid[cell.y][cell.x] = DECAL_WALL;
 		return (true);
-	}
 	if (block == DOOR && !is_door_open(cell, g->map.doors))
 		return (true);
-	return (false);
+	return (z <= get_floor_z_at(g, pos) + 0.01
+		|| z >= get_ceiling_z_at(g, pos) - 0.01);
+}
+
+bool	projectile_path_is_blocked(t_game *g, t_position start,
+		t_position end, double z)
+{
+	t_position	pos;
+	double		dx;
+	double		dy;
+	double		length;
+	double		progress;
+
+	dx = end.x - start.x;
+	dy = end.y - start.y;
+	length = sqrt(dx * dx + dy * dy);
+	if (length < 0.001)
+		return (projectile_cell_is_blocked(g, end, z));
+	progress = 0.0;
+	while (progress <= length)
+	{
+		pos.x = start.x + dx * progress / length;
+		pos.y = start.y + dy * progress / length;
+		if (projectile_cell_is_blocked(g, pos, z))
+			return (true);
+		progress += 0.05;
+	}
+	return (projectile_cell_is_blocked(g, end, z));
+}
+
+bool	hit_wall(t_game *g, t_projectile *p, t_position pos)
+{
+	t_coord	cell;
+
+	if (!projectile_path_is_blocked(g, p->pos, pos, p->z))
+		return (false);
+	cell.x = (int)pos.x;
+	cell.y = (int)pos.y;
+	if (is_in_bounds(cell, g) && g->map.grid[cell.y][cell.x] == WALL)
+		g->map.grid[cell.y][cell.x] = DECAL_WALL;
+	return (true);
 }

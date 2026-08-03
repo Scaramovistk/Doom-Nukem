@@ -115,6 +115,13 @@ void	ft_destroy_textures(t_game *g)
 		if (img->ptr)
 			mlx_destroy_image(g->mlx, img->ptr);
 	}
+	i = DECORATION_TYPES_NB;
+	while (i--)
+	{
+		img = &g->assets.decoration_icons[i].img;
+		if (img->ptr)
+			mlx_destroy_image(g->mlx, img->ptr);
+	}
 }
 
 #ifdef __linux__

@@ -54,6 +54,9 @@ void	ft_setup_header(t_header *header)
 	i = ENEMY_TYPES_NB;
 	while (i--)
 		ft_bzero(header->enemy_texture[i], LINE_SIZE);
+	i = DECORATION_TYPES_NB;
+	while (i--)
+		ft_bzero(header->decoration_texture[i], LINE_SIZE);
 }
 
 void	ft_get_xpm(char *dest, char *src, int *found, int *vals)
@@ -146,6 +149,18 @@ static int	ft_get_enemy_texture(char *text, t_header *header, int *values,
 	return (1);
 }
 
+static int	ft_get_decoration_texture(char *text, t_header *header,
+		int *values, int *vals)
+{
+	int	type;
+
+	if (text[0] != 'D' || text[1] < '1' || text[1] > '6')
+		return (0);
+	type = text[1] - '1';
+	ft_get_xpm(header->decoration_texture[type], text + 2, &values[8], vals);
+	return (1);
+}
+
 int	ft_header_extractor(char *line, int *vals, t_header *header)
 {
 	int		values[9];
@@ -156,6 +171,8 @@ int	ft_header_extractor(char *line, int *vals, t_header *header)
 	if (ft_get_sprite_frame(text, header, values, vals))
 		return (1);
 	if (ft_get_enemy_texture(text, header, values, vals))
+		return (1);
+	if (ft_get_decoration_texture(text, header, values, vals))
 		return (1);
 	if (ft_strncmp(text, "NO", wall) == 0)
 		return (ft_get_xpm(header->no, text + wall, &vals[0], vals), 1);

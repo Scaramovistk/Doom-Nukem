@@ -25,7 +25,7 @@ void	draw_scene(t_game *g)
 	draw_floor_ceiling(g);
 	draw_all_rays_threaded(rays, g, z_buffer);
 	draw_sprites(g, z_buffer, rays);
-	draw_projectiles(g, z_buffer);
+	draw_projectiles(g, z_buffer, rays);
 }
 
 static int	render_thread_count(void)
@@ -44,8 +44,6 @@ static int	render_thread_count(void)
 
 static double	ray_occluder_distance(t_ray *ray)
 {
-	if (ray->height_step_count > 0)
-		return (ray->height_steps[0].distance);
 	return (ray->distance);
 }
 

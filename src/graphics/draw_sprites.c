@@ -66,15 +66,13 @@ static void	init_sprite_draw(t_sprite_draw *s, t_position pos, int index,
 
 static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 {
-	int	horizon;
-
-	horizon = (WIN_HEIGHT / 2) + (int)g->player.pitch;
 	s->height = abs((int)(WIN_HEIGHT / s->transform_y));
 	s->width = s->height;
-	s->top = horizon - s->height / 2;
+	s->bottom = project_world_z(get_floor_z_at(g, s->pos), s->transform_y, g);
+	s->raw_top = s->bottom - s->height;
+	s->top = s->raw_top;
 	if (s->top < 0)
 		s->top = 0;
-	s->bottom = horizon + s->height / 2;
 	if (s->bottom >= WIN_HEIGHT)
 		s->bottom = WIN_HEIGHT - 1;
 	s->left = s->screen_x - s->width / 2;
@@ -83,6 +81,12 @@ static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 	s->right = s->screen_x + s->width / 2;
 	if (s->right >= WIN_WIDTH)
 		s->right = WIN_WIDTH - 1;
+}
+
+static bool	is_sprite_transparent(t_texture *texture, int color)
+{
+	return ((color & 0x00FFFFFF) == 0x00FF00FF
+		|| color == get_pixel(&texture->img, 0, 0));
 }
 
 static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
@@ -99,6 +103,15 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 			&& g->map.items[i].type >= 0
 			&& g->map.items[i].type < ITEM_TYPES_NB)
 			return (&g->assets.item_icons[g->map.items[i].type]);
+		i++;
+	}
+	i = 0;
+	while (i < g->map.decoration_count)
+	{
+		if (g->map.decorations[i].pos.x == s->pos.x
+			&& g->map.decorations[i].pos.y == s->pos.y
+			&& g->assets.decoration_icons[g->map.decorations[i].type].img.ptr)
+			return (&g->assets.decoration_icons[g->map.decorations[i].type]);
 		i++;
 	}
 	i = 0;
@@ -189,7 +202,6 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
 	int	tex_y;
 	int	y;
 	int	color;
-	int	d;
 	int	texture_size;
 
 	texture_size = sprite_texture_size(texture, g);
@@ -198,15 +210,15 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
 	y = s->top;
 	while (y < s->bottom)
 	{
-		d = (y - ((WIN_HEIGHT / 2) + (int)g->player.pitch)) * 256
-			+ s->height * 128;
-		tex_y = ((d * texture_size) / s->height) / 256;
+		tex_y = (y - s->raw_top) * texture_size / s->height;
 		color = get_pixel(&texture->img, tex_x, tex_y);
-		if ((color & 0x00FFFFFF) != 0x00FF00FF)
+		if (!is_sprite_transparent(texture, color))
 		{
 			color = apply_light(color, get_light_at(g, s->pos), s->transform_y);
 			color = blend_sprite_glass(color, y, s->transform_y, ray, g);
-			put_pixel(&g->img, stripe, y, color);
+			if (!door_occludes_pixel(ray, s->transform_y, y, g)
+				&& !height_step_occludes_pixel(ray, s->transform_y, y, g))
+				put_pixel(&g->img, stripe, y, color);
 		}
 		y++;
 	}
@@ -259,7 +271,8 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	free(sprites);
 }
 
-static void	draw_projectile_dot(t_game *g, t_sprite_draw *s, t_projectile *p)
+static void	draw_projectile_dot(t_game *g, t_sprite_draw *s, t_projectile *p,
+		t_ray *rays)
 {
 	int	x;
 	int	y;
@@ -274,7 +287,9 @@ static void	draw_projectile_dot(t_game *g, t_sprite_draw *s, t_projectile *p)
 		{
 			if (x >= 0 && x < WIN_WIDTH && y >= 0 && y < WIN_HEIGHT
 				&& pow(x - s->screen_x, 2) + pow(y - (s->top + radius), 2)
-				<= radius * radius)
+				<= radius * radius && !door_occludes_pixel(&rays[x],
+					s->transform_y, y, g)
+				&& !height_step_occludes_pixel(&rays[x], s->transform_y, y, g))
 				put_pixel(&g->img, x, y, p->color);
 			y++;
 		}
@@ -291,7 +306,7 @@ static void	init_projectile_draw(t_sprite_draw *s, t_projectile *p, t_game *g)
 	s->bottom = s->top + s->height;
 }
 
-void	draw_projectiles(t_game *g, double *z_buffer)
+void	draw_projectiles(t_game *g, double *z_buffer, t_ray *rays)
 {
 	t_sprite_draw	s;
 	int				i;
@@ -304,7 +319,7 @@ void	draw_projectiles(t_game *g, double *z_buffer)
 			init_projectile_draw(&s, &g->projectiles[i], g);
 			if (s.transform_y > 0 && s.screen_x >= 0 && s.screen_x < WIN_WIDTH
 				&& s.transform_y < z_buffer[s.screen_x])
-				draw_projectile_dot(g, &s, &g->projectiles[i]);
+				draw_projectile_dot(g, &s, &g->projectiles[i], rays);
 		}
 		i++;
 	}

@@ -51,6 +51,12 @@ static bool	try_pickup_item_at(t_coord pos, t_game *g)
 
 static bool	try_switches_at(t_coord check, t_game *g)
 {
+	if (in_coord_list(check, g->map.message_zones, g->map.message_count))
+	{
+		show_context_message(g);
+		play_sound_effect(g, "switch");
+		return (true);
+	}
 	if (in_coord_list(check, g->map.switches, g->map.switch_count))
 	{
 		trigger_switch_sequence(g);

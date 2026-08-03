@@ -143,6 +143,10 @@ static void	start_selected_level(t_game *g)
 {
 	if (!g->menu.level_count)
 		return ;
+	g->campaign_mode = (g->menu.selected == 0
+		&& is_new_game_entry(level_basename(g->menu.levels[0])));
+	g->story_visible = false;
+	g->story_is_debrief = false;
 	if (!load_level_path(g, g->menu.levels[g->menu.selected]))
 	{
 		show_message(g, "LEVEL LOAD FAILED", MESSAGE_DISPLAY_TIME);

@@ -59,6 +59,11 @@ static void	complete_level(t_game *g)
 	g->level.completed = true;
 	g->level.end_timer = LEVEL_END_DELAY;
 	g->hud.score += 100;
+	if (g->campaign_mode && g->campaign_level)
+	{
+		g->story_visible = true;
+		g->story_is_debrief = true;
+	}
 	show_message(g, "MISSION COMPLETE", LEVEL_END_DELAY);
 	play_sound_effect(g, "mission_complete");
 }
@@ -75,6 +80,8 @@ static bool	update_end_state(t_game *g)
 {
 	if (!g->level.completed && !g->level.failed)
 		return (false);
+	if (g->story_visible && g->story_is_debrief)
+		return (true);
 	g->level.end_timer -= g->delta_time;
 	if (g->level.end_timer <= 0.0)
 	{

@@ -14,9 +14,8 @@
 
 void	apply_health_pickup(t_game *g, int amount)
 {
-	g->hud.health += amount;
-	if (g->hud.health > g->hud.max_health)
-		g->hud.health = g->hud.max_health;
+	(void)amount;
+	g->hud.health = g->hud.max_health;
 	show_message(g, "HEALTH PACK PICKED UP", MESSAGE_DISPLAY_TIME);
 	play_sound_effect(g, "pickup");
 }

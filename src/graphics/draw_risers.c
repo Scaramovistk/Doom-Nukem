@@ -12,23 +12,25 @@
 
 #include "../../include/cub3d.h"
 
-static t_z_range	riser_bounds(t_height_step *step, t_game *g, bool is_ceil)
+static t_z_range	riser_bounds(t_height_step *step, t_ray *ray, t_game *g,
+		bool is_ceil)
 {
 	t_z_range	z;
-	t_sector	*near;
-	t_sector	*far;
+	t_position	near;
+	t_position	far;
 
-	near = &g->map.sectors[step->near_sector];
-	far = &g->map.sectors[step->far_sector];
+	near = ray_world_pos(ray, step->distance, g);
+	far.x = near.x + ray->dir.x * 0.02;
+	far.y = near.y + ray->dir.y * 0.02;
 	if (is_ceil)
 	{
-		z.lo = fmin(near->ceil_z, far->ceil_z);
-		z.hi = fmax(near->ceil_z, far->ceil_z);
+		z.lo = fmin(get_ceiling_z_at(g, near), get_ceiling_z_at(g, far));
+		z.hi = fmax(get_ceiling_z_at(g, near), get_ceiling_z_at(g, far));
 	}
 	else
 	{
-		z.lo = fmin(near->floor_z, far->floor_z);
-		z.hi = fmax(near->floor_z, far->floor_z);
+		z.lo = fmin(get_floor_z_at(g, near), get_floor_z_at(g, far));
+		z.hi = fmax(get_floor_z_at(g, near), get_floor_z_at(g, far));
 	}
 	return (z);
 }
@@ -53,6 +55,7 @@ static void	draw_riser_slice(t_ray *ray, t_height_step *step, t_z_range z,
 	slice.viewer_distance = step->distance;
 	slice.light = wall_light(step->side, get_light_at(g,
 				ray_world_pos(ray, step->distance, g)), false);
+	slice.ray = ray;
 	draw_texture_slice(&slice, g);
 }
 
@@ -67,7 +70,7 @@ static void	draw_one_riser(t_height_step *step, t_ray *ray, t_game *g,
 	save_distance = ray->distance;
 	ray->side = step->side;
 	ray->distance = step->distance;
-	z = riser_bounds(step, g, is_ceil);
+	z = riser_bounds(step, ray, g, is_ceil);
 	draw_riser_slice(ray, step, z, g);
 	ray->side = save_side;
 	ray->distance = save_distance;
@@ -108,7 +111,8 @@ void	draw_height_steps(t_ray *ray, t_game *g)
 		if (i < ray->height_step_count)
 		{
 			draw_one_riser(&ray->height_steps[i], ray, g, false);
-			draw_one_riser(&ray->height_steps[i], ray, g, true);
+			if (!g->assets.has_sky)
+				draw_one_riser(&ray->height_steps[i], ray, g, true);
 			near_d = ray->height_steps[i].distance;
 		}
 		i++;

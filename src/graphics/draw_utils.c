@@ -83,7 +83,11 @@ void	draw_texture_slice_alpha(t_texture_slice *s, t_game *g)
 		texture_y = ((int)(texture_y_pos)) & (TEXTURE_SIZE - 1);
 		texture_y_pos += s->texture_step;
 		pixel_color = get_pixel(&s->texture->img, s->texture_x_size, texture_y);
-		if ((pixel_color & 0x00FFFFFF) != 0x00FF00FF)
+		if ((pixel_color & 0x00FFFFFF) != 0x00FF00FF
+			&& (!s->ray || !door_occludes_pixel(s->ray,
+					s->viewer_distance, screen_y, g))
+			&& (!s->ray || !height_step_occludes_pixel(s->ray,
+					s->viewer_distance, screen_y, g)))
 		{
 			pixel_color = apply_light(pixel_color, s->light,
 					s->viewer_distance);

@@ -99,6 +99,7 @@ void		interact(t_game *g);
 
 // triggers.c
 bool		update_proximity_triggers(t_game *g);
+void		show_context_message(t_game *g);
 
 // events.c
 bool		update_world_events(t_game *g);
@@ -141,7 +142,9 @@ void		fire_enemy_projectile(t_game *g, t_enemy *enemy);
 void		fire_projectile(t_game *g);
 bool		update_projectiles(t_game *g);
 bool		hit_sprite(t_game *g, t_projectile *p, t_position pos);
-bool		hit_wall(t_game *g, t_position pos);
+bool		hit_wall(t_game *g, t_projectile *p, t_position pos);
+bool		projectile_path_is_blocked(t_game *g, t_position start,
+				t_position end, double z);
 
 // projectile_fire.c
 int			fire_projectile_from(t_game *g, t_shot_spec spec);
@@ -195,6 +198,8 @@ void		record_height_step(t_dda *dda, t_ray *ray, t_game *g,
 				int *prev_sector);
 int			band_sector(t_ray *ray, int i);
 double		step_far_d(t_ray *ray, int i);
+bool		height_step_occludes_pixel(t_ray *ray, double depth, int y,
+				t_game *g);
 
 // draw_step_bands.c
 void		draw_step_band(t_step_ctx ctx, t_game *g);
@@ -212,7 +217,7 @@ void		draw_vertical_line(int x, t_dimensions dims, int color, t_game *g);
 
 // draw_sprites.c
 void		draw_sprites(t_game *g, double *z_buffer, t_ray *rays);
-void		draw_projectiles(t_game *g, double *z_buffer);
+void		draw_projectiles(t_game *g, double *z_buffer, t_ray *rays);
 
 // draw_wall.c
 void		draw_wall_slice(t_dimensions wall, t_ray *ray, t_game *g);
@@ -227,6 +232,7 @@ int			project_world_z(double world_z, double distance, t_game *g);
 void		draw_door_slice(t_ray *ray, t_game *g);
 void		get_door_top_bottom(int *door_top, int *door_bottom,
 				int *raw_top, t_ray *ray, t_game *g);
+bool		door_occludes_pixel(t_ray *ray, double depth, int y, t_game *g);
 
 // draw_utils.c
 double		get_texture_x(t_ray *ray, double distance, int side, t_game *g);

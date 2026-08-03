@@ -49,6 +49,11 @@ int	game_loop(t_game *g)
 
 	if (g->state == STATE_MENU)
 		return (EXIT_SUCCESS);
+	if (g->story_visible)
+	{
+		render(g);
+		return (EXIT_SUCCESS);
+	}
 	update_doors(&door_updated, g);
 	update_audio();
 	projectile_active = update_projectiles(g);

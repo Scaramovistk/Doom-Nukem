@@ -341,6 +341,70 @@ static void	draw_weapon_view(t_game *g)
 	draw_weapon_name(g, pos);
 }
 
+static const char	*story_line(int level, bool debrief, int line)
+{
+	static const char	*briefings[5][4] = {
+	{"UAC PHOBOS BASE HAS GONE SILENT.", "DEMONIC SIGNALS FLOOD THE MOON.",
+		"FIND THE EXIT AND REACH THE HANGAR.", ""},
+	{"THE HANGAR LEADS TO THE DEIMOS GATE.", "THE INVASION IS SPREADING.",
+		"PUSH THROUGH THE INFESTED LABS.", ""},
+	{"THE GATE HAS PULLED YOU INTO HELL.", "DEIMOS HANGS ABOVE A RIVER OF FIRE.",
+		"FIND A WAY BACK TO THE SURFACE.", ""},
+	{"YOU HAVE REACHED THE HEART OF DEIMOS.", "THE DEMONS GUARD A STOLEN UAC TELEPORTER.",
+		"SEIZE IT BEFORE THE BREACH WIDENS.", ""},
+	{"THE FINAL CHAMBER SHAKES WITH RAGE.", "ONE LAST ASSAULT STANDS BETWEEN YOU AND HOME.",
+		"END THE INVASION.", ""}
+	};
+	static const char	*debriefings[5][4] = {
+	{"PHOBOS IS LOST.", "A STRONGER SIGNAL COMES FROM DEIMOS.",
+		"THE HANGAR GATE IS YOUR ONLY WAY FORWARD.", ""},
+	{"THE DEIMOS GATE IS OPEN.", "THE DEMONS HAVE DRAGGED THE MOON INTO HELL.",
+		"FOLLOW THEM AND SHUT THE BREACH.", ""},
+	{"YOU ESCAPED THE FIRST HELLISH SECTOR.", "THE DEMONIC FORTRESS STILL RISES AHEAD.",
+		"KEEP MOVING.", ""},
+	{"THE TELEPORTER IS IN YOUR HANDS.", "ONE FINAL FORTRESS BLOCKS THE WAY HOME.",
+		"MAKE THE LAST PUSH.", ""},
+	{"THE INVASION IS BROKEN.", "EARTH WILL LIVE TO FIGHT ANOTHER DAY.",
+		"YOU ARE THE LAST MARINE STANDING.", ""}
+	};
+
+	if (level < 1 || level > 5 || line < 0 || line >= 4)
+		return ("");
+	if (debrief)
+		return (debriefings[level - 1][line]);
+	return (briefings[level - 1][line]);
+}
+
+static void	draw_story_line(t_game *g, const char *line, int y)
+{
+	int	width;
+
+	width = (int)ft_strlen(line) * 12;
+	draw_text(g, line, (t_coord){(WIN_WIDTH - width) / 2, y}, 3);
+}
+
+static void	draw_campaign_story(t_game *g)
+{
+	int	line;
+
+	hud_rect(g, (t_coord){0, 0}, (t_coord){WIN_WIDTH, WIN_HEIGHT}, BLACK);
+	hud_rect(g, (t_coord){120, 140}, (t_coord){WIN_WIDTH - 240, 440}, HUD_BG);
+	hud_frame(g, (t_coord){120, 140}, (t_coord){WIN_WIDTH - 240, 440},
+		YELLOW);
+	if (g->story_is_debrief)
+		draw_story_line(g, "MISSION DEBRIEF", 180);
+	else
+		draw_story_line(g, "MISSION BRIEFING", 180);
+	line = 0;
+	while (line < 4)
+	{
+		draw_story_line(g, story_line(g->campaign_level,
+				g->story_is_debrief, line), 270 + line * 52);
+		line++;
+	}
+	draw_story_line(g, "PRESS ENTER TO CONTINUE", 520);
+}
+
 void	draw_hud(t_game *g)
 {
 	draw_crosshair(g);
@@ -351,4 +415,6 @@ void	draw_hud(t_game *g)
 	draw_score(g);
 	draw_fps(g);
 	draw_message(g);
+	if (g->story_visible)
+		draw_campaign_story(g);
 }

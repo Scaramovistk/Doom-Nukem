@@ -36,11 +36,27 @@ static bool	apply_hazard(t_game *g, t_coord cell)
 	return (true);
 }
 
+void	show_context_message(t_game *g)
+{
+	static const char	*logs[5] = {
+		"UAC LOG: PHOBOS EVACUATION FAILED",
+		"LAB LOG: QUARANTINE BREACH CONFIRMED",
+		"HELL RELAY: THE SIGNAL COMES FROM BELOW",
+		"DEIMOS CORE: TELEPORTER LOCKED",
+		"EARTH GATE: STABILITY FALLING"
+	};
+
+	if (g->campaign_level >= 1 && g->campaign_level <= 5)
+		show_message(g, logs[g->campaign_level - 1], MESSAGE_DISPLAY_TIME);
+	else
+		show_message(g, "TERMINAL OFFLINE", MESSAGE_DISPLAY_TIME);
+}
+
 static bool	apply_message(t_game *g, t_coord cell)
 {
 	if (in_zone(cell, g->map.message_zones, g->map.message_count))
 	{
-		show_message(g, "MESSAGE ZONE", MESSAGE_DISPLAY_TIME);
+		show_context_message(g);
 		return (true);
 	}
 	return (false);

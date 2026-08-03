@@ -42,6 +42,7 @@ void	draw_door_slice(t_ray *ray, t_game *g)
 	slice.texture_x = get_texture_x(ray, ray->door_distance, ray->door_side, g);
 	slice.viewer_distance = ray->door_distance;
 	slice.light = get_light_at(g, door_world_pos(ray, g));
+	slice.ray = ray;
 	draw_texture_slice(&slice, g);
 }
 
@@ -69,4 +70,16 @@ void	get_door_top_bottom(int *door_top, int *door_bottom,
 		*door_top = 0;
 	if (*door_bottom > WIN_HEIGHT)
 		*door_bottom = WIN_HEIGHT;
+}
+
+bool	door_occludes_pixel(t_ray *ray, double depth, int y, t_game *g)
+{
+	int	door_top;
+	int	door_bottom;
+	int	raw_top;
+
+	if (!ray->hit_door || depth <= ray->door_distance)
+		return (false);
+	get_door_top_bottom(&door_top, &door_bottom, &raw_top, ray, g);
+	return (y >= door_top && y < door_bottom);
 }

@@ -75,6 +75,12 @@ typedef struct s_enemy
 	int			score_value;
 }				t_enemy;
 
+typedef struct s_decoration
+{
+	t_position	pos;
+	int			type;
+}				t_decoration;
+
 typedef struct s_sector
 {
 	double		floor_z;
@@ -112,6 +118,8 @@ typedef struct s_map
 	int			enemy_count;
 	t_item		*items;
 	int			item_count;
+	t_decoration	*decorations;
+	int			decoration_count;
 	t_coord		*switches;
 	int			switch_count;
 	t_coord		*elevators;
@@ -187,6 +195,7 @@ typedef struct s_assets
 	t_texture	ammo_icon;
 	t_texture	item_icons[ITEM_TYPES_NB];
 	t_texture	enemy_icons[ENEMY_TYPES_NB];
+	t_texture	decoration_icons[DECORATION_TYPES_NB];
 	bool		has_sky;
 	bool		has_sprite_frames;
 	int			floor_color;
@@ -253,6 +262,7 @@ typedef struct s_sprite_draw
 	int			screen_x;
 	int			height;
 	int			width;
+	int			raw_top;
 	int			top;
 	int			bottom;
 	int			left;
@@ -300,6 +310,7 @@ typedef struct s_texture_slice
 	int			texture_x_size;
 	double		height;
 	double		texture_step;
+	t_ray			*ray;
 }				t_texture_slice;
 
 typedef struct s_render_band
@@ -389,6 +400,7 @@ typedef struct s_projectile
 {
 	t_position		pos;
 	t_position		velocity;
+	double			z;
 	double			ttl;
 	int				damage;
 	int				size;
@@ -429,6 +441,10 @@ typedef struct s_game
 	int			exit_status;
 	t_game_state	state;
 	t_menu		menu;
+	bool			campaign_mode;
+	bool			story_visible;
+	bool			story_is_debrief;
+	int			campaign_level;
 
 	t_map		map;
 	t_player	player;
@@ -466,6 +482,7 @@ typedef struct s_header
 	char		decal_texture[LINE_SIZE];
 	char		sprite_frame_textures[SPRITE_FRAME_NB][LINE_SIZE];
 	char		enemy_texture[ENEMY_TYPES_NB][LINE_SIZE];
+	char		decoration_texture[DECORATION_TYPES_NB][LINE_SIZE];
 	char		next_level[LINE_SIZE];
 	int			floor[3];
 	int			ceiling[3];

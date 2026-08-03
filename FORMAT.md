@@ -85,6 +85,9 @@ ids 10-35.
 segment. `texture` uses the texture enum order from `ft_enumerations.h`:
 0 north, 1 south, 2 east, 3 west, 4 door, 5 sprite, 6 transparent, 7 decal.
 
+`DC` supplies the transparent decal drawn over a wall after it is hit by a
+projectile.
+
 ## Non-grid rooms
 
 A room with any number of walls in any direction is authored by leaving the
@@ -110,4 +113,3 @@ stderr if any segment endpoint is unmatched — an open loop is a visual
 light-leak (the ray falls through to the distant grid wall instead of
 hitting a wall face), not a crash. The minimap draws every segment as a line
 over the grid so open loops are also visible there.
-
