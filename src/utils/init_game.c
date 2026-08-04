@@ -298,6 +298,7 @@ void	init_game_struct(t_game *g)
 	g->mlx = NULL;
 	g->mlx_win = NULL;
 	g->unpacked_level = false;
+	g->last_frame_time = 0.0;
 	g->unpack_dir[0] = '\0';
 	g->level_source[0] = '\0';
 	g->delta_time = 0.0;

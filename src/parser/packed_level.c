@@ -521,10 +521,10 @@ static void	write_sound_assets(FILE *out)
 
 static void	write_hud_assets(FILE *out)
 {
-	static const char	*keys[HUD_ASSET_NB] = {"hud_pistol_idle",
+	const char *const	keys[HUD_ASSET_NB] = {"hud_pistol_idle",
 		"hud_pistol_fire", "hud_blaster_idle", "hud_blaster_fire",
 		"hud_ammo", "hud_item0", "hud_item1", "hud_item2", "hud_item3"};
-	static const char	*paths[HUD_ASSET_NB] = {HUD_PISTOL_IDLE,
+	const char *const	paths[HUD_ASSET_NB] = {HUD_PISTOL_IDLE,
 		HUD_PISTOL_FIRE, HUD_BLASTER_IDLE, HUD_BLASTER_FIRE,
 		HUD_AMMO_ICON, HUD_ITEM0_ICON, HUD_ITEM1_ICON, HUD_ITEM2_ICON,
 		HUD_ITEM3_ICON};

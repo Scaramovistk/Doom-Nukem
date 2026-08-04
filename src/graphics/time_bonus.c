@@ -14,11 +14,9 @@
 
 void	update_time(t_game *g)
 {
-	static double	last_time = 0;
-
-	if (last_time == 0)
-		last_time = get_time();
-	g->delta_time = calculate_delta_time(&last_time);
+	if (g->last_frame_time == 0.0)
+		g->last_frame_time = get_time();
+	g->delta_time = calculate_delta_time(&g->last_frame_time);
 }
 
 double	get_time(void)

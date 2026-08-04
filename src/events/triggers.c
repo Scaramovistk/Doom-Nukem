@@ -38,7 +38,7 @@ static bool	apply_hazard(t_game *g, t_coord cell)
 
 void	show_context_message(t_game *g)
 {
-	static const char	*logs[5] = {
+	const char *const	logs[5] = {
 		"UAC LOG: PHOBOS EVACUATION FAILED",
 		"LAB LOG: QUARANTINE BREACH CONFIRMED",
 		"HELL RELAY: THE SIGNAL COMES FROM BELOW",

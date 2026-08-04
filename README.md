@@ -45,11 +45,24 @@ Or open the level select menu:
 
 ## Editor / Packing
 
-Create or refresh a self-contained packed level:
+Open an editable `.cub` project in the interactive terminal editor:
 
 ```sh
-./doom-nukem --edit tests/maps/door_map.cub tests/maps/door_map.dnk
+./doom-nukem --edit tests/maps_src/door_map.cub tests/maps/door_map.dnk
 ```
+
+The editor can place map devices/entities, change texture headers, define floor
+and ceiling heights, slopes and lighting, assign sector cells, add arbitrary
+wall segments, save the `.cub`/`.sectors` sources, validate them, and pack the
+result. Type `help` in the editor for the complete command list.
+
+For a non-interactive rebuild, use:
+
+```sh
+./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
+```
+
+To create a starter packed level, use `./doom-nukem --edit output.dnk`.
 
 Validate a level without opening a window:
 

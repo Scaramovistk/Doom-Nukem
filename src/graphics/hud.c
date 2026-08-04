@@ -49,7 +49,7 @@ static void	draw_hud_texture(t_game *g, t_texture *texture, t_coord pos,
 
 static const char	*digit_pattern(int digit)
 {
-	static const char	*patterns[10] = {
+	const char *const	patterns[10] = {
 		"111101101101111", "010110010010111", "111001111100111",
 		"111001111001111", "101101111001001", "111100111001111",
 		"111100111101111", "111001001001001", "111101111101111",
@@ -178,7 +178,7 @@ static void	draw_score(t_game *g)
 
 static const char	*letter_pattern(char c)
 {
-	static const char	*patterns[26] = {
+	const char *const	patterns[26] = {
 		"010101111101101", "110101110101110", "011100100100011",
 		"110101101101110", "111100110100111", "111100110100100",
 		"011100101101011", "101101111101101", "111010010010111",
@@ -344,7 +344,7 @@ static void	draw_weapon_view(t_game *g)
 
 static const char	*story_line(int level, bool debrief, int line)
 {
-	static const char	*briefings[5][4] = {
+	const char *const	briefings[5][4] = {
 	{"UAC PHOBOS BASE HAS GONE SILENT.", "DEMONIC SIGNALS FLOOD THE MOON.",
 		"FIND THE EXIT AND REACH THE HANGAR.", ""},
 	{"THE HANGAR LEADS TO THE DEIMOS GATE.", "THE INVASION IS SPREADING.",
@@ -356,7 +356,7 @@ static const char	*story_line(int level, bool debrief, int line)
 	{"THE FINAL CHAMBER SHAKES WITH RAGE.", "ONE LAST ASSAULT STANDS BETWEEN YOU AND HOME.",
 		"END THE INVASION.", ""}
 	};
-	static const char	*debriefings[5][4] = {
+	const char *const	debriefings[5][4] = {
 	{"PHOBOS IS LOST.", "A STRONGER SIGNAL COMES FROM DEIMOS.",
 		"THE HANGAR GATE IS YOUR ONLY WAY FORWARD.", ""},
 	{"THE DEIMOS GATE IS OPEN.", "THE DEMONS HAVE DRAGGED THE MOON INTO HELL.",

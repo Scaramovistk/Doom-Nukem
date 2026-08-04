@@ -20,6 +20,7 @@
 int			main(int argc, char *argv[]);
 int			run_editor(int argc, char *argv[]);
 int			check_level_file(char *path);
+int			interactive_level_editor(char *src, char *default_output);
 
 // ----- EVENTS ----- //
 

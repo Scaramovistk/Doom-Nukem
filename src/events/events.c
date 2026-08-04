@@ -143,7 +143,7 @@ static t_world_event	make_event(t_event_action action, double timer, int value)
 void	trigger_switch_sequence(t_game *g)
 {
 	t_world_event	event;
-	static const char	*messages[5] = {
+	const char *const	messages[5] = {
 		"HANGAR POWER ROUTED", "LAB LOCKDOWN OVERRIDDEN",
 		"INFERNAL SEAL UNLATCHED", "TELEPORTER COORDINATES SET",
 		"EARTH GATE CHARGING"

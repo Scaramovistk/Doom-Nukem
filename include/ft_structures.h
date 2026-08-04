@@ -462,6 +462,7 @@ typedef struct s_game
 	char		level_source[LINE_SIZE];
 
 	double		delta_time;
+	double		last_frame_time;
 
 }				t_game;
 

@@ -237,7 +237,7 @@ static int	count_items(char **map, int lines, int width)
 
 static int	item_default_quantity(int type)
 {
-	static const int	amounts[ITEM_TYPES_NB] = {25, 10, 1, 5};
+	const int	amounts[ITEM_TYPES_NB] = {25, 10, 1, 5};
 
 	if (type < 0 || type >= ITEM_TYPES_NB)
 		return (1);
@@ -297,30 +297,29 @@ typedef struct s_enemy_stats
 	int		score_value;
 }				t_enemy_stats;
 
-static const t_enemy_stats	*enemy_stats_for_type(int type)
+static t_enemy_stats	enemy_stats_for_type(int type)
 {
-	static const t_enemy_stats	table[5] = {
-	{20, false, ENEMY_MOVE_SPEED, 6, ENEMY_ATTACK_DELAY,
-		ENEMY_ATTACK_RANGE, ENEMY_ALERT_RANGE, 0.0, 0.0, 0, 10},
-	{30, true, ENEMY_MOVE_SPEED, 0, 0.0,
-		0.0, ENEMY_ALERT_RANGE, ENEMY_FIRE_DELAY, ENEMY_RANGED_RANGE, 6, 25},
-	{45, true, ENEMY_MOVE_SPEED, 0, 0.0,
-		0.0, ENEMY_ALERT_RANGE, 1.3, ENEMY_RANGED_RANGE, 8, 35},
-	{60, false, ENEMY_MOVE_SPEED * 1.6, 12, 0.6,
-		ENEMY_ATTACK_RANGE, ENEMY_ALERT_RANGE * 1.3, 0.0, 0.0, 0, 45},
-	{120, true, ENEMY_MOVE_SPEED * 0.5, 0, 0.0,
-		0.0, ENEMY_ALERT_RANGE, 1.8, ENEMY_RANGED_RANGE * 1.2, 12, 60},
-	};
-
-	if (type < 0 || type >= 5)
-		type = 0;
-	return (&table[type]);
+	if (type == 1)
+		return ((t_enemy_stats){30, true, ENEMY_MOVE_SPEED, 0, 0.0, 0.0,
+			ENEMY_ALERT_RANGE, ENEMY_FIRE_DELAY, ENEMY_RANGED_RANGE, 6, 25});
+	if (type == 2)
+		return ((t_enemy_stats){45, true, ENEMY_MOVE_SPEED, 0, 0.0, 0.0,
+			ENEMY_ALERT_RANGE, 1.3, ENEMY_RANGED_RANGE, 8, 35});
+	if (type == 3)
+		return ((t_enemy_stats){60, false, ENEMY_MOVE_SPEED * 1.6, 12, 0.6,
+			ENEMY_ATTACK_RANGE, ENEMY_ALERT_RANGE * 1.3, 0.0, 0.0, 0, 45});
+	if (type == 4)
+		return ((t_enemy_stats){120, true, ENEMY_MOVE_SPEED * 0.5, 0, 0.0,
+			0.0, ENEMY_ALERT_RANGE, 1.8, ENEMY_RANGED_RANGE * 1.2, 12, 60});
+	return ((t_enemy_stats){20, false, ENEMY_MOVE_SPEED, 6,
+		ENEMY_ATTACK_DELAY, ENEMY_ATTACK_RANGE, ENEMY_ALERT_RANGE,
+		0.0, 0.0, 0, 10});
 }
 
 static void	add_enemies(int count, int *types, t_game *g)
 {
 	int						i;
-	const t_enemy_stats	*stats;
+	t_enemy_stats	stats;
 
 	g->map.enemy_count = count;
 	if (!count)
@@ -331,26 +330,26 @@ static void	add_enemies(int count, int *types, t_game *g)
 	{
 		stats = enemy_stats_for_type(types[i]);
 		g->map.enemies[i].pos = g->map.sprites[i];
-		g->map.enemies[i].health = stats->health;
-		g->map.enemies[i].max_health = stats->health;
+		g->map.enemies[i].health = stats.health;
+		g->map.enemies[i].max_health = stats.health;
 		g->map.enemies[i].sprite_index = i;
 		g->map.enemies[i].attack_timer = 0.0;
 		g->map.enemies[i].fire_timer = 0.0;
 		g->map.enemies[i].type = types[i];
-		g->map.enemies[i].is_ranged = stats->is_ranged;
+		g->map.enemies[i].is_ranged = stats.is_ranged;
 		g->map.enemies[i].active = true;
-		g->map.enemies[i].move_speed = stats->move_speed;
-		g->map.enemies[i].contact_damage = stats->contact_damage;
-		g->map.enemies[i].attack_delay = stats->attack_delay;
-		g->map.enemies[i].attack_range_sq = stats->attack_range
-			* stats->attack_range;
-		g->map.enemies[i].alert_range_sq = stats->alert_range
-			* stats->alert_range;
-		g->map.enemies[i].fire_delay = stats->fire_delay;
-		g->map.enemies[i].ranged_range_sq = stats->ranged_range
-			* stats->ranged_range;
-		g->map.enemies[i].projectile_damage = stats->projectile_damage;
-		g->map.enemies[i].score_value = stats->score_value;
+		g->map.enemies[i].move_speed = stats.move_speed;
+		g->map.enemies[i].contact_damage = stats.contact_damage;
+		g->map.enemies[i].attack_delay = stats.attack_delay;
+		g->map.enemies[i].attack_range_sq = stats.attack_range
+			* stats.attack_range;
+		g->map.enemies[i].alert_range_sq = stats.alert_range
+			* stats.alert_range;
+		g->map.enemies[i].fire_delay = stats.fire_delay;
+		g->map.enemies[i].ranged_range_sq = stats.ranged_range
+			* stats.ranged_range;
+		g->map.enemies[i].projectile_damage = stats.projectile_damage;
+		g->map.enemies[i].score_value = stats.score_value;
 		i++;
 	}
 }

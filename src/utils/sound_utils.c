@@ -14,7 +14,7 @@
 
 bool	sound_path(char *dst, size_t size, const char *dir, const char *name)
 {
-	static const char	*exts[3] = {".wav", ".ogg", ".mp3"};
+	const char *const	exts[3] = {".wav", ".ogg", ".mp3"};
 	int					i;
 	int					fd;
 
