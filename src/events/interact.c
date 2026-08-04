@@ -67,14 +67,6 @@ static bool	try_switches_at(t_coord check, t_game *g)
 		trigger_elevator_switch(g, check);
 		return (true);
 	}
-	if (in_coord_list(check, g->map.secrets, g->map.secret_count))
-	{
-		if (consume_key(g))
-			trigger_secret_switch(g, check);
-		else
-			show_message(g, "NEED A KEY", MESSAGE_DISPLAY_TIME);
-		return (true);
-	}
 	return (false);
 }
 
@@ -96,12 +88,17 @@ void	interact(t_game *g)
 			return ;
 		if (try_switches_at(check, g))
 			return ;
-		if (is_door(check, g) && !is_on_player(check, g))
+		if (is_door(check, g) && !is_secret_cell(g, check)
+			&& !is_on_player(check, g))
 		{
 			activate_door(check, g);
 			play_sound_effect(g, "door");
 			return ;
 		}
+		if (is_door(check, g) || g->map.grid[check.y][check.x] == WALL
+			|| g->map.grid[check.y][check.x] == TRANSPARENT_WALL
+			|| g->map.grid[check.y][check.x] == DECAL_WALL)
+			return ;
 		check_distance += 0.1;
 	}
 }

@@ -41,6 +41,8 @@ typedef struct s_door
 {
 	double		opening_state;
 	bool		is_opening;
+	bool		is_secret;
+	bool		discovered;
 }				t_door;
 
 typedef struct s_item
@@ -79,6 +81,9 @@ typedef struct s_decoration
 {
 	t_position	pos;
 	int			type;
+	int			sprite_index;
+	double		z_offset;
+	double		scale;
 }				t_decoration;
 
 typedef struct s_sector
@@ -328,7 +333,7 @@ typedef struct s_hud
 {
 	int			health;
 	int			max_health;
-	int			ammo;
+	int			magazine[WEAPON_NB];
 	int			score;
 	int			fps;
 	int			inventory[4];
@@ -416,13 +421,6 @@ typedef struct s_shot_spec
 	int				damage;
 	bool			from_enemy;
 }				t_shot_spec;
-
-typedef struct s_door_search
-{
-	t_coord			pos;
-	t_coord			best;
-	long			best_dist;
-}				t_door_search;
 
 typedef struct s_menu
 {

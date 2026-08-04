@@ -98,11 +98,16 @@ int	pressed(int key, t_game *g)
 	else if (key == KEY_E)
 		interact(g);
 	else if (key == KEY_F)
-		toggle_fly_mode(&g->player, g);
+	{
+		if (g->hud.inventory[ITEM_ARTIFACT] > 0)
+			toggle_fly_mode(&g->player, g);
+		else
+			show_message(g, "JETPACK REQUIRED", MESSAGE_DISPLAY_TIME);
+	}
 	else if (key == KEY_Q)
 		cycle_weapon(g);
 	else if (key == KEY_R)
-		fire_projectile(g);
+		reload_weapon(g);
 	else if (key == KEY_1)
 		select_item(g, 0);
 	else if (key == KEY_2)

@@ -12,6 +12,21 @@
 
 #include "../../include/cub3d.h"
 
+static bool	sector_is_moving(t_game *g, int id)
+{
+	int	i;
+
+	i = 0;
+	while (i < WORLD_EVENT_MAX)
+	{
+		if (g->events[i].active && g->events[i].action == EVENT_SECTOR_ANIMATE
+			&& g->events[i].target == id)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
 void	trigger_elevator_switch(t_game *g, t_coord pos)
 {
 	int				id;
@@ -22,6 +37,10 @@ void	trigger_elevator_switch(t_game *g, t_coord pos)
 
 	id = g->map.sector_grid[pos.y][pos.x];
 	sector = &g->map.sectors[id];
+	if (!sector->active)
+		return (show_message(g, "ELEVATOR UNPOWERED", MESSAGE_DISPLAY_TIME));
+	if (sector_is_moving(g, id))
+		return (show_message(g, "ELEVATOR MOVING", 1.0));
 	from = sector->floor_z;
 	if (sector->elevator_raised)
 		to = from - ELEVATOR_RISE;
@@ -34,60 +53,29 @@ void	trigger_elevator_switch(t_game *g, t_coord pos)
 	play_sound_effect(g, "switch");
 }
 
-static long	door_distance(t_coord door, t_coord pos)
+bool	is_secret_cell(t_game *g, t_coord pos)
 {
-	long	dx;
-	long	dy;
+	int	i;
 
-	dx = door.x - pos.x;
-	dy = door.y - pos.y;
-	return (dx * dx + dy * dy);
-}
-
-static void	check_door_cell(t_game *g, t_coord cell, t_door_search *search)
-{
-	long	dist;
-
-	if (g->map.grid[cell.y][cell.x] != DOOR)
-		return ;
-	dist = door_distance(cell, search->pos);
-	if (search->best_dist < 0 || dist < search->best_dist)
+	i = 0;
+	while (i < g->map.secret_count)
 	{
-		search->best_dist = dist;
-		search->best = cell;
+		if (g->map.secrets[i].x == pos.x && g->map.secrets[i].y == pos.y)
+			return (true);
+		i++;
 	}
-}
-
-static t_coord	find_nearest_door(t_game *g, t_coord pos)
-{
-	t_door_search	search;
-	t_coord			cell;
-
-	search.pos = pos;
-	search.best = pos;
-	search.best_dist = -1;
-	cell.y = 0;
-	while (cell.y < g->map.height)
-	{
-		cell.x = 0;
-		while (cell.x < g->map.width)
-		{
-			check_door_cell(g, cell, &search);
-			cell.x++;
-		}
-		cell.y++;
-	}
-	return (search.best);
+	return (false);
 }
 
 void	trigger_secret_switch(t_game *g, t_coord pos)
 {
-	t_coord			door;
-	t_world_event	event;
+	t_door	*door;
 
-	door = find_nearest_door(g, pos);
-	make_event_door(&event, door, SWITCH_EVENT_DELAY);
-	queue_world_event(g, event);
+	if (!is_in_bounds(pos, g) || g->map.grid[pos.y][pos.x] != DOOR)
+		return ;
+	door = &g->map.doors[pos.y][pos.x];
+	door->is_opening = true;
+	door->discovered = true;
 	show_message(g, "SECRET FOUND", MESSAGE_DISPLAY_TIME);
-	play_sound_effect(g, "switch");
+	play_sound_effect(g, "door");
 }

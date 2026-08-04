@@ -91,8 +91,8 @@ void		collect_item(t_item *item, t_game *g);
 // item_effects.c
 void		apply_health_pickup(t_game *g, int amount);
 void		apply_ammo_pickup(t_game *g, int amount);
-bool		consume_key(t_game *g);
 void		use_selected_item(t_game *g);
+void		reload_weapon(t_game *g);
 
 // interact.c
 void		interact(t_game *g);
@@ -116,6 +116,7 @@ bool		animate_sector_event(t_game *g, t_world_event *event);
 // switch_targets.c
 void		trigger_elevator_switch(t_game *g, t_coord pos);
 void		trigger_secret_switch(t_game *g, t_coord pos);
+bool		is_secret_cell(t_game *g, t_coord pos);
 
 // message.c
 void		show_message(t_game *g, const char *text, double duration);

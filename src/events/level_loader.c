@@ -36,14 +36,14 @@ static void	apply_difficulty(t_game *g)
 	{
 		g->hud.health = 150;
 		g->hud.max_health = 150;
-		g->hud.ammo += 20;
+		g->hud.inventory[ITEM_AMMO] += 20;
 	}
 	else if (g->menu.difficulty == 2)
 	{
 		g->hud.health = 75;
 		g->hud.max_health = 75;
-		if (g->hud.ammo > 10)
-			g->hud.ammo -= 10;
+		if (g->hud.inventory[ITEM_AMMO] > 10)
+			g->hud.inventory[ITEM_AMMO] -= 10;
 	}
 }
 

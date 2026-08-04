@@ -70,11 +70,13 @@ slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 - Shift: run
 - Ctrl: crouch, or descend while flying/swimming
 - Space: jump, or ascend while flying/swimming
-- `F`: toggle fly mode
+- `F`: engage/disengage the jetpack after collecting the artifact pickup
 - `E`: interact with doors
-- Left mouse or `R`: fire projectile
+- Left mouse: fire projectile
+- `R`: reload the selected weapon from reserve ammo
 - `Q`: switch weapon
 - `1` / `2` / `3` / `4`: select carried artifact slot
+- Enter: use the selected inventory slot (`2` reloads, `4` toggles jetpack)
 - Esc or window close button: quit cleanly
 
 ## Menu
@@ -85,7 +87,8 @@ starts the selected level.
 
 ## HUD
 
-The frame buffer HUD renders health, ammo, inventory slots, and score/currency
+The frame buffer HUD renders health, the selected weapon's magazine, inventory
+slots, and score/currency
 as separate overlay elements. The minimap is shown in the top-left, score is
 centered at the top, FPS is shown in the top-right, and the view includes a
 crosshair plus a bottom-center XPM weapon sprite. Ammo and inventory slots use
@@ -98,12 +101,29 @@ it shows a message, adds score, toggles doors after a short delay, then closes
 doors again after a timer. Two additional switch types target a single
 specific device instead of every door on the map:
 
-- `L` — elevator switch. Animates the floor of the sector beneath it between
-  its resting height and a raised height over `ELEVATOR_DURATION` seconds,
-  clamped so it can never rise into the ceiling. Triggering it again lowers it
-  back down.
-- `P` — secret-passage switch. Opens the single nearest `2` door tile after a
-  short delay, leaving every other door on the map untouched.
+- `L` — solid wall device with a dedicated, hand-height button sprite. The
+  sector assigned to its map cell is the lift target. Press `E` at the button
+  to raise/lower that sector over `ELEVATOR_DURATION`; a grounded player on the
+  platform rides it smoothly. The button sprite is separate from damage decals.
+- `P` — disguised secret door. It uses the surrounding wall texture, is drawn
+  as an ordinary wall on the minimap, and opens automatically when approached.
+  It does not require a key or the interact key.
+
+## Reloading and Flight
+
+Ammo pickups go into inventory slot 2 as reserve ammunition rather than
+directly filling the gun. Each weapon has its own magazine. Select slot 2 and
+press Enter to reload, or use `R` as the shortcut. Empty-magazine feedback
+points the player back to the ammo inventory.
+
+The slot-4 artifact is a jetpack. Once collected, select it and press Enter (or
+press `F`) to engage flight. Space/Ctrl ascend and descend, and looking up or
+down while moving adds smooth pitch-directed climb. Flight respects floors,
+ceilings, walls, and raised ledges.
+
+`tests/maps/flight_ops.dnk` is the hand-in showcase mission for all four
+features: hidden passage, inventory reload, wall-panel elevator, and a required
+jetpack crossing over a deep shaft.
 
 ## Text Overlay
 

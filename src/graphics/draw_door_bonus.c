@@ -26,6 +26,38 @@ static t_position	door_world_pos(t_ray *ray, t_game *g)
 	return (pos);
 }
 
+static t_texture	*door_texture(t_ray *ray, t_game *g)
+{
+	int			texture;
+	int			i;
+	bool		secret;
+
+	secret = false;
+	i = 0;
+	while (i < g->map.secret_count)
+	{
+		if (&g->map.doors[g->map.secrets[i].y][g->map.secrets[i].x]
+			== ray->hit_door)
+			secret = true;
+		i++;
+	}
+	if (!secret)
+		return (&g->assets.textures[DOOR_T]);
+	if (ray->door_side == 0)
+	{
+		texture = EAST;
+		if (ray->dir.x < 0)
+			texture = WEST;
+	}
+	else
+	{
+		texture = SOUTH;
+		if (ray->dir.y < 0)
+			texture = NORTH;
+	}
+	return (&g->assets.textures[texture]);
+}
+
 void	draw_door_slice(t_ray *ray, t_game *g)
 {
 	t_texture_slice	slice;
@@ -38,7 +70,7 @@ void	draw_door_slice(t_ray *ray, t_game *g)
 	slice.y_start = door_top;
 	slice.y_end = door_bottom;
 	slice.raw_top = raw_top;
-	slice.texture = &g->assets.textures[DOOR_T];
+	slice.texture = door_texture(ray, g);
 	slice.texture_x = get_texture_x(ray, ray->door_distance, ray->door_side, g);
 	slice.viewer_distance = ray->door_distance;
 	slice.light = get_light_at(g, door_world_pos(ray, g));

@@ -20,7 +20,7 @@ t_block	ft_convert_tblock(char c)
 		return (WALL);
 	else if (c == 'S' || c == 'W' || c == 'N' || c == 'E')
 		return (PLAYER);
-	else if (c == '2')
+	else if (c == '2' || c == 'P')
 		return (DOOR);
 	else if (c == '3' || c == 'K' || c == 'I' || c == 'D' || c == 'C')
 		return (SPRITE);
@@ -28,8 +28,10 @@ t_block	ft_convert_tblock(char c)
 		return (TRANSPARENT_WALL);
 	else if (c == '5' || c == 'T')
 		return (DECAL_WALL);
+	else if (c == 'L')
+		return (WALL);
 	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M' || c == 'X'
-		|| c == 'L' || c == 'P' || c == 'V' || (c >= 'a' && c <= 'f'))
+		|| c == 'V' || (c >= 'a' && c <= 'f'))
 		return (EMPTY);
 	else
 		return (NULL_BLOCK);
@@ -40,7 +42,7 @@ static bool	ft_is_enemy_char(char c)
 	return (c == '3' || c == 'K' || c == 'I' || c == 'D' || c == 'C');
 }
 
-static int	count_decorations(char **map, int lines, int width)
+static int	count_map_char(char **map, int lines, int width, char target)
 {
 	int	count;
 	int	x;
@@ -52,10 +54,44 @@ static int	count_decorations(char **map, int lines, int width)
 	{
 		x = 0;
 		while (x < width)
-			count += (map[y][x++] >= 'a' && map[y][x - 1] <= 'f');
+			count += (map[y][x++] == target);
 		y++;
 	}
 	return (count);
+}
+
+static int	count_decorations(char **map, int lines, int width)
+{
+	int	type;
+	int	count;
+
+	count = count_map_char(map, lines, width, 'L');
+	type = 0;
+	while (type < DECORATION_TYPES_NB)
+		count += count_map_char(map, lines, width, 'a' + type++);
+	return (count);
+}
+
+static bool	button_neighbor(char c)
+{
+	return (c != '1' && c != '4' && c != '5' && c != 'L' && c != ' ');
+}
+
+static t_position	button_position(char **map, int x, int y,
+		int lines, int width)
+{
+	t_position	pos;
+
+	pos = (t_position){x + 0.5, y + 0.5};
+	if (y > 0 && button_neighbor(map[y - 1][x]))
+		pos.y -= ELEVATOR_BUTTON_OFFSET;
+	else if (y + 1 < lines && button_neighbor(map[y + 1][x]))
+		pos.y += ELEVATOR_BUTTON_OFFSET;
+	else if (x > 0 && button_neighbor(map[y][x - 1]))
+		pos.x -= ELEVATOR_BUTTON_OFFSET;
+	else if (x + 1 < width && button_neighbor(map[y][x + 1]))
+		pos.x += ELEVATOR_BUTTON_OFFSET;
+	return (pos);
 }
 
 static void	add_decorations(char **map, int lines, int width, t_game *g)
@@ -79,7 +115,19 @@ static void	add_decorations(char **map, int lines, int width, t_game *g)
 			if (map[y][x] >= 'a' && map[y][x] <= 'f')
 			{
 				g->map.decorations[i].pos = (t_position){x + 0.5, y + 0.5};
-				g->map.decorations[i++].type = map[y][x] - 'a';
+				g->map.decorations[i].type = map[y][x] - 'a';
+				g->map.decorations[i].z_offset = 0.0;
+				g->map.decorations[i].scale = 1.0;
+				i++;
+			}
+			else if (map[y][x] == 'L')
+			{
+				g->map.decorations[i].pos = button_position(map, x, y,
+					lines, width);
+				g->map.decorations[i].type = ELEVATOR_BUTTON_DECORATION;
+				g->map.decorations[i].z_offset = ELEVATOR_BUTTON_Z;
+				g->map.decorations[i].scale = ELEVATOR_BUTTON_SCALE;
+				i++;
 			}
 			x++;
 		}
@@ -347,6 +395,7 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 	i = deco + vending;
 	while (i < deco + vending + decorations)
 	{
+		g->map.decorations[i - deco - vending].sprite_index = i;
 		g->map.sprites[i] = g->map.decorations[i - deco - vending].pos;
 		i++;
 	}

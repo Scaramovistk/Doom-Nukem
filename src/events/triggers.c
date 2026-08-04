@@ -62,6 +62,29 @@ static bool	apply_message(t_game *g, t_coord cell)
 	return (false);
 }
 
+static bool	open_nearby_secret(t_game *g)
+{
+	t_coord	secret;
+	double	dx;
+	double	dy;
+	int		i;
+
+	i = 0;
+	while (i < g->map.secret_count)
+	{
+		secret = g->map.secrets[i++];
+		dx = secret.x + 0.5 - g->player.pos.x;
+		dy = secret.y + 0.5 - g->player.pos.y;
+		if (dx * dx + dy * dy <= SECRET_OPEN_RADIUS * SECRET_OPEN_RADIUS
+			&& !g->map.doors[secret.y][secret.x].discovered)
+		{
+			trigger_secret_switch(g, secret);
+			return (true);
+		}
+	}
+	return (false);
+}
+
 bool	update_proximity_triggers(t_game *g)
 {
 	t_coord	cell;
@@ -72,5 +95,5 @@ bool	update_proximity_triggers(t_game *g)
 	cell.y = (int)g->player.pos.y;
 	hazard = apply_hazard(g, cell);
 	message = apply_message(g, cell);
-	return (hazard || message);
+	return (hazard || message || open_nearby_secret(g));
 }

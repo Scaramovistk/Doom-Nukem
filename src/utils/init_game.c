@@ -87,6 +87,8 @@ void	ft_int_assets(t_assets *assets)
 		assets->decoration_icons[i].source = NULL;
 		i++;
 	}
+	assets->decoration_icons[ELEVATOR_BUTTON_DECORATION].source
+		= ELEVATOR_BUTTON_ICON;
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -126,7 +128,8 @@ void	ft_int_hud(t_hud *hud)
 
 	hud->health = 100;
 	hud->max_health = 100;
-	hud->ammo = 30;
+	hud->magazine[0] = PISTOL_MAGAZINE_SIZE;
+	hud->magazine[1] = BLASTER_MAGAZINE_SIZE;
 	hud->score = 0;
 	hud->fps = 0;
 	hud->selected_item = 0;
@@ -135,6 +138,7 @@ void	ft_int_hud(t_hud *hud)
 	i = 0;
 	while (i < 4)
 		hud->inventory[i++] = 0;
+	hud->inventory[ITEM_AMMO] = STARTING_RESERVE_AMMO;
 }
 
 void	ft_init_map(t_map *map)

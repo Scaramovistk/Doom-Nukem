@@ -36,6 +36,16 @@ static void	relink_moved_item(t_game *g, int old_index, int new_index)
 		}
 		i++;
 	}
+	i = 0;
+	while (i < g->map.decoration_count)
+	{
+		if (g->map.decorations[i].sprite_index == old_index)
+		{
+			g->map.decorations[i].sprite_index = new_index;
+			return ;
+		}
+		i++;
+	}
 }
 
 static void	remove_item_sprite(t_item *item, t_game *g)

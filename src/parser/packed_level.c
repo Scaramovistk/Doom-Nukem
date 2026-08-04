@@ -633,6 +633,33 @@ static void	write_default_sector_grid(FILE *out, char **lines, int count)
 	fprintf(out, "END_SECTORS\n");
 }
 
+static bool	write_sector_sidecar(FILE *out, char *src)
+{
+	char	path[LINE_SIZE];
+	char	line[LINE_SIZE];
+	char	*extension;
+	FILE	*sidecar;
+
+	ft_strlcpy(path, src, LINE_SIZE);
+	extension = ft_strrchr(path, '.');
+	if (extension && ft_strcmp(extension, ".cub") == 0)
+		ft_strlcpy(extension, ".sectors", LINE_SIZE - (extension - path));
+	else
+		ft_strlcat(path, ".sectors", LINE_SIZE);
+	sidecar = fopen(path, "r");
+	if (!sidecar)
+		return (false);
+	line[0] = '\0';
+	fprintf(out, "BEGIN_SECTORS\n");
+	while (fgets(line, sizeof(line), sidecar))
+		fputs(line, out);
+	if (line[0] && line[ft_strlen(line) - 1] != '\n')
+		fputc('\n', out);
+	fprintf(out, "END_SECTORS\n");
+	fclose(sidecar);
+	return (true);
+}
+
 static bool	load_cub_text(char *src, char **lines, int *count)
 {
 	int		fd;
@@ -679,7 +706,8 @@ int	pack_level_file(char *src, char *dst)
 	while (i < count)
 		write_cub_line(out, lines[i++]);
 	fprintf(out, "END_CUB\n");
-	write_default_sector_grid(out, lines, count);
+	if (!write_sector_sidecar(out, src))
+		write_default_sector_grid(out, lines, count);
 	fclose(out);
 	i = 0;
 	while (i < count)

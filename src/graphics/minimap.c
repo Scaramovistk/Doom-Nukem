@@ -47,6 +47,13 @@ static int	block_color(t_block block)
 	return (DARK_GREY);
 }
 
+static int	map_cell_color(t_game *g, t_coord cell)
+{
+	if (is_secret_cell(g, cell))
+		return (GREY);
+	return (block_color(g->map.grid[cell.y][cell.x]));
+}
+
 static void	draw_map_cells(t_game *g, t_coord origin)
 {
 	t_coord	cell;
@@ -61,7 +68,7 @@ static void	draw_map_cells(t_game *g, t_coord origin)
 			pos.x = origin.x + cell.x * MAP_SCALE;
 			pos.y = origin.y + cell.y * MAP_SCALE;
 			minimap_rect(g, pos, (t_coord){MAP_SCALE - 1, MAP_SCALE - 1},
-				block_color(g->map.grid[cell.y][cell.x]));
+				map_cell_color(g, cell));
 			cell.x++;
 		}
 		cell.y++;

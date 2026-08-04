@@ -28,11 +28,16 @@ void	init_door_grid(t_game *g)
 			{
 				g->map.doors[pos.y][pos.x].opening_state = 0.0;
 				g->map.doors[pos.y][pos.x].is_opening = false;
+				g->map.doors[pos.y][pos.x].is_secret
+					= is_secret_cell(g, pos);
+				g->map.doors[pos.y][pos.x].discovered = false;
 			}
 			else
 			{
 				g->map.doors[pos.y][pos.x].opening_state = -1.0;
 				g->map.doors[pos.y][pos.x].is_opening = false;
+				g->map.doors[pos.y][pos.x].is_secret = false;
+				g->map.doors[pos.y][pos.x].discovered = false;
 			}
 			pos.x++;
 		}

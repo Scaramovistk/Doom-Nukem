@@ -27,6 +27,20 @@ static bool	is_item_sprite(t_game *g, int sprite_index)
 	return (false);
 }
 
+static bool	is_decoration_sprite(t_game *g, int sprite_index)
+{
+	int	i;
+
+	i = 0;
+	while (i < g->map.decoration_count)
+	{
+		if (g->map.decorations[i].sprite_index == sprite_index)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
 static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 {
 	int	i;
@@ -37,6 +51,13 @@ static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 		if (g->map.items[i].active
 			&& g->map.items[i].sprite_index == old_index)
 			g->map.items[i].sprite_index = new_index;
+		i++;
+	}
+	i = 0;
+	while (i < g->map.decoration_count)
+	{
+		if (g->map.decorations[i].sprite_index == old_index)
+			g->map.decorations[i].sprite_index = new_index;
 		i++;
 	}
 }
@@ -68,6 +89,11 @@ bool	hit_sprite(t_game *g, t_projectile *p, t_position pos)
 	i = 0;
 	while (i < g->map.sprite_count)
 	{
+		if (is_decoration_sprite(g, i))
+		{
+			i++;
+			continue ;
+		}
 		dx = g->map.sprites[i].x - pos.x;
 		dy = g->map.sprites[i].y - pos.y;
 		if (dx * dx + dy * dy <= PROJECTILE_HIT_RADIUS

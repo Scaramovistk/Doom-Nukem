@@ -25,6 +25,12 @@ so keeping `.cub` files out of it avoids duplicate menu entries for the same
 level. After editing a `.cub` source, re-run `--pack` to refresh its `.dnk` in
 `tests/maps/`.
 
+For authored heights and devices, place a same-basename `.sectors` file beside
+the source (for example `flight_ops.cub` + `flight_ops.sectors`). It contains
+the `SECTOR`, optional `WALL`, and `GRID` lines without section wrappers. The
+packer embeds it as `BEGIN_SECTORS`; if absent, it generates the legacy default
+two-sector grid.
+
 ## Layout
 
 ```text
@@ -87,6 +93,19 @@ segment. `texture` uses the texture enum order from `ft_enumerations.h`:
 
 `DC` supplies the transparent decal drawn over a wall after it is hit by a
 projectile.
+
+Map device tokens are preserved inside the packed `BEGIN_CUB` data:
+
+- `L` is a solid wall device with a small billboard control sprite placed just
+  in front of its accessible face. Interacting with it animates every cell
+  assigned to the panel's sector. Its sprite uses decoration texture `D5`,
+  independently from the projectile-damage decal supplied by `DC`.
+- `P` is the actual secret-door cell. It renders with the directional wall
+  texture and is deliberately indistinguishable from a wall on the minimap;
+  proximity opens it automatically.
+- `9` is the jetpack/artifact pickup used to authorize flight.
+- `7` is reserve ammunition; selecting inventory slot 2 and pressing Enter
+  transfers it into the active weapon's magazine.
 
 ## Non-grid rooms
 

@@ -44,6 +44,10 @@ bool	animate_sector_event(t_game *g, t_world_event *event)
 		+ (event->to_value - event->from_value) * ratio;
 	if (sector->floor_z > sector->ceil_z - 0.25)
 		sector->floor_z = sector->ceil_z - 0.25;
+	if (g->player.on_ground && g->map.sector_grid
+		&& g->map.sector_grid[(int)g->player.pos.y][(int)g->player.pos.x]
+		== event->target)
+		g->player.z = get_floor_z_at(g, g->player.pos);
 	if (ratio >= 1.0)
 		event->active = false;
 	return (true);

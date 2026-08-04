@@ -125,7 +125,8 @@ static void	draw_ammo(t_game *g)
 	hud_frame(g, pos, (t_coord){118, 46}, HUD_BORDER);
 	draw_hud_texture(g, &g->assets.ammo_icon,
 		(t_coord){pos.x + 8, pos.y + 7}, 1);
-	draw_number(g, g->hud.ammo, (t_coord){pos.x + 42, pos.y + 10}, 5);
+	draw_number(g, g->hud.magazine[g->hud.selected_weapon],
+		(t_coord){pos.x + 42, pos.y + 10}, 5);
 }
 
 static void	draw_inventory(t_game *g)
