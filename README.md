@@ -75,7 +75,7 @@ slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 
 ## Controls
 
-- `W` / `S`: move forward and backward
+- `W` / `S` or Arrow Up / Down: move forward and backward
 - `A` / `D`: strafe
 - Arrow left/right: rotate
 - Mouse: look around
@@ -84,7 +84,7 @@ slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 - Ctrl: crouch, or descend while flying/swimming
 - Space: jump, or ascend while flying/swimming
 - `F`: engage/disengage the jetpack after collecting the artifact pickup
-- `E`: interact with doors
+- `E`: interact with doors, switches, elevator panels, and keyed doors
 - Left mouse: fire projectile
 - `R`: reload the selected weapon from reserve ammo
 - `Q`: switch weapon
@@ -121,6 +121,9 @@ specific device instead of every door on the map:
 - `P` — disguised secret door. It uses the surrounding wall texture, is drawn
   as an ordinary wall on the minimap, and opens automatically when approached.
   It does not require a key or the interact key.
+- `B` — locked door. Collect an `8` key pickup and press `E` at the door to
+  consume one key, permanently unlock it, and begin the normal door animation.
+  `door_map.dnk` demonstrates the complete pickup-to-unlock path.
 
 ## Reloading and Flight
 

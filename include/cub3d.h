@@ -118,6 +118,7 @@ bool		animate_sector_event(t_game *g, t_world_event *event);
 void		trigger_elevator_switch(t_game *g, t_coord pos);
 void		trigger_secret_switch(t_game *g, t_coord pos);
 bool		is_secret_cell(t_game *g, t_coord pos);
+bool		is_locked_cell(t_game *g, t_coord pos);
 
 // message.c
 void		show_message(t_game *g, const char *text, double duration);
@@ -269,6 +270,7 @@ void		ft_populate_info(t_header *h, t_game *g);
 // generate_map_utils.c
 void		add_elevators(char **map, int lines, int width, t_game *g);
 void		add_secrets(char **map, int lines, int width, t_game *g);
+void		add_locked_doors(char **map, int lines, int width, t_game *g);
 
 // get_header.c
 void		ft_setup_header(t_header *header);

@@ -176,6 +176,8 @@ void	ft_init_map(t_map *map)
 	map->elevator_count = 0;
 	map->secrets = NULL;
 	map->secret_count = 0;
+	map->locked_doors = NULL;
+	map->locked_door_count = 0;
 	map->hazard_zones = NULL;
 	map->hazard_count = 0;
 	map->message_zones = NULL;

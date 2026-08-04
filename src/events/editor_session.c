@@ -88,7 +88,7 @@ static bool	is_map_line(const char *line)
 	int			i;
 	bool		non_space;
 
-	valid = "0123456789 NWSETHMXKLPIDCVabcdef";
+	valid = "0123456789 NWSETHMXKLPIDCVBabcdef";
 	i = 0;
 	non_space = false;
 	while (line[i])
@@ -240,7 +240,7 @@ static bool	save_document(t_editor_doc *doc)
 
 static bool	valid_map_token(char token)
 {
-	return (ft_strchr("0123456789NWSETHMXKLPIDCVabcdef", token) != NULL);
+	return (ft_strchr("0123456789NWSETHMXKLPIDCVBabcdef", token) != NULL);
 }
 
 static void	set_map_cell(t_editor_doc *doc, char *command)
@@ -455,9 +455,10 @@ static void	print_help(void)
 	printf("  wall add X1 Y1 X2 Y2 TEXTURE SECTOR TRANSPARENT\n");
 	printf("  wall clear\n");
 	printf("  save | validate | pack [output.dnk] | quit\n");
-	printf("Map tokens: 0 floor, 1 wall, 2 door, P secret, L elevator,\n");
-	printf(" T timed switch, H hazard, M message, X exit, 6 health,\n");
-	printf(" 7 ammo, 8 key, 9 jetpack, 3/K/I/D/C enemies, V decoration.\n");
+	printf("Map tokens: 0 floor, 1 wall, 2 door, B locked, P secret,\n");
+	printf(" L elevator, T timed switch, H hazard, M message, X exit,\n");
+	printf(" 6 health, 7 ammo, 8 key, 9 jetpack, 3/K/I/D/C enemies,\n");
+	printf(" V decoration.\n");
 }
 
 static void	validate_document(t_editor_doc *doc)

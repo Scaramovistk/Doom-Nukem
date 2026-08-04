@@ -70,6 +70,26 @@ static bool	try_switches_at(t_coord check, t_game *g)
 	return (false);
 }
 
+static void	use_door(t_coord pos, t_game *g)
+{
+	t_door	*door;
+
+	door = &g->map.doors[pos.y][pos.x];
+	if (door->is_locked && g->hud.inventory[ITEM_KEY] <= 0)
+	{
+		show_message(g, "LOCKED - KEY REQUIRED", MESSAGE_DISPLAY_TIME);
+		return ;
+	}
+	if (door->is_locked)
+	{
+		g->hud.inventory[ITEM_KEY]--;
+		door->is_locked = false;
+		show_message(g, "KEY USED - DOOR UNLOCKED", MESSAGE_DISPLAY_TIME);
+	}
+	activate_door(pos, g);
+	play_sound_effect(g, "door");
+}
+
 void	interact(t_game *g)
 {
 	t_position	dir;
@@ -91,8 +111,7 @@ void	interact(t_game *g)
 		if (is_door(check, g) && !is_secret_cell(g, check)
 			&& !is_on_player(check, g))
 		{
-			activate_door(check, g);
-			play_sound_effect(g, "door");
+			use_door(check, g);
 			return ;
 		}
 		if (is_door(check, g) || g->map.grid[check.y][check.x] == WALL

@@ -67,6 +67,21 @@ bool	is_secret_cell(t_game *g, t_coord pos)
 	return (false);
 }
 
+bool	is_locked_cell(t_game *g, t_coord pos)
+{
+	int	i;
+
+	i = 0;
+	while (i < g->map.locked_door_count)
+	{
+		if (g->map.locked_doors[i].x == pos.x
+			&& g->map.locked_doors[i].y == pos.y)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
 void	trigger_secret_switch(t_game *g, t_coord pos)
 {
 	t_door	*door;

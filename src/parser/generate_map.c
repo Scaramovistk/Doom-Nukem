@@ -20,7 +20,7 @@ t_block	ft_convert_tblock(char c)
 		return (WALL);
 	else if (c == 'S' || c == 'W' || c == 'N' || c == 'E')
 		return (PLAYER);
-	else if (c == '2' || c == 'P')
+	else if (c == '2' || c == 'P' || c == 'B')
 		return (DOOR);
 	else if (c == '3' || c == 'K' || c == 'I' || c == 'D' || c == 'C')
 		return (SPRITE);
@@ -516,6 +516,7 @@ static void	add_interactables(char **map, int lines, int width, t_game *g)
 	add_exits(map, lines, width, g);
 	add_elevators(map, lines, width, g);
 	add_secrets(map, lines, width, g);
+	add_locked_doors(map, lines, width, g);
 }
 
 void	ft_populate_map(char **map, int *vals, t_game *g)

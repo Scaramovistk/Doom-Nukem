@@ -75,3 +75,25 @@ void	add_secrets(char **map, int lines, int width, t_game *g)
 				g->map.secrets[i++] = (t_coord){hor, vert};
 	}
 }
+
+void	add_locked_doors(char **map, int lines, int width, t_game *g)
+{
+	int	vert;
+	int	hor;
+	int	i;
+
+	g->map.locked_door_count = count_char_at(map, lines, width, 'B');
+	if (!g->map.locked_door_count)
+		return ;
+	g->map.locked_doors = calloc_s(g->map.locked_door_count,
+			sizeof(t_coord), g);
+	i = 0;
+	vert = -1;
+	while (++vert < lines)
+	{
+		hor = -1;
+		while (++hor < width)
+			if (map[vert][hor] == 'B')
+				g->map.locked_doors[i++] = (t_coord){hor, vert};
+	}
+}

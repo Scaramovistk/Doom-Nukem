@@ -41,15 +41,16 @@ Status meanings:
    creates a valid `.dnk`. The broader limitation on arbitrary runtime action
    scripting remains separately recorded in finding 9.
 
-3. **FAIL — keys have no usable gameplay path.** Key pickups still occupy
-   `ITEM_KEY`, but there is no key-consumption or locked-door implementation.
-   Secret doors intentionally no longer consume a key. The subject explicitly
-   asks for “keys, and ways to use them.”
+3. **RESOLVED — keys now have a usable gameplay path.** The authored `B` token
+   creates a locked door. Pressing `E` without a key gives clear feedback;
+   collecting an `8` pickup and interacting consumes exactly one key, unlocks
+   that door permanently, and starts its normal animation. Timed/global events
+   cannot bypass locks. `door_map.dnk` demonstrates this path.
 
-4. **FAIL — keyboard arrows do not provide forward/back movement.** During play,
-   Left/Right rotate, but Up/Down are only handled by the menu. Forward/backward
-   movement uses W/S. The wording explicitly requests real-time movement via the
-   keyboard arrows.
+4. **RESOLVED — keyboard arrows provide the required movement.** During play,
+   Up/Down now drive the same forward/back movement state as W/S, while
+   Left/Right retain 360-degree rotation. In menu state, Up/Down continue to
+   select levels.
 
 5. **FAIL — proximity hazard damage is effectively zero at normal frame rates.**
    `src/events/triggers.c` subtracts `(int)(10.0 * delta_time)`. At 60 FPS this
@@ -107,7 +108,7 @@ Status meanings:
 | Requirement | Status | Evidence / finding |
 |---|---|---|
 | Subjective ray-cast 3D; no 3D library | PASS | DDA ray casting and segment intersection are implemented in `src/graphics`; MLX presents a software-generated framebuffer. |
-| Forward/back, 360-degree rotation via arrows | **FAIL** | W/S move and Left/Right rotate; Up/Down do not move during gameplay. |
+| Forward/back, 360-degree rotation via arrows | **PASS** | Gameplay Up/Down move forward/back and Left/Right rotate; W/S remain available. |
 | Escape closes cleanly | PASS | `KEY_ESC` calls `stop_game()`, which calls cleanup. |
 | Window red cross closes cleanly | PASS | Client-message hook calls `stop_game()`. |
 | Textured walls | PASS | Directional XPM wall textures and textured slices are implemented. |
@@ -140,11 +141,11 @@ Status meanings:
 | Run, jump, fall, crouch, stand | PASS / LIVE VERIFY | State/input and vertical physics exist. |
 | Fly or swim | PASS | Jetpack-gated flight exists and `flight_ops.dnk` requires crossing a deep shaft. |
 | Blocking/non-blocking objects proportional to visuals | **FAIL / PARTIAL** | Data field exists, but no authored object is configured as blocking and generic sprite collision is absent. |
-| Pickups and inventory | PASS | Health, reserve ammo, keys, and artifacts are collected; ammo reload and jetpack use inventory selections. |
+| Pickups and inventory | PASS | Health, reserve ammo, keys, and artifacts are collected; keys unlock `B` doors, while ammo reload and jetpack use inventory selections. |
 | Proximity and voluntary interactions | PARTIAL | Automatic secret doors and E-button interactions work in code; hazard damage is broken by integer truncation. |
 | Timed actions/action sequences | PASS | World-event queue supports delayed/repeating actions; switch and elevator events are timed. |
 | Actions alter shapes/properties broadly | PARTIAL | Doors and floor height change; arbitrary geometry/texture/property changes are not authorable. |
-| Animated doors, keys, elevators, secret passages | **PARTIAL / FAIL** | Doors, elevator, and automatic disguised passages exist. Keys have no use. |
+| Animated doors, keys, elevators, secret passages | **PASS** | Ordinary and keyed animated doors, consumed inventory keys, elevators, and automatic disguised passages are implemented. |
 | Characters/objects with reactions/interactions | PASS | Multiple enemy types chase, attack, shoot, take damage, die, and award score. Buttons/doors react to interaction. |
 | Projectiles interact with world, objects, characters, player | PASS / RISK | Player/enemy projectile ownership, wall collision/decals, sprite collision, enemy damage, and player damage exist. Decorations are intentionally projectile-transparent and items stop shots without taking damage. |
 | Story and mission goal | PASS | Five-level campaign briefings/debriefings plus item/exit objectives exist. |
@@ -186,6 +187,8 @@ make                                  # final no-op confirmed
 ./doom-nukem --edit /tmp/verdict-editor-starter.dnk # succeeded
 ./doom-nukem --check /tmp/verdict-editor-starter.dnk # passed
 interactive edit/save/validate/pack smoke test       # passed
+./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
+./doom-nukem --check tests/maps/door_map.dnk         # 1 key + 1 locked door
 nm -A --defined-only build/*.o | writable-symbol filter
                                                     # no output (passed)
 git diff --check                                    # passed
@@ -197,17 +200,15 @@ there is no X server or Xvfb in this environment.
 
 ## Recommended order before hand-in
 
-1. Add locked doors and an actual key-use flow.
-2. Bind gameplay Up/Down to forward/back movement while preserving W/S.
-3. Accumulate fractional hazard damage instead of truncating each frame.
-4. Give every menu-selectable level a valid start, mission, and exit/end.
-5. Repack every level with all fallback assets and remove unconditional external
+1. Accumulate fractional hazard damage instead of truncating each frame.
+2. Give every menu-selectable level a valid start, mission, and exit/end.
+3. Repack every level with all fallback assets and remove unconditional external
    texture dependencies from packed-level loading.
-6. Add authorable blocking object properties and collision sized to objects.
-7. Expand level-authored actions to texture, ceiling, object, and geometry
+4. Add authorable blocking object properties and collision sized to objects.
+5. Expand level-authored actions to texture, ceiling, object, and geometry
    changes, or prepare a strong defense if the school interprets the sentence
    less literally.
-8. Run full playthroughs and clean-exit leak checks under X with Valgrind or
+6. Run full playthroughs and clean-exit leak checks under X with Valgrind or
    sanitizers, including repeated campaign transitions and audio playback.
 
 Only after those blockers are addressed should bonus-polish work be prioritized.

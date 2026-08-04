@@ -115,6 +115,7 @@ int	check_level_file(char *path)
 	printf("  items: %d\n", g.map.item_count);
 	printf("  elevator panels: %d\n", g.map.elevator_count);
 	printf("  secret doors: %d\n", g.map.secret_count);
+	printf("  locked doors: %d\n", g.map.locked_door_count);
 	check_segment_loops(&g);
 	free_all(&g);
 	return (EXIT_SUCCESS);

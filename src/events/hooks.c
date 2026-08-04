@@ -63,9 +63,9 @@ int	pressed(int key, t_game *g)
 		}
 		return (0);
 	}
-	if (key == KEY_W)
+	if (key == KEY_W || key == KEY_UP)
 		g->player.vertical_move = 1;
-	else if (key == KEY_S)
+	else if (key == KEY_S || key == KEY_DOWN)
 		g->player.vertical_move = -1;
 	else if (key == KEY_A)
 		g->player.lateral_move = -1;
@@ -125,7 +125,7 @@ int	released(int key, t_game *g)
 {
 	if (g->state == STATE_MENU)
 		return (0);
-	if (key == KEY_W || key == KEY_S)
+	if (key == KEY_W || key == KEY_S || key == KEY_UP || key == KEY_DOWN)
 		g->player.vertical_move = 0;
 	else if (key == KEY_A || key == KEY_D)
 		g->player.lateral_move = 0;

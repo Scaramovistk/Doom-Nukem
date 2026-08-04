@@ -35,5 +35,7 @@ void	activate_door(t_coord pos, t_game *g)
 	t_door	*door;
 
 	door = &g->map.doors[pos.y][pos.x];
+	if (door->is_locked)
+		return ;
 	door->is_opening = !door->is_opening;
 }

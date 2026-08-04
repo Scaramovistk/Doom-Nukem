@@ -112,7 +112,11 @@ Map device tokens are preserved inside the packed `BEGIN_CUB` data:
 - `P` is the actual secret-door cell. It renders with the directional wall
   texture and is deliberately indistinguishable from a wall on the minimap;
   proximity opens it automatically.
+- `B` is a locked door. Without a key it remains closed and displays feedback;
+  pressing `E` with an `8` key pickup in inventory consumes one key, unlocks
+  the door permanently, and opens it. Timed/global door events respect locks.
 - `9` is the jetpack/artifact pickup used to authorize flight.
+- `8` is a key pickup used by `B` doors.
 - `7` is reserve ammunition; selecting inventory slot 2 and pressing Enter
   transfers it into the active weapon's magazine.
 

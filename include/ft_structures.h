@@ -42,6 +42,7 @@ typedef struct s_door
 	double		opening_state;
 	bool		is_opening;
 	bool		is_secret;
+	bool		is_locked;
 	bool		discovered;
 }				t_door;
 
@@ -131,6 +132,8 @@ typedef struct s_map
 	int			elevator_count;
 	t_coord		*secrets;
 	int			secret_count;
+	t_coord		*locked_doors;
+	int			locked_door_count;
 	t_coord		*hazard_zones;
 	int			hazard_count;
 	t_coord		*message_zones;

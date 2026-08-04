@@ -22,7 +22,8 @@ static void	set_all_doors(t_game *g, bool opening)
 		pos.x = 0;
 		while (pos.x < g->map.width)
 		{
-			if (g->map.grid[pos.y][pos.x] == DOOR)
+			if (g->map.grid[pos.y][pos.x] == DOOR
+				&& !g->map.doors[pos.y][pos.x].is_locked)
 				g->map.doors[pos.y][pos.x].is_opening = opening;
 			pos.x++;
 		}
@@ -40,7 +41,8 @@ static void	toggle_all_doors(t_game *g)
 		pos.x = 0;
 		while (pos.x < g->map.width)
 		{
-			if (g->map.grid[pos.y][pos.x] == DOOR)
+			if (g->map.grid[pos.y][pos.x] == DOOR
+				&& !g->map.doors[pos.y][pos.x].is_locked)
 				g->map.doors[pos.y][pos.x].is_opening
 					= !g->map.doors[pos.y][pos.x].is_opening;
 			pos.x++;
