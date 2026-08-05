@@ -82,8 +82,10 @@ HUD assets are embedded automatically by `--pack`/`--edit` under fixed keys:
 `hud_ammo`, and `hud_item0` through `hud_item3` (health/ammo/key/artifact
 pickup icons). They unpack to `hud/` inside the level's temp directory and
 override the game's built-in HUD sprites, making a packed `.dnk` fully
-self-sufficient. `.dnk` files packed before this feature have no `hud_*`
-assets and fall back to the built-in sprites with no error.
+self-sufficient. Export also embeds sound/music and the default elevator-button
+sprite. Missing source assets make packing fail and remove the incomplete
+output. Packed levels never fall back to repository texture, HUD, or audio
+paths; legacy packs containing direct `.xpm` paths are rejected.
 
 `BEGIN_CUB` contains normal cub3D-compatible header and map data, except texture
 paths can be asset references.
@@ -119,6 +121,11 @@ Map device tokens are preserved inside the packed `BEGIN_CUB` data:
 - `8` is a key pickup used by `B` doors.
 - `7` is reserve ammunition; selecting inventory slot 2 and pressing Enter
   transfers it into the active weapon's magazine.
+- `V` places a solid generic world object using the `SP`/`SP0`-`SP7` visual.
+  `v` places the same object as pass-through. Collision is circular and derived
+  from the rendered object's scale rather than occupying its entire map cell.
+  Active enemies use the same radius-based player collision; pickups and
+  ordinary `a`-`f` decorations remain pass-through.
 
 ## Non-grid rooms
 

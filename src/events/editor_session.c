@@ -88,7 +88,7 @@ static bool	is_map_line(const char *line)
 	int			i;
 	bool		non_space;
 
-	valid = "0123456789 NWSETHMXKLPIDCVBabcdef";
+	valid = "0123456789 NWSETHMXKLPIDCVBabcdefv";
 	i = 0;
 	non_space = false;
 	while (line[i])
@@ -240,7 +240,7 @@ static bool	save_document(t_editor_doc *doc)
 
 static bool	valid_map_token(char token)
 {
-	return (ft_strchr("0123456789NWSETHMXKLPIDCVBabcdef", token) != NULL);
+	return (ft_strchr("0123456789NWSETHMXKLPIDCVBabcdefv", token) != NULL);
 }
 
 static void	set_map_cell(t_editor_doc *doc, char *command)
@@ -458,7 +458,7 @@ static void	print_help(void)
 	printf("Map tokens: 0 floor, 1 wall, 2 door, B locked, P secret,\n");
 	printf(" L elevator, T timed switch, H hazard, M message, X exit,\n");
 	printf(" 6 health, 7 ammo, 8 key, 9 jetpack, 3/K/I/D/C enemies,\n");
-	printf(" V decoration.\n");
+	printf(" V solid object, v pass-through object, a-f decorations.\n");
 }
 
 static void	validate_document(t_editor_doc *doc)

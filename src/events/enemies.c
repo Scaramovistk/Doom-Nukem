@@ -55,6 +55,20 @@ static void	remove_enemy_sprite(t_game *g, t_enemy *enemy)
 				g->map.enemies[i].sprite_index = enemy->sprite_index;
 			i++;
 		}
+		i = 0;
+		while (i < g->map.decoration_count)
+		{
+			if (g->map.decorations[i].sprite_index == last)
+				g->map.decorations[i].sprite_index = enemy->sprite_index;
+			i++;
+		}
+		i = 0;
+		while (i < g->map.object_count)
+		{
+			if (g->map.objects[i].sprite_index == last)
+				g->map.objects[i].sprite_index = enemy->sprite_index;
+			i++;
+		}
 	}
 	g->map.sprite_count--;
 	enemy->sprite_index = -1;

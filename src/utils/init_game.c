@@ -87,8 +87,6 @@ void	ft_int_assets(t_assets *assets)
 		assets->decoration_icons[i].source = NULL;
 		i++;
 	}
-	assets->decoration_icons[ELEVATOR_BUTTON_DECORATION].source
-		= ELEVATOR_BUTTON_ICON;
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -170,6 +168,8 @@ void	ft_init_map(t_map *map)
 	map->item_count = 0;
 	map->decorations = NULL;
 	map->decoration_count = 0;
+	map->objects = NULL;
+	map->object_count = 0;
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;

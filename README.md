@@ -55,12 +55,18 @@ The editor can place map devices/entities, change texture headers, define floor
 and ceiling heights, slopes and lighting, assign sector cells, add arbitrary
 wall segments, save the `.cub`/`.sectors` sources, validate them, and pack the
 result. Type `help` in the editor for the complete command list.
+The map token `V` authors a solid sprite object and `v` authors its
+pass-through counterpart; collision is sized to the rendered object.
 
 For a non-interactive rebuild, use:
 
 ```sh
 ./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
 ```
+
+Packing embeds every referenced texture plus the HUD, elevator control, music,
+and sound effects. Export fails instead of leaving a partial `.dnk` when any
+required asset cannot be read.
 
 To create a starter packed level, use `./doom-nukem --edit output.dnk`.
 

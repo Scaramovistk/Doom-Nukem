@@ -86,7 +86,7 @@ bool		load_level_path(t_game *g, char *path);
 
 // pickup.c
 void		update_item_pickups(t_game *g);
-bool		is_item_blocking(t_coord cell, t_game *g);
+bool		is_object_blocking(t_position pos, t_game *g);
 void		collect_item(t_item *item, t_game *g);
 
 // item_effects.c

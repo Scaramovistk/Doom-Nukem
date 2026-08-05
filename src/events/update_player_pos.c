@@ -175,6 +175,8 @@ bool	is_position_legal(t_position pos, t_game *g)
 	target_floor = get_floor_z_at(g, pos);
 	if (segment_blocks_position(g, pos))
 		return (false);
+	if (is_object_blocking(pos, g))
+		return (false);
 	if (!has_free_movement(&g->player)
 		&& target_floor > current_floor + PLAYER_STEP_HEIGHT)
 		return (false);
@@ -195,8 +197,6 @@ bool	is_position_legal(t_position pos, t_game *g)
 		if (block == WALL || block == TRANSPARENT_WALL || block == DECAL_WALL)
 			return (false);
 		if (block == DOOR && !is_door_open(cell, g->map.doors))
-			return (false);
-		if (is_item_blocking(cell, g))
 			return (false);
 		i++;
 	}

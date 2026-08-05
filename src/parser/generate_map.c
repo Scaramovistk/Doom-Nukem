@@ -31,7 +31,7 @@ t_block	ft_convert_tblock(char c)
 	else if (c == 'L')
 		return (WALL);
 	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M' || c == 'X'
-		|| c == 'V' || (c >= 'a' && c <= 'f'))
+		|| c == 'V' || c == 'v' || (c >= 'a' && c <= 'f'))
 		return (EMPTY);
 	else
 		return (NULL_BLOCK);
@@ -135,7 +135,7 @@ static void	add_decorations(char **map, int lines, int width, t_game *g)
 	}
 }
 
-static int	count_vending_machines(char **map, int lines, int width)
+static int	count_world_objects(char **map, int lines, int width)
 {
 	int	count;
 	int	x;
@@ -147,26 +147,45 @@ static int	count_vending_machines(char **map, int lines, int width)
 	{
 		x = 0;
 		while (x < width)
-			count += (map[y][x++] == 'V');
+		{
+			count += (map[y][x] == 'V' || map[y][x] == 'v');
+			x++;
+		}
 		y++;
 	}
 	return (count);
 }
 
-static void	add_vending_machines(char **map, int lines, int width,
+static void	add_world_objects(char **map, int lines, int width,
 		t_game *g, int start)
 {
 	int	x;
 	int	y;
+	int	i;
 
+	g->map.object_count = count_world_objects(map, lines, width);
+	if (!g->map.object_count)
+		return ;
+	g->map.objects = calloc_s(g->map.object_count,
+			sizeof(t_world_object), g);
+	i = 0;
 	y = 0;
 	while (y < lines)
 	{
 		x = 0;
 		while (x < width)
 		{
-			if (map[y][x] == 'V')
-				g->map.sprites[start++] = (t_position){x + 0.5, y + 0.5};
+			if (map[y][x] == 'V' || map[y][x] == 'v')
+			{
+				g->map.objects[i].pos = (t_position){x + 0.5, y + 0.5};
+				g->map.objects[i].sprite_index = start + i;
+				g->map.objects[i].scale = WORLD_OBJECT_SCALE;
+				g->map.objects[i].collision_radius
+					= WORLD_OBJECT_SCALE * WORLD_OBJECT_COLLISION_RATIO;
+				g->map.objects[i].blocks_passage = (map[y][x] == 'V');
+				g->map.sprites[start + i] = g->map.objects[i].pos;
+				i++;
+			}
 			x++;
 		}
 		y++;
@@ -365,7 +384,7 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 	int		*types;
 
 	deco = count_sprites(map, lines, width);
-	vending = count_vending_machines(map, lines, width);
+	vending = count_world_objects(map, lines, width);
 	decorations = count_decorations(map, lines, width);
 	g->map.item_count = count_items(map, lines, width);
 	g->map.sprite_count = deco + vending + decorations + g->map.item_count;
@@ -398,7 +417,7 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 		g->map.sprites[i] = g->map.decorations[i - deco - vending].pos;
 		i++;
 	}
-	add_vending_machines(map, lines, width, g, deco);
+	add_world_objects(map, lines, width, g, deco);
 	add_items(map, lines, width, g, deco + vending + decorations);
 }
 

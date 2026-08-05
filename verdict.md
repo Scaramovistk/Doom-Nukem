@@ -11,7 +11,7 @@ of the visible rendering/gameplay ideas. It builds cleanly and every packed
 level passes the headless parser check. However, the subject says the mandatory
 part must be integral and work without malfunctioning. There are still several
 objective mandatory failures or serious defense blockers, so the honest answer
-to “is everything there?” remains **no**. The original findings 1 through 6
+to “is everything there?” remains **no**. The original findings 1 through 8
 have now been fixed and are recorded below as resolved.
 
 This is a static/headless audit. The environment has no X server, so rendering,
@@ -64,20 +64,20 @@ Status meanings:
    shipped packed level now contains an exit and passes the headless parser
    check.
 
-7. **FAIL / HIGH RISK — packed-level self-sufficiency is inconsistent.** Several
-   `.dnk` files rely on repository fallback paths. `architecture_map.dnk` lacks
-   the packed HUD and core sound assets. Seven packed maps lack `D5`, while
-   `ft_int_assets()` assigns the elevator-button texture to the external path
-   `tests/textures_doom/uac_panel_tech.xpm` and `load_all_textures()` loads it
-   unconditionally. Therefore the binary plus any one of those level files is
-   not self-sufficient outside the repository. `flight_ops.dnk` itself does pack
-   `D5`, HUD assets, music, and sound effects correctly.
+7. **RESOLVED — every shipped packed level is asset-self-sufficient.** All 13
+   `.dnk` files now embed their referenced textures, nine HUD assets, seven
+   sound/music assets, and the elevator-button control sprite. Packed parsing
+   clears repository HUD/audio fallbacks and rejects legacy direct `.xpm`
+   paths. Export now fails and removes partial output if any asset cannot be
+   read. The editable source and sector sidecar for `architecture_map.dnk` were
+   restored so it can be regenerated through the same workflow.
 
-8. **FAIL / PARTIAL — blocking objects are not authorable in practice.** The
-   `blocks_passage` field and collision check exist, but
-   `item_default_blocks()` always returns false and the level format/editor has
-   no way to configure proportional blocking for objects. Enemies and generic
-   sprites are also not part of player collision.
+8. **RESOLVED — blocking and pass-through objects are authorable.** `V` authors
+   a solid generic sprite and `v` its pass-through counterpart through both the
+   map format and editor. World-object metadata stores visual scale, blocking
+   state, and a proportional circular collision radius instead of blocking a
+   whole tile. Active enemies also participate in radius-based player collision;
+   pickups and ordinary decorations deliberately remain pass-through.
 
 9. **PARTIAL — actions cannot alter the full set of properties described by the
    subject.** Timed events can operate doors, score, messages, player damage, and
@@ -142,7 +142,7 @@ Status meanings:
 | Wall collision and reasonable steps | PASS / LIVE VERIFY | Four-corner collision, door checks, ceiling clearance, and step-height logic exist. |
 | Run, jump, fall, crouch, stand | PASS / LIVE VERIFY | State/input and vertical physics exist. |
 | Fly or swim | PASS | Jetpack-gated flight exists and `flight_ops.dnk` requires crossing a deep shaft. |
-| Blocking/non-blocking objects proportional to visuals | **FAIL / PARTIAL** | Data field exists, but no authored object is configured as blocking and generic sprite collision is absent. |
+| Blocking/non-blocking objects proportional to visuals | **PASS** | `V`/`v` author solid/pass-through generic sprites; collision radius follows visual scale, and active enemies also block proportionally. |
 | Pickups and inventory | PASS | Health, reserve ammo, keys, and artifacts are collected; keys unlock `B` doors, while ammo reload and jetpack use inventory selections. |
 | Proximity and voluntary interactions | **PASS** | Automatic secret doors and E-button interactions work; hazard contact accumulates fractional per-frame damage and applies the configured rate. |
 | Timed actions/action sequences | PASS | World-event queue supports delayed/repeating actions; switch and elevator events are timed. |
@@ -161,7 +161,7 @@ Status meanings:
 |---|---|---|
 | Mandatory level editor | **PASS** | Interactive `--edit` supports editing, saving, validation, and packing; the starter workflow also succeeds. |
 | Editor defines geometry, height, textures, actions/interactions | **PASS / RISK** | It authors all properties and device tokens supported by this engine: grid/free-segment geometry, texture headers, sector height/slope/light, entities, pickups, and interaction devices. General data-driven runtime action scripts are not supported; see finding 9. |
-| One self-sufficient packed file per level | **FAIL / PARTIAL** | DNK embedding works and `flight_ops.dnk` is well packed, but several shipped files fall back to external repository assets. |
+| One self-sufficient packed file per level | **PASS** | All 13 shipped DNKs embed level textures, HUD, audio, and the elevator control; packed loading rejects direct repository XPM paths. |
 
 ## Bonus status
 
@@ -191,6 +191,13 @@ make                                  # final no-op confirmed
 interactive edit/save/validate/pack smoke test       # passed
 ./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
 ./doom-nukem --check tests/maps/door_map.dnk         # 1 key + 1 locked door
+repack tests/maps_src/*.cub to tests/maps/*.dnk      # all 13 succeeded
+packed asset-reference/HUD/audio/control audit       # all 13 passed
+run all DNKs from an isolated working directory      # all 13 passed
+missing source-asset export                           # rejected; no partial file
+legacy DNK with direct repository XPM paths           # rejected
+editor V/v authoring smoke test                       # 2 objects, 1 blocking
+solid/pass-through/enemy collision harness            # passed
 nm -A --defined-only build/*.o | writable-symbol filter
                                                     # no output (passed)
 git diff --check                                    # passed
@@ -202,13 +209,10 @@ there is no X server or Xvfb in this environment.
 
 ## Recommended order before hand-in
 
-1. Repack every level with all fallback assets and remove unconditional external
-   texture dependencies from packed-level loading.
-2. Add authorable blocking object properties and collision sized to objects.
-3. Expand level-authored actions to texture, ceiling, object, and geometry
+1. Expand level-authored actions to texture, ceiling, object, and geometry
    changes, or prepare a strong defense if the school interprets the sentence
    less literally.
-4. Run full playthroughs and clean-exit leak checks under X with Valgrind or
+2. Run full playthroughs and clean-exit leak checks under X with Valgrind or
    sanitizers, including repeated campaign transitions and audio playback.
 
 Only after those blockers are addressed should bonus-polish work be prioritized.

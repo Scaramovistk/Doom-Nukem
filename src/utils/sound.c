@@ -22,8 +22,14 @@ void	init_audio(t_game *g)
 	}
 # endif
 	g->audio.enabled = true;
-	if (!g->audio.sound_dir[0])
+	if (!g->audio.sound_dir[0] && !g->unpacked_level)
 		ft_strlcpy(g->audio.sound_dir, SOUND_DIR, LINE_SIZE);
+	if (!g->audio.sound_dir[0])
+	{
+		g->audio.enabled = false;
+		g->audio.music_path[0] = '\0';
+		return ;
+	}
 	sound_path(g->audio.music_path, sizeof(g->audio.music_path),
 		g->audio.sound_dir, MUSIC_BASENAME);
 }

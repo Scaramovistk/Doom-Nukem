@@ -78,9 +78,24 @@ static t_decoration	*sprite_decoration(t_sprite_draw *s, t_game *g)
 	return (NULL);
 }
 
+static t_world_object	*sprite_object(t_sprite_draw *s, t_game *g)
+{
+	int	i;
+
+	i = 0;
+	while (i < g->map.object_count)
+	{
+		if (g->map.objects[i].sprite_index == s->sprite_index)
+			return (&g->map.objects[i]);
+		i++;
+	}
+	return (NULL);
+}
+
 static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 {
 	t_decoration	*decoration;
+	t_world_object	*object;
 	double			scale;
 	double			bottom_z;
 
@@ -92,6 +107,9 @@ static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 		scale = decoration->scale;
 		bottom_z += decoration->z_offset;
 	}
+	object = sprite_object(s, g);
+	if (object)
+		scale = object->scale;
 	s->height = abs((int)(WIN_HEIGHT * scale / s->transform_y));
 	s->width = s->height;
 	s->bottom = project_world_z(bottom_z, s->transform_y, g);

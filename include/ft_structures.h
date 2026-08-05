@@ -87,6 +87,15 @@ typedef struct s_decoration
 	double		scale;
 }				t_decoration;
 
+typedef struct s_world_object
+{
+	t_position	pos;
+	int			sprite_index;
+	double		scale;
+	double		collision_radius;
+	bool		blocks_passage;
+}				t_world_object;
+
 typedef struct s_sector
 {
 	double		floor_z;
@@ -126,6 +135,8 @@ typedef struct s_map
 	int			item_count;
 	t_decoration	*decorations;
 	int			decoration_count;
+	t_world_object	*objects;
+	int			object_count;
 	t_coord		*switches;
 	int			switch_count;
 	t_coord		*elevators;
