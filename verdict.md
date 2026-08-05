@@ -1,6 +1,6 @@
 # Doom-Nukem v3.1 compliance verdict
 
-Audit date: 2026-08-04
+Audit date: 2026-08-05
 
 ## Overall verdict
 
@@ -11,8 +11,8 @@ of the visible rendering/gameplay ideas. It builds cleanly and every packed
 level passes the headless parser check. However, the subject says the mandatory
 part must be integral and work without malfunctioning. There are still several
 objective mandatory failures or serious defense blockers, so the honest answer
-to “is everything there?” remains **no**. The original findings 1 and 2 have
-now been fixed and are recorded below as resolved.
+to “is everything there?” remains **no**. The original findings 1 through 6
+have now been fixed and are recorded below as resolved.
 
 This is a static/headless audit. The environment has no X server, so rendering,
 input feel, audio output, and full mission playthroughs were not visually tested.
@@ -52,15 +52,17 @@ Status meanings:
    Left/Right retain 360-degree rotation. In menu state, Up/Down continue to
    select levels.
 
-5. **FAIL — proximity hazard damage is effectively zero at normal frame rates.**
-   `src/events/triggers.c` subtracts `(int)(10.0 * delta_time)`. At 60 FPS this
-   casts approximately `0.166` to zero every frame, so walking on an `H` tile
-   generally does not damage the player.
+5. **RESOLVED — proximity hazards now apply frame-rate-independent damage.**
+   `src/events/triggers.c` accumulates fractional damage between frames before
+   subtracting whole health points. At 60 FPS, sustained contact with an `H`
+   tile therefore applies the configured 10 damage per second. The remainder
+   resets after leaving the hazard and when loading another level.
 
-6. **FAIL — not every shipped/menu-selectable level has an end.** `blue_map.dnk`,
-   `item_map.dnk`, `simple_map.dnk`, and `subject_map.dnk` contain no `X` exit.
-   `update_level_flow()` has no completion path when a map has no exit, while the
-   subject requires a beginning and an end for each level.
+6. **RESOLVED — every shipped/menu-selectable level has an end.** Reachable `X`
+   exits were authored in `blue_map.cub`, `item_map.cub`, `simple_map.cub`, and
+   `subject_map.cub`, then their packed `.dnk` levels were regenerated. Every
+   shipped packed level now contains an exit and passes the headless parser
+   check.
 
 7. **FAIL / HIGH RISK — packed-level self-sufficiency is inconsistent.** Several
    `.dnk` files rely on repository fallback paths. `architecture_map.dnk` lacks
@@ -142,14 +144,14 @@ Status meanings:
 | Fly or swim | PASS | Jetpack-gated flight exists and `flight_ops.dnk` requires crossing a deep shaft. |
 | Blocking/non-blocking objects proportional to visuals | **FAIL / PARTIAL** | Data field exists, but no authored object is configured as blocking and generic sprite collision is absent. |
 | Pickups and inventory | PASS | Health, reserve ammo, keys, and artifacts are collected; keys unlock `B` doors, while ammo reload and jetpack use inventory selections. |
-| Proximity and voluntary interactions | PARTIAL | Automatic secret doors and E-button interactions work in code; hazard damage is broken by integer truncation. |
+| Proximity and voluntary interactions | **PASS** | Automatic secret doors and E-button interactions work; hazard contact accumulates fractional per-frame damage and applies the configured rate. |
 | Timed actions/action sequences | PASS | World-event queue supports delayed/repeating actions; switch and elevator events are timed. |
 | Actions alter shapes/properties broadly | PARTIAL | Doors and floor height change; arbitrary geometry/texture/property changes are not authorable. |
 | Animated doors, keys, elevators, secret passages | **PASS** | Ordinary and keyed animated doors, consumed inventory keys, elevators, and automatic disguised passages are implemented. |
 | Characters/objects with reactions/interactions | PASS | Multiple enemy types chase, attack, shoot, take damage, die, and award score. Buttons/doors react to interaction. |
 | Projectiles interact with world, objects, characters, player | PASS / RISK | Player/enemy projectile ownership, wall collision/decals, sprite collision, enemy damage, and player damage exist. Decorations are intentionally projectile-transparent and items stop shots without taking damage. |
 | Story and mission goal | PASS | Five-level campaign briefings/debriefings plus item/exit objectives exist. |
-| Beginning and end for each level | **FAIL** | Four menu levels have no exit/completion path. |
+| Beginning and end for each level | **PASS** | Every shipped/menu-selectable packed level has a reachable authored exit and a completion path. |
 | Sound effects | PASS / LIVE VERIFY | Packed WAV effects and SDL2/ALSA playback exist; audible output not tested. |
 | Music | PASS / LIVE VERIFY | Looping packed music channel exists; audible output not tested. |
 
@@ -200,15 +202,13 @@ there is no X server or Xvfb in this environment.
 
 ## Recommended order before hand-in
 
-1. Accumulate fractional hazard damage instead of truncating each frame.
-2. Give every menu-selectable level a valid start, mission, and exit/end.
-3. Repack every level with all fallback assets and remove unconditional external
+1. Repack every level with all fallback assets and remove unconditional external
    texture dependencies from packed-level loading.
-4. Add authorable blocking object properties and collision sized to objects.
-5. Expand level-authored actions to texture, ceiling, object, and geometry
+2. Add authorable blocking object properties and collision sized to objects.
+3. Expand level-authored actions to texture, ceiling, object, and geometry
    changes, or prepare a strong defense if the school interprets the sentence
    less literally.
-6. Run full playthroughs and clean-exit leak checks under X with Valgrind or
+4. Run full playthroughs and clean-exit leak checks under X with Valgrind or
    sanitizers, including repeated campaign transitions and audio playback.
 
 Only after those blockers are addressed should bonus-polish work be prioritized.

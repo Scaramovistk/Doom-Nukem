@@ -28,9 +28,19 @@ static bool	in_zone(t_coord cell, t_coord *zones, int count)
 
 static bool	apply_hazard(t_game *g, t_coord cell)
 {
+	int	damage;
+
 	if (!in_zone(cell, g->map.hazard_zones, g->map.hazard_count))
+	{
+		g->hazard_damage_accumulator = 0.0;
 		return (false);
-	g->hud.health -= (int)(HAZARD_DAMAGE_PER_SEC * g->delta_time);
+	}
+	g->hazard_damage_accumulator += HAZARD_DAMAGE_PER_SEC * g->delta_time;
+	damage = (int)(g->hazard_damage_accumulator + HAZARD_DAMAGE_EPSILON);
+	g->hazard_damage_accumulator -= damage;
+	if (g->hazard_damage_accumulator < 0.0)
+		g->hazard_damage_accumulator = 0.0;
+	g->hud.health -= damage;
 	if (g->hud.health < 0)
 		g->hud.health = 0;
 	return (true);

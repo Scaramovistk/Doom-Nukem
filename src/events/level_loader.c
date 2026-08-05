@@ -28,6 +28,7 @@ static void	reset_map_state(t_game *g)
 	g->unpack_dir[0] = '\0';
 	g->level_source[0] = '\0';
 	g->level.next_level[0] = '\0';
+	g->hazard_damage_accumulator = 0.0;
 }
 
 static void	apply_difficulty(t_game *g)

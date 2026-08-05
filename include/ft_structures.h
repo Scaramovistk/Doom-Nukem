@@ -466,6 +466,7 @@ typedef struct s_game
 
 	double		delta_time;
 	double		last_frame_time;
+	double		hazard_damage_accumulator;
 
 }				t_game;
 

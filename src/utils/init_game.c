@@ -304,4 +304,5 @@ void	init_game_struct(t_game *g)
 	g->unpack_dir[0] = '\0';
 	g->level_source[0] = '\0';
 	g->delta_time = 0.0;
+	g->hazard_damage_accumulator = 0.0;
 }
