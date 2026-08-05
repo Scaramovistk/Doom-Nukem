@@ -28,8 +28,10 @@ t_block	ft_convert_tblock(char c)
 		return (TRANSPARENT_WALL);
 	else if (c == '5' || c == 'T')
 		return (DECAL_WALL);
+	else if (c >= 'g' && c <= 'l')
+		return (DECAL_WALL);
 	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M' || c == 'X'
-		|| c == 'L' || c == 'P' || c == 'V' || (c >= 'a' && c <= 'f'))
+		|| c == 'L' || c == 'P' || c == 'V' || c == 'G')
 		return (EMPTY);
 	else
 		return (NULL_BLOCK);
@@ -52,7 +54,7 @@ static int	count_decorations(char **map, int lines, int width)
 	{
 		x = 0;
 		while (x < width)
-			count += (map[y][x++] >= 'a' && map[y][x - 1] <= 'f');
+			count += (map[y][x++] >= 'g' && map[y][x - 1] <= 'l');
 		y++;
 	}
 	return (count);
@@ -76,10 +78,10 @@ static void	add_decorations(char **map, int lines, int width, t_game *g)
 		x = 0;
 		while (x < width)
 		{
-			if (map[y][x] >= 'a' && map[y][x] <= 'f')
+			if (map[y][x] >= 'g' && map[y][x] <= 'l')
 			{
 				g->map.decorations[i].pos = (t_position){x + 0.5, y + 0.5};
-				g->map.decorations[i++].type = map[y][x] - 'a';
+				g->map.decorations[i++].type = map[y][x] - 'g';
 			}
 			x++;
 		}
@@ -105,8 +107,8 @@ static int	count_vending_machines(char **map, int lines, int width)
 	return (count);
 }
 
-static void	add_vending_machines(char **map, int lines, int width,
-		t_game *g, int start)
+static bool	add_vending_machine(char **map, int lines, int width, t_game *g,
+		int index)
 {
 	int	x;
 	int	y;
@@ -118,11 +120,18 @@ static void	add_vending_machines(char **map, int lines, int width,
 		while (x < width)
 		{
 			if (map[y][x] == 'V')
-				g->map.sprites[start++] = (t_position){x + 0.5, y + 0.5};
+			{
+				g->map.vending_machine.pos = (t_position){x + 0.5, y + 0.5};
+				g->map.vending_machine.sprite_index = index;
+				g->map.vending_machine.active = true;
+				g->map.sprites[index] = g->map.vending_machine.pos;
+				return (true);
+			}
 			x++;
 		}
 		y++;
 	}
+	return (false);
 }
 
 static int	enemy_type_from_char(char c)
@@ -156,6 +165,24 @@ static int	count_sprites(char **map, int lines, int width)
 			hor++;
 		}
 		vert++;
+	}
+	return (count);
+}
+
+static int	count_flags(char **map, int lines, int width)
+{
+	int	count;
+	int	x;
+	int	y;
+
+	count = 0;
+	y = 0;
+	while (y < lines)
+	{
+		x = 0;
+		while (x < width)
+			count += (map[y][x++] == 'G');
+		y++;
 	}
 	return (count);
 }
@@ -314,14 +341,17 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 	int		i;
 	int		deco;
 	int		vending;
-	int		decorations;
+	int		flags;
 	int		*types;
 
 	deco = count_sprites(map, lines, width);
 	vending = count_vending_machines(map, lines, width);
-	decorations = count_decorations(map, lines, width);
+	flags = count_flags(map, lines, width);
+	if (vending > 1)
+		error("Only one vending machine is allowed per map", g);
 	g->map.item_count = count_items(map, lines, width);
-	g->map.sprite_count = deco + vending + decorations + g->map.item_count;
+	add_decorations(map, lines, width, g);
+	g->map.sprite_count = deco + vending + flags + g->map.item_count;
 	if (!g->map.sprite_count)
 		return ;
 	g->map.sprites = calloc_s(g->map.sprite_count, sizeof(t_position), g);
@@ -343,15 +373,25 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 		}
 	}
 	add_enemies(deco, types, g);
-	add_decorations(map, lines, width, g);
+	if (vending)
+		add_vending_machine(map, lines, width, g, deco);
 	i = deco + vending;
-	while (i < deco + vending + decorations)
+	vert = -1;
+	while (++vert < lines)
 	{
-		g->map.sprites[i] = g->map.decorations[i - deco - vending].pos;
-		i++;
+		hor = -1;
+		while (++hor < width)
+		{
+			if (map[vert][hor] == 'G')
+			{
+				g->map.has_flag = true;
+				g->map.flag_pos = (t_position){hor + 0.5, vert + 0.5};
+				g->map.flag_sprite_index = i++;
+				g->map.sprites[g->map.flag_sprite_index] = g->map.flag_pos;
+			}
+		}
 	}
-	add_vending_machines(map, lines, width, g, deco);
-	add_items(map, lines, width, g, deco + vending + decorations);
+	add_items(map, lines, width, g, deco + vending + flags);
 }
 
 static int	count_char(char **map, int lines, int width, char target)
@@ -538,6 +578,9 @@ void	ft_populate_info(t_header *h, t_game *g)
 	if (h->sprite_texture[0])
 		g->assets.textures[SPRITE_T].source = s_alloc(
 				ft_strdup(h->sprite_texture), g);
+	if (h->vending_machine_texture[0])
+		g->assets.vending_machine.source = s_alloc(
+				ft_strdup(h->vending_machine_texture), g);
 	if (h->transparent_texture[0])
 		g->assets.textures[TRANSPARENT_T].source = s_alloc(
 				ft_strdup(h->transparent_texture), g);

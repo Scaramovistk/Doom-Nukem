@@ -77,6 +77,10 @@ slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 - `1` / `2` / `3` / `4`: select carried artifact slot
 - Esc or window close button: quit cleanly
 
+Campaign maps use one `V` vending-machine tile. Interact with it to spend
+5 score points on 10 ammo. Its texture is configured with the map's `VM`
+header and its replaceable sound is `assets/sounds/vending.wav`.
+
 ## Menu
 
 Launching without a map opens the level select menu. Up/Down chooses a `.cub`
@@ -139,6 +143,12 @@ Levels can use `X` in the map as an exit tile. The current mission flow starts
 with an objective message, requires active pickup items to be collected, then
 completes when the player reaches an exit. Dropping health to zero fails the
 mission after a short message.
+
+Capture-the-flag maps use `G` for the flag. Their only objective is to take it
+and return to the player start tile (the base); no enemy kills, pickups, or
+exit tile are required. The menu's **Capture the Flag (3 maps)** mode starts
+`ctf_1.dnk` and chains through `ctf_2.dnk` and `ctf_3.dnk`. On its minimap,
+the base is blue and the flag is yellow.
 
 ## Audio
 

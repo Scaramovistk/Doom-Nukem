@@ -105,15 +105,39 @@ static void	draw_minimap_sprites(t_game *g, t_coord origin)
 {
 	int		i;
 	t_coord	pos;
+	int		color;
 
 	i = 0;
 	while (i < g->map.sprite_count)
 	{
+		if (g->map.has_flag && g->map.flag_carried
+			&& g->map.flag_sprite_index == i)
+		{
+			i++;
+			continue ;
+		}
 		pos.x = origin.x + (int)(g->map.sprites[i].x * MAP_SCALE) - 2;
 		pos.y = origin.y + (int)(g->map.sprites[i].y * MAP_SCALE) - 2;
-		minimap_rect(g, pos, (t_coord){4, 4}, RED);
+		color = RED;
+		if (g->map.vending_machine.active
+			&& g->map.vending_machine.sprite_index == i)
+			color = GREEN;
+		if (g->map.has_flag && g->map.flag_sprite_index == i)
+			color = YELLOW;
+		minimap_rect(g, pos, (t_coord){4, 4}, color);
 		i++;
 	}
+}
+
+static void	draw_flag_base(t_game *g, t_coord origin)
+{
+	t_coord	pos;
+
+	if (!g->map.has_flag)
+		return ;
+	pos.x = origin.x + (int)(g->map.flag_base.x * MAP_SCALE) - 3;
+	pos.y = origin.y + (int)(g->map.flag_base.y * MAP_SCALE) - 3;
+	minimap_rect(g, pos, (t_coord){6, 6}, BLUE);
 }
 
 static void	draw_player_marker(t_game *g, t_coord origin)
@@ -141,6 +165,7 @@ void	draw_minimap(t_game *g)
 	draw_map_cells(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_map_segments(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_exits(g, (t_coord){origin.x + 4, origin.y + 4});
+	draw_flag_base(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_sprites(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_minimap_items(g, (t_coord){origin.x + 4, origin.y + 4});
 	draw_player_marker(g, (t_coord){origin.x + 4, origin.y + 4});

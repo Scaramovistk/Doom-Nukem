@@ -87,6 +87,8 @@ void	ft_int_assets(t_assets *assets)
 		assets->decoration_icons[i].source = NULL;
 		i++;
 	}
+	ft_int_image(&assets->vending_machine.img);
+	assets->vending_machine.source = NULL;
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -166,6 +168,9 @@ void	ft_init_map(t_map *map)
 	map->item_count = 0;
 	map->decorations = NULL;
 	map->decoration_count = 0;
+	map->vending_machine.pos = (t_position){0.0, 0.0};
+	map->vending_machine.sprite_index = -1;
+	map->vending_machine.active = false;
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;
@@ -178,6 +183,11 @@ void	ft_init_map(t_map *map)
 	map->message_count = 0;
 	map->exit_zones = NULL;
 	map->exit_count = 0;
+	map->has_flag = false;
+	map->flag_carried = false;
+	map->flag_sprite_index = -1;
+	map->flag_pos = (t_position){0.0, 0.0};
+	map->flag_base = (t_position){0.0, 0.0};
 	map->width = 0;
 	map->height = 0;
 }

@@ -27,6 +27,12 @@ static bool	is_item_sprite(t_game *g, int sprite_index)
 	return (false);
 }
 
+static bool	is_vending_machine_sprite(t_game *g, int sprite_index)
+{
+	return (g->map.vending_machine.active
+		&& g->map.vending_machine.sprite_index == sprite_index);
+}
+
 static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 {
 	int	i;
@@ -45,7 +51,8 @@ static void	remove_sprite_target(t_game *g, int index, int damage)
 {
 	int	last;
 
-	if (index < 0 || index >= g->map.sprite_count || is_item_sprite(g, index))
+	if (index < 0 || index >= g->map.sprite_count || is_item_sprite(g, index)
+		|| is_vending_machine_sprite(g, index))
 		return ;
 	last = g->map.sprite_count - 1;
 	if (index != last)

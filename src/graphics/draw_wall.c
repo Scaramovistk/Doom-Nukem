@@ -95,13 +95,31 @@ void	draw_transparent_walls(t_ray *ray, t_game *g)
 		draw_transparent_hit(&ray->transparent_hits[i], ray, g);
 }
 
+static t_texture	*get_decal_texture(t_ray *ray, t_game *g)
+{
+	int	i;
+
+	i = 0;
+	while (i < g->map.decoration_count)
+	{
+		if ((int)g->map.decorations[i].pos.x == ray->hit_cell.x
+			&& (int)g->map.decorations[i].pos.y == ray->hit_cell.y
+			&& g->assets.decoration_icons[g->map.decorations[i].type].img.ptr)
+			return (&g->assets.decoration_icons[g->map.decorations[i].type]);
+		i++;
+	}
+	return (&g->assets.textures[DECAL_T]);
+}
+
 void	draw_wall_decal(t_dimensions wall, t_ray *ray, t_game *g)
 {
 	t_texture_slice	slice;
+	t_texture		*texture;
 	int				height;
 	int				margin;
 
-	if (!g->assets.textures[DECAL_T].img.ptr)
+	texture = get_decal_texture(ray, g);
+	if (!texture->img.ptr)
 		return ;
 	height = wall.bottom - wall.top;
 	margin = height / 5;
@@ -109,7 +127,7 @@ void	draw_wall_decal(t_dimensions wall, t_ray *ray, t_game *g)
 	slice.y_start = wall.top + margin;
 	slice.y_end = wall.bottom - margin;
 	slice.raw_top = wall.raw_top;
-	slice.texture = &g->assets.textures[DECAL_T];
+	slice.texture = texture;
 	slice.texture_x = get_texture_x(ray, ray->distance, ray->side, g);
 	slice.viewer_distance = ray->distance;
 	slice.light = wall_light(ray->side, get_light_at(g,

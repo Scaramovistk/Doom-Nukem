@@ -113,29 +113,6 @@ void	ft_extract_line(char *src, char *dest, int chars)
 	dest[i] = '\0';
 }
 
-static void	decode_decoration_tokens(char **map, int lines)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (y < lines)
-	{
-		x = 0;
-		while (map[y][x + 1])
-		{
-			if (map[y][x] == 'D' && map[y][x + 1] >= '1'
-				&& map[y][x + 1] <= '6')
-			{
-				map[y][x] = 'a' + map[y][x + 1] - '1';
-				map[y][x + 1] = '0';
-			}
-			x++;
-		}
-		y++;
-	}
-}
-
 int	ft_get_map(char *mapfile, int *skip, int *succes, t_game *g)
 {
 	int		lines;
@@ -159,7 +136,6 @@ int	ft_get_map(char *mapfile, int *skip, int *succes, t_game *g)
 	*succes = ft_extract_map(map, mapfile, dims);
 	if (!(*succes))
 		return (ft_map_error(map, PROBLEME, lines, 0));
-	decode_decoration_tokens(map, dims[2]);
 	if (!ft_valid_map(map, dims[2], g))
 		return (ft_map_error(NULL, VALIDMAP, 0, 0));
 	dims[2] = skip[2];

@@ -81,6 +81,13 @@ typedef struct s_decoration
 	int			type;
 }				t_decoration;
 
+typedef struct s_vending_machine
+{
+	t_position	pos;
+	int			sprite_index;
+	bool		active;
+}				t_vending_machine;
+
 typedef struct s_sector
 {
 	double		floor_z;
@@ -120,6 +127,7 @@ typedef struct s_map
 	int			item_count;
 	t_decoration	*decorations;
 	int			decoration_count;
+	t_vending_machine	vending_machine;
 	t_coord		*switches;
 	int			switch_count;
 	t_coord		*elevators;
@@ -132,6 +140,11 @@ typedef struct s_map
 	int			message_count;
 	t_coord		*exit_zones;
 	int			exit_count;
+	bool			has_flag;
+	bool			flag_carried;
+	int			flag_sprite_index;
+	t_position	flag_pos;
+	t_position	flag_base;
 	int			width;
 	int			height;
 }				t_map;
@@ -196,6 +209,7 @@ typedef struct s_assets
 	t_texture	item_icons[ITEM_TYPES_NB];
 	t_texture	enemy_icons[ENEMY_TYPES_NB];
 	t_texture	decoration_icons[DECORATION_TYPES_NB];
+	t_texture	vending_machine;
 	bool		has_sky;
 	bool		has_sprite_frames;
 	int			floor_color;
@@ -238,6 +252,7 @@ typedef struct s_ray
 	double		distance;
 	int			side;
 	t_block		hit_block;
+	t_coord		hit_cell;
 
 	t_door		*hit_door;
 	double		door_distance;
@@ -483,6 +498,7 @@ typedef struct s_header
 	char		sprite_frame_textures[SPRITE_FRAME_NB][LINE_SIZE];
 	char		enemy_texture[ENEMY_TYPES_NB][LINE_SIZE];
 	char		decoration_texture[DECORATION_TYPES_NB][LINE_SIZE];
+	char		vending_machine_texture[LINE_SIZE];
 	char		next_level[LINE_SIZE];
 	int			floor[3];
 	int			ceiling[3];

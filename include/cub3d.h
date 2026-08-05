@@ -91,6 +91,7 @@ void		collect_item(t_item *item, t_game *g);
 // item_effects.c
 void		apply_health_pickup(t_game *g, int amount);
 void		apply_ammo_pickup(t_game *g, int amount);
+bool		try_use_vending_machine_at(t_coord pos, t_game *g);
 bool		consume_key(t_game *g);
 void		use_selected_item(t_game *g);
 

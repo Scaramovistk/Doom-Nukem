@@ -1,0 +1,19 @@
+NO tests/textures_classic/greystone.xpm
+SO tests/textures_classic/greystone.xpm
+EA tests/textures_classic/bluestone.xpm
+WE tests/textures_classic/bluestone.xpm
+
+DO tests/textures_classic/door.xpm
+SP tests/textures_classic/barrel.xpm
+F 35,45,50
+C 18,14,32
+
+NEXT tests/maps/ctf_3.dnk
+
+11111111111111111
+1N00000000000001
+1011111111111101
+1000000000000101
+1111111111110101
+1G00000000000101
+11111111111111111

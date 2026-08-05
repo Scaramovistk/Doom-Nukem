@@ -48,7 +48,9 @@ void	start_level_flow(t_game *g)
 		return ;
 	g->level.started = true;
 	g->level.required_items = active_items(g);
-	if (g->map.exit_count)
+	if (g->map.has_flag)
+		show_message(g, "CAPTURE THE FLAG - RETURN IT TO BASE", MESSAGE_DISPLAY_TIME);
+	else if (g->map.exit_count)
 		show_message(g, "MISSION START REACH EXIT", MESSAGE_DISPLAY_TIME);
 	else
 		show_message(g, "MISSION START", MESSAGE_DISPLAY_TIME);
@@ -64,7 +66,10 @@ static void	complete_level(t_game *g)
 		g->story_visible = true;
 		g->story_is_debrief = true;
 	}
-	show_message(g, "MISSION COMPLETE", LEVEL_END_DELAY);
+	if (g->map.has_flag)
+		show_message(g, "CONGRATS! FLAG RETURNED", LEVEL_END_DELAY);
+	else
+		show_message(g, "MISSION COMPLETE", LEVEL_END_DELAY);
 	play_sound_effect(g, "mission_complete");
 }
 
@@ -114,6 +119,22 @@ bool	update_level_flow(t_game *g)
 	{
 		fail_level(g);
 		return (true);
+	}
+	if (g->map.has_flag)
+	{
+		if (!g->map.flag_carried && pow(g->player.pos.x - g->map.flag_pos.x, 2)
+			+ pow(g->player.pos.y - g->map.flag_pos.y, 2)
+			<= ITEM_PICKUP_RADIUS * ITEM_PICKUP_RADIUS)
+		{
+			g->map.flag_carried = true;
+			show_message(g, "FLAG TAKEN - RETURN TO BASE", MESSAGE_DISPLAY_TIME);
+			play_sound_effect(g, "pickup");
+		}
+		if (g->map.flag_carried && pow(g->player.pos.x - g->map.flag_base.x, 2)
+			+ pow(g->player.pos.y - g->map.flag_base.y, 2)
+			<= ITEM_PICKUP_RADIUS * ITEM_PICKUP_RADIUS)
+			complete_level(g);
+		return (g->level.completed);
 	}
 	if (!g->map.exit_count)
 		return (false);

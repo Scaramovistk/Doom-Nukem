@@ -95,6 +95,13 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 	int		frame;
 	int		i;
 
+	if (g->map.has_flag && !g->map.flag_carried
+		&& g->map.flag_sprite_index == s->sprite_index)
+		return (&g->assets.item_icons[ITEM_ARTIFACT]);
+	if (g->map.vending_machine.active
+		&& g->map.vending_machine.sprite_index == s->sprite_index
+		&& g->assets.vending_machine.img.ptr)
+		return (&g->assets.vending_machine);
 	i = 0;
 	while (i < g->map.item_count)
 	{
@@ -103,15 +110,6 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 			&& g->map.items[i].type >= 0
 			&& g->map.items[i].type < ITEM_TYPES_NB)
 			return (&g->assets.item_icons[g->map.items[i].type]);
-		i++;
-	}
-	i = 0;
-	while (i < g->map.decoration_count)
-	{
-		if (g->map.decorations[i].pos.x == s->pos.x
-			&& g->map.decorations[i].pos.y == s->pos.y
-			&& g->assets.decoration_icons[g->map.decorations[i].type].img.ptr)
-			return (&g->assets.decoration_icons[g->map.decorations[i].type]);
 		i++;
 	}
 	i = 0;
@@ -145,6 +143,8 @@ static int	sprite_texture_size(t_texture *texture, t_game *g)
 			return (32);
 		i++;
 	}
+	if (texture == &g->assets.item_icons[ITEM_ARTIFACT])
+		return (32);
 	return (TEXTURE_SIZE);
 }
 
@@ -261,13 +261,21 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	i = 0;
 	while (i < g->map.sprite_count)
 	{
-		init_sprite_draw(&sprites[i], g->map.sprites[i], i, g);
+		if (g->map.has_flag && g->map.flag_carried
+			&& g->map.flag_sprite_index == i)
+			sprites[i].distance = -1.0;
+		else
+			init_sprite_draw(&sprites[i], g->map.sprites[i], i, g);
 		i++;
 	}
 	sort_sprites(sprites, g->map.sprite_count);
 	i = 0;
 	while (i < g->map.sprite_count)
-		draw_one_sprite(&sprites[i++], g, z_buffer, rays);
+	{
+		if (sprites[i].distance >= 0.0)
+			draw_one_sprite(&sprites[i], g, z_buffer, rays);
+		i++;
+	}
 	free(sprites);
 }
 

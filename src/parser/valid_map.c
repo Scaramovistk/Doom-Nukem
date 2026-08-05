@@ -138,6 +138,7 @@ int	ft_valid_map(char **map, int lines, t_game *g)
 		return (ft_map_error(NULL, NULL, 0, 0));
 	g->player.pos.y = player[0] + calibrate;
 	g->player.pos.x = player[1] + calibrate;
+	g->map.flag_base = (t_position){player[1] + 0.5, player[0] + 0.5};
 	g->player.look = map[player[0]][player[1]];
 	return (1);
 }

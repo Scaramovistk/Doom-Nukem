@@ -88,6 +88,44 @@ segment. `texture` uses the texture enum order from `ft_enumerations.h`:
 `DC` supplies the transparent decal drawn over a wall after it is hit by a
 projectile.
 
+`VM path/to/vending_machine.xpm` supplies the sprite used for a `V` vending
+machine map tile. A map may contain at most one `V`; interact with it to buy
+10 ammo for 5 score points.
+
+## Map tile reference
+
+The map symbols are documented below.
+
+`0` is empty floor, `1` is a solid wall, and `2` is a door.
+
+`3` is the default melee enemy using `E0`. `K`, `I`, `D`, and `C` are enemy
+variants using `E1`, `E2`, `E3`, and `E4`, respectively.
+
+`4` is a transparent wall / glass. `5` is a decal wall, which can display the
+`DC` decal after a projectile hit.
+
+`6` is a health pickup (25 health), `7` is an ammo pickup (+10 ammo), `8` is a
+key pickup (+1 key), and `9` is an artifact pickup (+5 artifacts).
+
+`N`, `S`, `E`, and `W` set the player start and initial facing direction;
+exactly one start tile is required.
+
+`T` is the general switch: it adds score, toggles doors after a short delay,
+then closes them. It uses the decal-wall rendering. `L` is an elevator switch
+that raises or lowers the floor in its sector. `P` is a secret switch that
+consumes one key and opens the nearest door.
+
+`H` is a hazard zone, `M` is a message zone, and `X` is an exit zone.
+
+`G` is a capture-the-flag objective. Take the flag and return to the player
+start tile (your base) to complete the map; regular pickups and exits are not
+required for this mode.
+
+`V` is a vending-machine sprite: buy 10 ammo for 5 score points. At most one
+is permitted per map. `g` through `l` are decorative wall decals using
+header textures `D1` through `D6`, respectively; like `DC`, they overlay
+their wall surface.
+
 ## Non-grid rooms
 
 A room with any number of walls in any direction is authored by leaving the

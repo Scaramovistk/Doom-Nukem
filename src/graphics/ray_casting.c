@@ -98,6 +98,7 @@ void	cast_one_ray(t_ray *ray, double angle, t_game *g)
 	ray->dir.y = sin(angle);
 	ray->hit_door = false;
 	ray->hit_segment = false;
+	ray->hit_cell = (t_coord){0, 0};
 	ray->segment_u = 0.0;
 	ray->segment_distance = 0.0;
 	ray->segment_texture = NORTH;

@@ -100,6 +100,9 @@ void	load_all_textures(t_game *g)
 			load_texture(&g->assets.decoration_icons[i], &size, g);
 		i++;
 	}
+	size = TEXTURE_SIZE;
+	if (g->assets.vending_machine.source)
+		load_texture(&g->assets.vending_machine, &size, g);
 }
 
 void	load_texture(t_texture *t, int *size, t_game *g)

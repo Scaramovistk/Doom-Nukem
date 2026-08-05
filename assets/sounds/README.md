@@ -9,6 +9,7 @@ Recognized event names:
 - `switch.wav`, `switch.ogg`, or `switch.mp3`
 - `mission_complete.wav`, `mission_complete.ogg`, or `mission_complete.mp3`
 - `mission_failed.wav`, `mission_failed.ogg`, or `mission_failed.mp3`
+- `vending.wav`, `vending.ogg`, or `vending.mp3` (ammo purchase)
 
 Background music:
 - `music.wav`, `music.ogg`, or `music.mp3`

@@ -568,7 +568,7 @@ static bool	is_map_source_line(char *line)
 	has_map_char = 0;
 	while (line[i] && line[i] != '\n' && line[i] != '\r')
 	{
-		if (!ft_strchr("0123456789 NWSETHMXKLPIDC", line[i]))
+		if (!ft_strchr("0123456789 NWSETHMXKLPIDCVghijkl", line[i]))
 			return (false);
 		if (line[i] != ' ')
 			has_map_char = 1;

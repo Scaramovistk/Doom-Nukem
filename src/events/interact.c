@@ -94,6 +94,8 @@ void	interact(t_game *g)
 			return ;
 		if (try_pickup_item_at(check, g))
 			return ;
+		if (try_use_vending_machine_at(check, g))
+			return ;
 		if (try_switches_at(check, g))
 			return ;
 		if (is_door(check, g) && !is_on_player(check, g))
