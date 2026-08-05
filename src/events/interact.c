@@ -59,7 +59,8 @@ static bool	try_switches_at(t_coord check, t_game *g)
 	}
 	if (in_coord_list(check, g->map.switches, g->map.switch_count))
 	{
-		trigger_switch_sequence(g);
+		if (!trigger_authored_actions(g, check))
+			trigger_switch_sequence(g);
 		return (true);
 	}
 	if (in_coord_list(check, g->map.elevators, g->map.elevator_count))

@@ -15,8 +15,9 @@ sector metadata.
 
 `--edit` opens an interactive terminal editor for the `.cub` and its optional
 same-basename `.sectors` file. Its commands edit map tokens, texture/header
-values, sector heights/slopes/light, sector-grid assignments, and arbitrary
-wall segments; `save`, `validate`, and `pack [output.dnk]` finish the workflow.
+values, sector heights/slopes/light, sector-grid assignments, arbitrary wall
+segments, and delayed runtime action sequences; `save`, `validate`, and
+`pack [output.dnk]` finish the workflow.
 Type `help` in the editor for exact syntax. `--pack` is the non-interactive
 export command. `--check` parses a level without opening a window and prints
 map, sector, angled-wall, sprite, and item counts.
@@ -101,6 +102,34 @@ ids 10-35.
 `WALL x1 y1 x2 y2 texture sector transparent` adds an arbitrary angled wall
 segment. `texture` uses the texture enum order from `ft_enumerations.h`:
 0 north, 1 south, 2 east, 3 west, 4 door, 5 sprite, 6 transparent, 7 decal.
+
+## Authored runtime actions
+
+Place `ACTION` records after `SECTOR`/`WALL` declarations and before `GRID` in
+the `.sectors` sidecar. `trigger_x trigger_y` must identify a `T` switch in the
+map. Each matching action is queued independently, so increasing delays define
+a sequence:
+
+```text
+ACTION trigger_x trigger_y delay BLOCK x y EMPTY|WALL|DOOR|GLASS|DECAL
+ACTION trigger_x trigger_y delay FLOOR sector height
+ACTION trigger_x trigger_y delay CEILING sector height
+ACTION trigger_x trigger_y delay LIGHT sector value
+ACTION trigger_x trigger_y delay TEXTURE_SWAP texture_a texture_b
+ACTION trigger_x trigger_y delay OBJECT_MOVE object_index x y
+ACTION trigger_x trigger_y delay OBJECT_BLOCK object_index 0|1
+ACTION trigger_x trigger_y delay OBJECT_SCALE object_index scale
+ACTION trigger_x trigger_y delay OBJECT_TEXTURE object_index texture
+ACTION trigger_x trigger_y delay WALL_MOVE wall_index x1 y1 x2 y2
+ACTION trigger_x trigger_y delay WALL_TEXTURE wall_index texture
+```
+
+Texture numbers use the enum order listed above. Object indices follow `V`/`v`
+map scan order, top-to-bottom then left-to-right; wall indices follow `WALL`
+declaration order. A level supports up to 32 authored actions. Invalid syntax,
+missing switches, and out-of-range sector/object/wall references make packed
+validation fail. In the editor, use `action add TX TY DELAY TYPE ARGUMENTS` or
+`action clear`.
 
 `DC` supplies the transparent decal drawn over a wall after it is hit by a
 projectile.

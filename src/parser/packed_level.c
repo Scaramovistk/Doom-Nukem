@@ -368,13 +368,15 @@ static void	apply_sector_grid_line(t_game *g, char *line, int y)
 	}
 }
 
-static void	parse_sector_line(t_game *g, char *line, int *grid_y)
+static bool	parse_sector_line(t_game *g, char *line, int *grid_y)
 {
 	t_sector	sector;
 	t_wall_segment	wall;
 	int			id;
 	int			transparent;
 
+	if (starts_with(line, "ACTION "))
+		return (add_authored_action(g, line));
 	if (starts_with(line, "SECTOR "))
 	{
 		sector.active = true;
@@ -402,9 +404,10 @@ static void	parse_sector_line(t_game *g, char *line, int *grid_y)
 		*grid_y = 0;
 	else if (*grid_y >= 0 && *grid_y < g->map.height)
 		apply_sector_grid_line(g, line, (*grid_y)++);
+	return (true);
 }
 
-static void	apply_packed_sectors(t_dnk *dnk, t_game *g)
+static bool	apply_packed_sectors(t_dnk *dnk, t_game *g)
 {
 	int	i;
 	int	grid_y;
@@ -413,7 +416,11 @@ static void	apply_packed_sectors(t_dnk *dnk, t_game *g)
 	i = 0;
 	grid_y = -1;
 	while (i < dnk->sector_count)
-		parse_sector_line(g, dnk->sector_lines[i++], &grid_y);
+	{
+		if (!parse_sector_line(g, dnk->sector_lines[i++], &grid_y))
+			return (false);
+	}
+	return (true);
 }
 
 static void	set_hud_source(char **field, const char *key, t_dnk *dnk,
@@ -469,7 +476,8 @@ int	ft_parse_packed_file(int argc, char *argv[], t_game *g)
 	cub_argv[1] = dnk.cub_path;
 	if (!ft_parse_file(2, cub_argv, g))
 		return (0);
-	apply_packed_sectors(&dnk, g);
+	if (!apply_packed_sectors(&dnk, g))
+		return (ft_parsing_error("Invalid authored action.", 0));
 	apply_packed_defaults(&dnk, g);
 	apply_packed_hud(&dnk, g);
 	ft_strlcpy(g->level_source, argv[1], LINE_SIZE);

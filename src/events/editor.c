@@ -119,6 +119,7 @@ int	check_level_file(char *path)
 	while (i < g.map.object_count)
 		blocking += g.map.objects[i++].blocks_passage;
 	printf("  world objects: %d (%d blocking)\n", g.map.object_count, blocking);
+	printf("  authored actions: %d\n", g.map.action_count);
 	printf("  items: %d\n", g.map.item_count);
 	printf("  elevator panels: %d\n", g.map.elevator_count);
 	printf("  secret doors: %d\n", g.map.secret_count);

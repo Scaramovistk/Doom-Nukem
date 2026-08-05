@@ -57,6 +57,8 @@ wall segments, save the `.cub`/`.sectors` sources, validate them, and pack the
 result. Type `help` in the editor for the complete command list.
 The map token `V` authors a solid sprite object and `v` authors its
 pass-through counterpart; collision is sized to the rendered object.
+`action add` attaches delayed runtime mutations to `T` switches, including
+geometry, sector height/light, texture, object, and arbitrary-wall changes.
 
 For a non-interactive rebuild, use:
 

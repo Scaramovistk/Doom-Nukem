@@ -91,10 +91,22 @@ typedef struct s_world_object
 {
 	t_position	pos;
 	int			sprite_index;
+	int			texture;
 	double		scale;
 	double		collision_radius;
 	bool		blocks_passage;
 }				t_world_object;
+
+typedef struct s_authored_action
+{
+	t_coord				trigger;
+	double				delay;
+	t_authored_action_type	type;
+	t_coord				cell;
+	int				target;
+	int				value;
+	double				values[4];
+}				t_authored_action;
 
 typedef struct s_sector
 {
@@ -137,6 +149,8 @@ typedef struct s_map
 	int			decoration_count;
 	t_world_object	*objects;
 	int			object_count;
+	t_authored_action	actions[AUTHORED_ACTION_MAX];
+	int			action_count;
 	t_coord		*switches;
 	int			switch_count;
 	t_coord		*elevators;

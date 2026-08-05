@@ -179,6 +179,7 @@ static void	add_world_objects(char **map, int lines, int width,
 			{
 				g->map.objects[i].pos = (t_position){x + 0.5, y + 0.5};
 				g->map.objects[i].sprite_index = start + i;
+				g->map.objects[i].texture = SPRITE_T;
 				g->map.objects[i].scale = WORLD_OBJECT_SCALE;
 				g->map.objects[i].collision_radius
 					= WORLD_OBJECT_SCALE * WORLD_OBJECT_COLLISION_RATIO;

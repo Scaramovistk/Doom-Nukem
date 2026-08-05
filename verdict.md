@@ -11,7 +11,7 @@ of the visible rendering/gameplay ideas. It builds cleanly and every packed
 level passes the headless parser check. However, the subject says the mandatory
 part must be integral and work without malfunctioning. There are still several
 objective mandatory failures or serious defense blockers, so the honest answer
-to “is everything there?” remains **no**. The original findings 1 through 8
+to “is everything there?” remains **no**. The original findings 1 through 9
 have now been fixed and are recorded below as resolved.
 
 This is a static/headless audit. The environment has no X server, so rendering,
@@ -38,8 +38,7 @@ Status meanings:
    height, slope and light, assign the sector grid, add/clear arbitrary wall
    segments, save, validate, and pack. `--pack` remains available for scripted
    export. The starter command now uses the correct source path and successfully
-   creates a valid `.dnk`. The broader limitation on arbitrary runtime action
-   scripting remains separately recorded in finding 9.
+   creates a valid `.dnk`.
 
 3. **RESOLVED — keys now have a usable gameplay path.** The authored `B` token
    creates a locked door. Pressing `E` without a key gives clear feedback;
@@ -79,11 +78,14 @@ Status meanings:
    whole tile. Active enemies also participate in radius-based player collision;
    pickups and ordinary decorations deliberately remain pass-through.
 
-9. **PARTIAL — actions cannot alter the full set of properties described by the
-   subject.** Timed events can operate doors, score, messages, player damage, and
-   elevator floor height. There is no level-authored action system for changing
-   wall/room shape, wall or object texture, ceiling height, object placement, or
-   other arbitrary properties at runtime.
+9. **RESOLVED — broad runtime mutations are level-authored.** `ACTION` records
+   attach delayed sequences to specific `T` switches. Supported mutations alter
+   grid geometry/block type, floor and ceiling height, sector light, loaded
+   texture-slot assignments, object position/blocking/scale/texture, and
+   arbitrary-wall endpoints/texture. The editor can add or clear these records,
+   and packed validation rejects malformed actions or invalid switch, sector,
+   object, and wall references. `gameplay_map.dnk` contains a nine-step sequence
+   demonstrating geometry, height, light, texture, and object changes.
 
 10. **UNVERIFIED — memory leaks and crash-free graphical execution.** Cleanup
     code exists, and malformed-file smoke tests returned controlled errors.
@@ -146,7 +148,7 @@ Status meanings:
 | Pickups and inventory | PASS | Health, reserve ammo, keys, and artifacts are collected; keys unlock `B` doors, while ammo reload and jetpack use inventory selections. |
 | Proximity and voluntary interactions | **PASS** | Automatic secret doors and E-button interactions work; hazard contact accumulates fractional per-frame damage and applies the configured rate. |
 | Timed actions/action sequences | PASS | World-event queue supports delayed/repeating actions; switch and elevator events are timed. |
-| Actions alter shapes/properties broadly | PARTIAL | Doors and floor height change; arbitrary geometry/texture/property changes are not authorable. |
+| Actions alter shapes/properties broadly | **PASS** | Delayed level-authored actions mutate grid/segment geometry, floor/ceiling/light, texture slots, and object position/blocking/scale/texture. |
 | Animated doors, keys, elevators, secret passages | **PASS** | Ordinary and keyed animated doors, consumed inventory keys, elevators, and automatic disguised passages are implemented. |
 | Characters/objects with reactions/interactions | PASS | Multiple enemy types chase, attack, shoot, take damage, die, and award score. Buttons/doors react to interaction. |
 | Projectiles interact with world, objects, characters, player | PASS / RISK | Player/enemy projectile ownership, wall collision/decals, sprite collision, enemy damage, and player damage exist. Decorations are intentionally projectile-transparent and items stop shots without taking damage. |
@@ -160,7 +162,7 @@ Status meanings:
 | Requirement | Status | Evidence / finding |
 |---|---|---|
 | Mandatory level editor | **PASS** | Interactive `--edit` supports editing, saving, validation, and packing; the starter workflow also succeeds. |
-| Editor defines geometry, height, textures, actions/interactions | **PASS / RISK** | It authors all properties and device tokens supported by this engine: grid/free-segment geometry, texture headers, sector height/slope/light, entities, pickups, and interaction devices. General data-driven runtime action scripts are not supported; see finding 9. |
+| Editor defines geometry, height, textures, actions/interactions | **PASS** | It authors grid/free-segment geometry, texture headers, sectors, entities/devices, and validated delayed runtime mutation sequences attached to switches. |
 | One self-sufficient packed file per level | **PASS** | All 13 shipped DNKs embed level textures, HUD, audio, and the elevator control; packed loading rejects direct repository XPM paths. |
 
 ## Bonus status
@@ -198,6 +200,10 @@ missing source-asset export                           # rejected; no partial fil
 legacy DNK with direct repository XPM paths           # rejected
 editor V/v authoring smoke test                       # 2 objects, 1 blocking
 solid/pass-through/enemy collision harness            # passed
+gameplay_map authored-action parse                     # 9 actions
+editor action clear/add/pack/check smoke test          # 1 valid action
+11-form authored mutation/queue harness                # passed
+malformed authored action in packed level              # rejected
 nm -A --defined-only build/*.o | writable-symbol filter
                                                     # no output (passed)
 git diff --check                                    # passed
@@ -209,10 +215,7 @@ there is no X server or Xvfb in this environment.
 
 ## Recommended order before hand-in
 
-1. Expand level-authored actions to texture, ceiling, object, and geometry
-   changes, or prepare a strong defense if the school interprets the sentence
-   less literally.
-2. Run full playthroughs and clean-exit leak checks under X with Valgrind or
+1. Run full playthroughs and clean-exit leak checks under X with Valgrind or
    sanitizers, including repeated campaign transitions and audio playback.
 
 Only after those blockers are addressed should bonus-polish work be prioritized.

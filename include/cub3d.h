@@ -106,6 +106,10 @@ void		show_context_message(t_game *g);
 bool		update_world_events(t_game *g);
 void		queue_world_event(t_game *g, t_world_event event);
 void		trigger_switch_sequence(t_game *g);
+bool		authored_action_line_valid(const char *line);
+bool		add_authored_action(t_game *g, const char *line);
+bool		trigger_authored_actions(t_game *g, t_coord trigger);
+void		run_authored_action(t_game *g, int index);
 
 // sector_events.c
 void		make_event_sector(t_world_event *event, int target,

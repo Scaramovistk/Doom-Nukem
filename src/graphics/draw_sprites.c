@@ -135,10 +135,14 @@ static bool	is_sprite_transparent(t_texture *texture, int color)
 
 static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 {
+	t_world_object	*object;
 	double	angle;
 	int		frame;
 	int		i;
 
+	object = sprite_object(s, g);
+	if (object && object->texture != SPRITE_T)
+		return (&g->assets.textures[object->texture]);
 	i = 0;
 	while (i < g->map.item_count)
 	{

@@ -170,6 +170,7 @@ void	ft_init_map(t_map *map)
 	map->decoration_count = 0;
 	map->objects = NULL;
 	map->object_count = 0;
+	map->action_count = 0;
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;

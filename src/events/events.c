@@ -76,6 +76,8 @@ static void	run_event_action(t_game *g, t_world_event *event)
 		show_event_message(g, event);
 	else if (event->action == EVENT_OPEN_ONE_DOOR)
 		open_one_door(g, event->door_target);
+	else if (event->action == EVENT_AUTHORED_ACTION)
+		run_authored_action(g, event->target);
 }
 
 void	queue_world_event(t_game *g, t_world_event event)
