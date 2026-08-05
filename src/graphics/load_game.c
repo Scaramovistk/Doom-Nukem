@@ -103,6 +103,9 @@ void	load_all_textures(t_game *g)
 	size = TEXTURE_SIZE;
 	if (g->assets.vending_machine.source)
 		load_texture(&g->assets.vending_machine, &size, g);
+	size = TEXTURE_SIZE;
+	if (g->assets.laptop.source)
+		load_texture(&g->assets.laptop, &size, g);
 }
 
 void	load_texture(t_texture *t, int *size, t_game *g)

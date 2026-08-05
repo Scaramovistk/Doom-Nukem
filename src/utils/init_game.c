@@ -89,6 +89,8 @@ void	ft_int_assets(t_assets *assets)
 	}
 	ft_int_image(&assets->vending_machine.img);
 	assets->vending_machine.source = NULL;
+	ft_int_image(&assets->laptop.img);
+	assets->laptop.source = NULL;
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -171,6 +173,8 @@ void	ft_init_map(t_map *map)
 	map->vending_machine.pos = (t_position){0.0, 0.0};
 	map->vending_machine.sprite_index = -1;
 	map->vending_machine.active = false;
+	map->laptops = NULL;
+	map->laptop_count = 0;
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;

@@ -150,6 +150,24 @@ exit tile are required. The menu's **Capture the Flag (3 maps)** mode starts
 `ctf_1.dnk` and chains through `ctf_2.dnk` and `ctf_3.dnk`. On its minimap,
 the base is blue and the flag is yellow.
 
+To author another CTF map, use exactly one player start (`N`, `S`, `E`, or
+`W`), place one `G`, and optionally add `NEXT path/to/next-level.dnk` to
+chain it to another map. The player start is automatically the return base.
+
+## Laptop Tables
+
+Laptop tables are decorative, non-interactive `B` map tiles. Add this header
+line to use the supplied texture:
+
+```text
+LT tests/textures_doom/laptop_table.xpm
+```
+
+When the player enters a laptop's proximity radius, it plays a one-shot sound.
+It does not repeat while the player remains nearby; leaving the radius and
+returning triggers it again. Laptop tables sit on the ground and are hidden
+from the minimap.
+
 ## Audio
 
 Sound effects and looping music are loaded from the active level's unpacked

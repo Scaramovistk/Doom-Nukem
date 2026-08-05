@@ -88,6 +88,13 @@ typedef struct s_vending_machine
 	bool		active;
 }				t_vending_machine;
 
+typedef struct s_laptop
+{
+	t_position	pos;
+	int			sprite_index;
+	bool		player_near;
+}				t_laptop;
+
 typedef struct s_sector
 {
 	double		floor_z;
@@ -128,6 +135,8 @@ typedef struct s_map
 	t_decoration	*decorations;
 	int			decoration_count;
 	t_vending_machine	vending_machine;
+	t_laptop		*laptops;
+	int			laptop_count;
 	t_coord		*switches;
 	int			switch_count;
 	t_coord		*elevators;
@@ -210,6 +219,7 @@ typedef struct s_assets
 	t_texture	enemy_icons[ENEMY_TYPES_NB];
 	t_texture	decoration_icons[DECORATION_TYPES_NB];
 	t_texture	vending_machine;
+	t_texture	laptop;
 	bool		has_sky;
 	bool		has_sprite_frames;
 	int			floor_color;
@@ -499,6 +509,7 @@ typedef struct s_header
 	char		enemy_texture[ENEMY_TYPES_NB][LINE_SIZE];
 	char		decoration_texture[DECORATION_TYPES_NB][LINE_SIZE];
 	char		vending_machine_texture[LINE_SIZE];
+	char		laptop_texture[LINE_SIZE];
 	char		next_level[LINE_SIZE];
 	int			floor[3];
 	int			ceiling[3];

@@ -191,6 +191,8 @@ void	ft_ok(int *vals, int *ok, t_header *header)
 		return ;
 	if (!ft_good_optional_xpm(header->vending_machine_texture, ok))
 		return ;
+	if (!ft_good_optional_xpm(header->laptop_texture, ok))
+		return ;
 	if (!ft_good_optional_xpm(header->transparent_texture, ok))
 		return ;
 	if (!ft_good_optional_xpm(header->decal_texture, ok))

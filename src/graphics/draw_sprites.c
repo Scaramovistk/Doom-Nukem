@@ -103,6 +103,14 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 		&& g->assets.vending_machine.img.ptr)
 		return (&g->assets.vending_machine);
 	i = 0;
+	while (i < g->map.laptop_count)
+	{
+		if (g->map.laptops[i].sprite_index == s->sprite_index
+			&& g->assets.laptop.img.ptr)
+			return (&g->assets.laptop);
+		i++;
+	}
+	i = 0;
 	while (i < g->map.item_count)
 	{
 		if (g->map.items[i].active
@@ -234,6 +242,14 @@ static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer,
 		return ;
 	set_sprite_bounds(s, g);
 	texture = get_sprite_texture(s, g);
+	if (texture == &g->assets.laptop)
+	{
+		s->bottom += s->height * 11 / TEXTURE_SIZE;
+		s->raw_top += s->height * 11 / TEXTURE_SIZE;
+		s->top += s->height * 11 / TEXTURE_SIZE;
+		if (s->bottom >= WIN_HEIGHT)
+			s->bottom = WIN_HEIGHT - 1;
+	}
 	stripe = s->left;
 	while (stripe < s->right)
 	{

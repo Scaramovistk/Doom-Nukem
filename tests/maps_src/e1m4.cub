@@ -11,6 +11,7 @@ D3 tests/textures_doom/deco_scorch_marks.xpm
 D4 tests/textures_doom/deco_slime_drip.xpm
 D5 tests/textures_doom/deco_tech_decal.xpm
 D6 tests/textures_doom/deco_warning_stripes.xpm
+TR tests/textures_blue/glass_wall.xpm
 
 SP tests/textures_classic/barrel.xpm
 VM tests/textures_doom/vending_machine.xpm

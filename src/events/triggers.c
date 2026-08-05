@@ -62,6 +62,34 @@ static bool	apply_message(t_game *g, t_coord cell)
 	return (false);
 }
 
+static bool	update_laptop_proximity(t_game *g)
+{
+	int		i;
+	double		dx;
+	double		dy;
+	bool		active;
+
+	active = false;
+	i = 0;
+	while (i < g->map.laptop_count)
+	{
+		dx = g->player.pos.x - g->map.laptops[i].pos.x;
+		dy = g->player.pos.y - g->map.laptops[i].pos.y;
+		if (dx * dx + dy * dy <= LAPTOP_PROXIMITY_RADIUS
+			* LAPTOP_PROXIMITY_RADIUS)
+		{
+			if (!g->map.laptops[i].player_near)
+				play_sound_effect(g, LAPTOP_SOUND);
+			g->map.laptops[i].player_near = true;
+			active = true;
+		}
+		else
+			g->map.laptops[i].player_near = false;
+		i++;
+	}
+	return (active);
+}
+
 bool	update_proximity_triggers(t_game *g)
 {
 	t_coord	cell;
@@ -72,5 +100,5 @@ bool	update_proximity_triggers(t_game *g)
 	cell.y = (int)g->player.pos.y;
 	hazard = apply_hazard(g, cell);
 	message = apply_message(g, cell);
-	return (hazard || message);
+	return (hazard || message || update_laptop_proximity(g));
 }

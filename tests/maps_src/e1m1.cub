@@ -12,6 +12,9 @@ D3 tests/textures_doom/deco_scorch_marks.xpm
 D4 tests/textures_doom/deco_slime_drip.xpm
 D5 tests/textures_doom/deco_tech_decal.xpm
 D6 tests/textures_doom/deco_warning_stripes.xpm
+LT tests/textures_doom/laptop_table.xpm
+TR tests/textures_blue/glass_wall.xpm
+
 
 SP tests/textures_classic/barrel.xpm
 VM tests/textures_doom/vending_machine.xpm
@@ -36,7 +39,7 @@ NEXT tests/maps/e1m2.dnk
 111111111g11121111110000000000111111
 111111111g111011g111000K000000111111
 111111111000000000110000M00000400001
-11111111i003000600i1000000000040000d
+11111111iB03000600i1000000000040000d
 111111111000003000000000000000200X0d
 11111111i007000000i1000000000040000d
 111111111000300000110000000000400001

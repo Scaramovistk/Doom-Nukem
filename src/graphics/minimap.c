@@ -104,6 +104,7 @@ static void	draw_minimap_exits(t_game *g, t_coord origin)
 static void	draw_minimap_sprites(t_game *g, t_coord origin)
 {
 	int		i;
+	int		laptop;
 	t_coord	pos;
 	int		color;
 
@@ -112,6 +113,15 @@ static void	draw_minimap_sprites(t_game *g, t_coord origin)
 	{
 		if (g->map.has_flag && g->map.flag_carried
 			&& g->map.flag_sprite_index == i)
+		{
+			i++;
+			continue ;
+		}
+		laptop = 0;
+		while (laptop < g->map.laptop_count
+			&& g->map.laptops[laptop].sprite_index != i)
+			laptop++;
+		if (laptop < g->map.laptop_count)
 		{
 			i++;
 			continue ;

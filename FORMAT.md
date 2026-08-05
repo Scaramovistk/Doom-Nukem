@@ -119,12 +119,19 @@ consumes one key and opens the nearest door.
 
 `G` is a capture-the-flag objective. Take the flag and return to the player
 start tile (your base) to complete the map; regular pickups and exits are not
-required for this mode.
+required for this mode. The player start is marked blue and the flag yellow on
+the minimap. Chain CTF maps with the normal `NEXT path/to/next-level.dnk`
+header directive.
 
 `V` is a vending-machine sprite: buy 10 ammo for 5 score points. At most one
-is permitted per map. `g` through `l` are decorative wall decals using
+is permitted per map. `a` through `l` are decorative wall decals using
 header textures `D1` through `D6`, respectively; like `DC`, they overlay
 their wall surface.
+
+`B` is a laptop-table sprite. Add `LT path/to/laptop_table.xpm` to its header.
+Entering its proximity range plays a short sound once; leaving and returning
+plays it again. Laptop tables are floor-aligned and intentionally have no
+minimap marker.
 
 ## Non-grid rooms
 

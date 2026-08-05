@@ -5,6 +5,7 @@ WE tests/textures_classic/bluestone.xpm
 
 DO tests/textures_classic/door.xpm
 SP tests/textures_classic/barrel.xpm
+LT tests/textures_doom/laptop_table.xpm
 F 45,45,55
 C 14,18,32
 
@@ -13,7 +14,7 @@ NEXT tests/maps/ctf_2.dnk
 111111111111111
 1N0000000000001
 111111111111101
-100000000000001
+1000000B0000001
 101111111111111
 1000000000000G1
 111111111111111

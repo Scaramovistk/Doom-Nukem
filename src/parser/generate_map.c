@@ -28,10 +28,10 @@ t_block	ft_convert_tblock(char c)
 		return (TRANSPARENT_WALL);
 	else if (c == '5' || c == 'T')
 		return (DECAL_WALL);
-	else if (c >= 'g' && c <= 'l')
+	else if (c >= 'a' && c <= 'l')
 		return (DECAL_WALL);
 	else if ((c >= '6' && c <= '9') || c == 'H' || c == 'M' || c == 'X'
-		|| c == 'L' || c == 'P' || c == 'V' || c == 'G')
+		|| c == 'L' || c == 'P' || c == 'V' || c == 'B' || c == 'G')
 		return (EMPTY);
 	else
 		return (NULL_BLOCK);
@@ -54,7 +54,7 @@ static int	count_decorations(char **map, int lines, int width)
 	{
 		x = 0;
 		while (x < width)
-			count += (map[y][x++] >= 'g' && map[y][x - 1] <= 'l');
+			count += (map[y][x++] >= 'a' && map[y][x - 1] <= 'l');
 		y++;
 	}
 	return (count);
@@ -78,10 +78,11 @@ static void	add_decorations(char **map, int lines, int width, t_game *g)
 		x = 0;
 		while (x < width)
 		{
-			if (map[y][x] >= 'g' && map[y][x] <= 'l')
+			if (map[y][x] >= 'a' && map[y][x] <= 'l')
 			{
 				g->map.decorations[i].pos = (t_position){x + 0.5, y + 0.5};
-				g->map.decorations[i++].type = map[y][x] - 'g';
+				g->map.decorations[i++].type = (map[y][x] - 'a')
+					% DECORATION_TYPES_NB;
 			}
 			x++;
 		}
@@ -132,6 +133,54 @@ static bool	add_vending_machine(char **map, int lines, int width, t_game *g,
 		y++;
 	}
 	return (false);
+}
+
+static int	count_laptops(char **map, int lines, int width)
+{
+	int	count;
+	int	x;
+	int	y;
+
+	count = 0;
+	y = 0;
+	while (y < lines)
+	{
+		x = 0;
+		while (x < width)
+			count += (map[y][x++] == 'B');
+		y++;
+	}
+	return (count);
+}
+
+static void	add_laptops(char **map, int lines, int width, t_game *g,
+		int start)
+{
+	int	x;
+	int	y;
+	int	i;
+
+	if (!g->map.laptop_count)
+		return ;
+	g->map.laptops = calloc_s(g->map.laptop_count, sizeof(t_laptop), g);
+	i = 0;
+	y = 0;
+	while (y < lines)
+	{
+		x = 0;
+		while (x < width)
+		{
+			if (map[y][x] == 'B')
+			{
+				g->map.laptops[i].pos = (t_position){x + 0.5, y + 0.5};
+				g->map.laptops[i].sprite_index = start + i;
+				g->map.sprites[start + i] = g->map.laptops[i].pos;
+				i++;
+			}
+			x++;
+		}
+		y++;
+	}
 }
 
 static int	enemy_type_from_char(char c)
@@ -341,17 +390,20 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 	int		i;
 	int		deco;
 	int		vending;
+	int		laptops;
 	int		flags;
 	int		*types;
 
 	deco = count_sprites(map, lines, width);
 	vending = count_vending_machines(map, lines, width);
+	laptops = count_laptops(map, lines, width);
 	flags = count_flags(map, lines, width);
 	if (vending > 1)
 		error("Only one vending machine is allowed per map", g);
 	g->map.item_count = count_items(map, lines, width);
+	g->map.laptop_count = laptops;
 	add_decorations(map, lines, width, g);
-	g->map.sprite_count = deco + vending + flags + g->map.item_count;
+	g->map.sprite_count = deco + vending + laptops + flags + g->map.item_count;
 	if (!g->map.sprite_count)
 		return ;
 	g->map.sprites = calloc_s(g->map.sprite_count, sizeof(t_position), g);
@@ -375,7 +427,8 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 	add_enemies(deco, types, g);
 	if (vending)
 		add_vending_machine(map, lines, width, g, deco);
-	i = deco + vending;
+	add_laptops(map, lines, width, g, deco + vending);
+	i = deco + vending + laptops;
 	vert = -1;
 	while (++vert < lines)
 	{
@@ -391,7 +444,7 @@ static void	add_sprites(char **map, int lines, int width, t_game *g)
 			}
 		}
 	}
-	add_items(map, lines, width, g, deco + vending + flags);
+	add_items(map, lines, width, g, deco + vending + laptops + flags);
 }
 
 static int	count_char(char **map, int lines, int width, char target)
@@ -581,6 +634,8 @@ void	ft_populate_info(t_header *h, t_game *g)
 	if (h->vending_machine_texture[0])
 		g->assets.vending_machine.source = s_alloc(
 				ft_strdup(h->vending_machine_texture), g);
+	if (h->laptop_texture[0])
+		g->assets.laptop.source = s_alloc(ft_strdup(h->laptop_texture), g);
 	if (h->transparent_texture[0])
 		g->assets.textures[TRANSPARENT_T].source = s_alloc(
 				ft_strdup(h->transparent_texture), g);
