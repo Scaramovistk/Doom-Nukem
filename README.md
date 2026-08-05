@@ -115,6 +115,17 @@ centered at the top, FPS is shown in the top-right, and the view includes a
 crosshair plus a bottom-center XPM weapon sprite. Ammo and inventory slots use
 the same HUD icon asset set as pickup items.
 
+## Asset Layout
+
+All project-owned runtime media is grouped under `assets/`:
+
+- `assets/images/hud/` contains HUD and weapon sprites.
+- `assets/images/textures/blue/`, `classic/`, and `doom/` contain level images.
+- `assets/sounds/` contains sound effects and music.
+
+See `assets/README.md` for the packing convention. MiniLibX's own test fixtures
+remain inside `lib/` with the vendored dependency.
+
 ## Scripted Events
 
 Switch interactions enqueue timed world events. Map `T` is the default switch:

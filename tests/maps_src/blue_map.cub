@@ -1,14 +1,14 @@
 
 
-WE tests/textures_blue/blue2.xpm
+WE assets/images/textures/blue/blue2.xpm
 
-EA tests/textures_blue/blue3.xpm
+EA assets/images/textures/blue/blue3.xpm
 
-NO tests/textures_blue/blue1.xpm
+NO assets/images/textures/blue/blue1.xpm
 
-SO tests/textures_blue/blue4.xpm
+SO assets/images/textures/blue/blue4.xpm
 
-DO tests/textures_classic/redbrick.xpm
+DO assets/images/textures/classic/redbrick.xpm
 
 F 31, 18, 106
 

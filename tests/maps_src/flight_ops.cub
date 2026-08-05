@@ -1,21 +1,21 @@
-NO tests/textures_doom/uac_metal_wall.xpm
-SO tests/textures_doom/uac_metal_wall.xpm
-EA tests/textures_doom/level1_concrete.xpm
-WE tests/textures_doom/level1_concrete.xpm
+NO assets/images/textures/doom/uac_metal_wall.xpm
+SO assets/images/textures/doom/uac_metal_wall.xpm
+EA assets/images/textures/doom/level1_concrete.xpm
+WE assets/images/textures/doom/level1_concrete.xpm
 
-DO tests/textures_doom/uac_metal_wall.xpm
-DC tests/textures_doom/bullet_holes_triple.xpm
-D5 tests/textures_doom/uac_panel_tech.xpm
+DO assets/images/textures/doom/uac_metal_wall.xpm
+DC assets/images/textures/doom/bullet_holes_triple.xpm
+D5 assets/images/textures/doom/uac_panel_tech.xpm
 
-SP tests/textures_classic/barrel.xpm
-E0 tests/textures_doom/zombieman.xpm
-E1 tests/textures_doom/shotgunguy.xpm
-E2 tests/textures_doom/imp.xpm
-E3 tests/textures_doom/demon.xpm
-E4 tests/textures_doom/cacodemon.xpm
+SP assets/images/textures/classic/barrel.xpm
+E0 assets/images/textures/doom/zombieman.xpm
+E1 assets/images/textures/doom/shotgunguy.xpm
+E2 assets/images/textures/doom/imp.xpm
+E3 assets/images/textures/doom/demon.xpm
+E4 assets/images/textures/doom/cacodemon.xpm
 
-F tests/textures_doom/level1_grate_floor.xpm
-SK tests/textures_doom/sky_mars.xpm
+F assets/images/textures/doom/level1_grate_floor.xpm
+SK assets/images/textures/doom/sky_mars.xpm
 C 18, 12, 10
 
 111111111111111111111111

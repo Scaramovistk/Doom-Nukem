@@ -1,25 +1,25 @@
-NO tests/textures_doom/tech_panel.xpm
-SO tests/textures_doom/tech_panel.xpm
-EA tests/textures_classic/redbrick.xpm
-WE tests/textures_doom/uac_metal_wall.xpm
+NO assets/images/textures/doom/tech_panel.xpm
+SO assets/images/textures/doom/tech_panel.xpm
+EA assets/images/textures/classic/redbrick.xpm
+WE assets/images/textures/doom/uac_metal_wall.xpm
 
-DO tests/textures_classic/door.xpm
-DC tests/textures_doom/bullet_holes_triple.xpm
-D1 tests/textures_doom/deco_grime_layer.xpm
-D2 tests/textures_doom/deco_rust_damage.xpm
-D3 tests/textures_doom/deco_scorch_marks.xpm
-D4 tests/textures_doom/deco_slime_drip.xpm
-D5 tests/textures_doom/deco_tech_decal.xpm
-D6 tests/textures_doom/deco_warning_stripes.xpm
+DO assets/images/textures/classic/door.xpm
+DC assets/images/textures/doom/bullet_holes_triple.xpm
+D1 assets/images/textures/doom/deco_grime_layer.xpm
+D2 assets/images/textures/doom/deco_rust_damage.xpm
+D3 assets/images/textures/doom/deco_scorch_marks.xpm
+D4 assets/images/textures/doom/deco_slime_drip.xpm
+D5 assets/images/textures/doom/deco_tech_decal.xpm
+D6 assets/images/textures/doom/deco_warning_stripes.xpm
 
-SP tests/textures_classic/barrel.xpm
-E0 tests/textures_doom/zombieman.xpm
-E1 tests/textures_doom/shotgunguy.xpm
-E2 tests/textures_doom/imp.xpm
-E3 tests/textures_doom/demon.xpm
-E4 tests/textures_doom/cacodemon.xpm
+SP assets/images/textures/classic/barrel.xpm
+E0 assets/images/textures/doom/zombieman.xpm
+E1 assets/images/textures/doom/shotgunguy.xpm
+E2 assets/images/textures/doom/imp.xpm
+E3 assets/images/textures/doom/demon.xpm
+E4 assets/images/textures/doom/cacodemon.xpm
 
-F tests/textures_doom/level1_concrete.xpm
+F assets/images/textures/doom/level1_concrete.xpm
 C 49, 12, 12
 
 1111111111111111111111111111111111111111111111

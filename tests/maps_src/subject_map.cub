@@ -1,14 +1,14 @@
 
 
-SO tests/textures_classic/redbrick.xpm
+SO assets/images/textures/classic/redbrick.xpm
 
-WE tests/textures_classic/greystone.xpm
+WE assets/images/textures/classic/greystone.xpm
 
-EA tests/textures_classic/bluestone.xpm
+EA assets/images/textures/classic/bluestone.xpm
 
-NO tests/textures_classic/colorstone.xpm
+NO assets/images/textures/classic/colorstone.xpm
 
-DO tests/textures_classic/eagle.xpm
+DO assets/images/textures/classic/eagle.xpm
 
 F 7, 0, 77
 

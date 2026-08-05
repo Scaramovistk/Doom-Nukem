@@ -4,15 +4,17 @@ Audit date: 2026-08-05
 
 ## Overall verdict
 
-**Not ready for hand-in as a complete mandatory submission.**
+**Not yet ready to claim a perfect mandatory submission.**
 
 The repository has substantial Doom-Nukem functionality and demonstrates most
 of the visible rendering/gameplay ideas. It builds cleanly and every packed
-level passes the headless parser check. However, the subject says the mandatory
-part must be integral and work without malfunctioning. There are still several
-objective mandatory failures or serious defense blockers, so the honest answer
-to “is everything there?” remains **no**. The original findings 1 through 9
-have now been fixed and are recorded below as resolved.
+level passes the headless parser check. The original findings 1 through 9 have
+been fixed. The remaining concrete concern is inclined-plane rendering: slope
+data affects world height and collision, but the textured plane caster still
+projects rows as horizontal planes. There are also live graphical/audio/leak
+checks and an image-reader interpretation that cannot be closed headlessly.
+Because the subject requires the mandatory part to be perfect, the honest answer
+to “is everything proven ready?” remains **no** until those items are addressed.
 
 This is a static/headless audit. The environment has no X server, so rendering,
 input feel, audio output, and full mission playthroughs were not visually tested.
@@ -87,11 +89,33 @@ Status meanings:
    object, and wall references. `gameplay_map.dnk` contains a nine-step sequence
    demonstrating geometry, height, light, texture, and object changes.
 
-10. **UNVERIFIED — memory leaks and crash-free graphical execution.** Cleanup
-    code exists, and malformed-file smoke tests returned controlled errors.
-    Valgrind could not run because the installed snap refuses to start without
-    its AppArmor service. No X server was available for a complete game-session
-    leak test.
+10. **PARTIAL / UNVERIFIED — memory leaks and crash-free graphical execution.**
+    All packed levels plus invalid-path cases pass an isolated ASan/UBSan build,
+    and malformed-file smoke tests return controlled errors. LeakSanitizer cannot
+    run under this environment's ptrace wrapper, while the installed Valgrind
+    snap refuses to start without its AppArmor service. No X server is available
+    for a complete game-session leak or crash test. Clang's static analyzer also
+    reports two possible safety paths, but source review shows both depend on
+    infeasible assumptions: sprite draw records are initialized before sorting,
+    and enemy storage is sized with the same predicate used to populate it. It
+    also reports two harmless dead stores (`corridor`). These findings should be
+    cleaned up or locally asserted if a warning-free analyzer report is desired.
+
+11. **FAIL / PARTIAL — inclined textured planes are not perspective-correct.**
+    Sector slopes feed `get_floor_z_at()`/`get_ceiling_z_at()` for collision,
+    wall endpoints, sprites, and step detection. However,
+    `src/graphics/draw_scene.c:set_surface_row()` derives one row distance from
+    the height at the player's position, and `draw_step_bands.c` uses the
+    sector's base height. Neither solves the ray/plane intersection using the
+    sampled sector slope. A sloped sector therefore behaves as sloped geometry
+    but its floor/ceiling texture is still projected as a horizontal plane.
+
+12. **DEFENSE RISK — the required image-reader interpretation is unresolved.**
+    Project code loads XPM files through `mlx_xpm_file_to_image()`. The reader is
+    bundled source inside the submitted MLX, but it is not a reader authored in
+    the game code. The subject allows all MLX functions while also saying the
+    needed image reader must be recoded; confirm the evaluator's interpretation
+    or provide a project-owned reader before claiming an unqualified pass.
 
 ## General instructions
 
@@ -103,7 +127,7 @@ Status meanings:
 | libft at repository root and built by Makefile | PASS | `lib/libft` has its own Makefile and is a dependency. |
 | No global variables | **PASS** | Runtime timing is owned by `t_game`; a post-build `nm` scan finds no writable static-storage symbols in game objects. |
 | Careful errors/no unexpected termination | PARTIAL | Missing file, directory, invalid extension, and invalid packed level produce controlled errors. GUI/runtime paths were not fuzzed. |
-| No memory leaks | UNVERIFIED | Cleanup is extensive, but no usable Valgrind/X session was available. |
+| No memory leaks | PARTIAL / UNVERIFIED | ASan/UBSan headless parsing/export passes; LSan, Valgrind, and a graphical-session leak test remain unavailable. |
 | Library restrictions | PASS / RISK | MLX is used for window/pixels/events; SDL2/ALSA for sound; pthread rendering is a listed bonus. Evaluators should confirm their interpretation of bundled MLX XPM loading. |
 | Recode required image reader | PARTIAL / RISK | Game code calls `mlx_xpm_file_to_image`; the reader is bundled in MLX rather than clearly implemented as project code. |
 
@@ -124,7 +148,7 @@ Status meanings:
 | Look up/down | PASS | Mouse and Page Up/Down change pitch with clamping. |
 | Arbitrary room shapes/wall directions | PASS | Free wall segments and segment ray intersection exist; `architecture_map.dnk` contains a closed five-wall angled room. |
 | Adjustable floor/ceiling heights | PASS | Sector floor/ceiling values, height-step bands, and risers exist. |
-| Inclined floor/ceiling planes | PARTIAL / RISK | Sector slopes affect sampled heights, collision, walls, and step detection. The main floor-casting distance still assumes the viewer's horizontal plane, so true perspective-correct rendering of inclined textured planes is not proven. |
+| Inclined floor/ceiling planes | **FAIL / PARTIAL** | Slopes affect geometry and collision, but floor/ceiling texture casting still uses horizontal-plane row distances rather than ray/sloped-plane intersection. |
 | Textured floors and ceilings | PASS | Floor/ceiling casting samples textures. |
 | Sky instead of ceiling | PASS | `SK` texture support and sky-row rendering exist; several levels use it. |
 | Partially transparent walls | PASS | Transparent hits are retained and alpha blended. |
@@ -204,18 +228,28 @@ gameplay_map authored-action parse                     # 9 actions
 editor action clear/add/pack/check smoke test          # 1 valid action
 11-form authored mutation/queue harness                # passed
 malformed authored action in packed level              # rejected
+isolated ASan/UBSan build + all 13 packed checks       # passed
+isolated ASan/UBSan repack/check of every source       # passed
+ASan/UBSan missing-file check                           # controlled failure
+clang --analyze over all source translation units       # 4 warnings reviewed
 nm -A --defined-only build/*.o | writable-symbol filter
                                                     # no output (passed)
 git diff --check                                    # passed
 ```
 
 Valgrind was attempted, but the installed snap refused to run because its
-AppArmor service is unavailable. A graphical smoke test was impossible because
-there is no X server or Xvfb in this environment.
+AppArmor service is unavailable. LeakSanitizer also cannot operate under the
+environment's ptrace wrapper. AddressSanitizer and UndefinedBehaviorSanitizer
+did run successfully with leak detection disabled. A graphical smoke test was
+impossible because there is no X server or Xvfb in this environment.
 
 ## Recommended order before hand-in
 
-1. Run full playthroughs and clean-exit leak checks under X with Valgrind or
+1. Replace horizontal row-distance floor casting in sloped sectors with proper
+   ray/plane intersection for both floor and ceiling textures.
+2. Confirm that the bundled MLX XPM reader satisfies the evaluator, or add a
+   project-owned XPM/image reader and use it from the game.
+3. Run full playthroughs and clean-exit leak checks under X with Valgrind or
    sanitizers, including repeated campaign transitions and audio playback.
 
 Only after those blockers are addressed should bonus-polish work be prioritized.
