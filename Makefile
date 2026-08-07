@@ -68,11 +68,11 @@ VPATH			=	src src/events src/graphics src/parser src/parser/utils src/utils
 
 # Source Files
 SRC_MAIN		=	main.c
-SRC_EVENTS		=	authored_actions.c door_bonus.c editor.c editor_session.c enemies.c enemy_ranged.c enemy_update.c events.c game_loop.c hooks.c hooks_door_bonus.c interact.c item_effects.c level_flow.c level_loader.c menu.c message.c \
-					mlx_mouse_pos_bonus.c pickup.c projectile.c projectile_fire.c projectile_update.c sector_events.c stop_game.c switch_targets.c triggers.c update_player_pos.c
+SRC_EVENTS		=	authored_actions.c display_control.c door_bonus.c editor.c editor_border.c editor_gui.c editor_gui_draw.c editor_gui_input.c editor_session.c enemies.c enemy_ranged.c enemy_update.c events.c game_loop.c hooks.c hooks_door_bonus.c interact.c item_effects.c level_flow.c level_loader.c menu.c message.c \
+					mlx_mouse_pos_bonus.c pickup.c projectile.c projectile_fire.c projectile_update.c sector_events.c stop_game.c switch_targets.c triggers.c update_player_pos.c window_mode.c
 SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_risers.c draw_scene.c draw_sprites.c draw_step_bands.c draw_utils.c draw_wall.c graphics_utils.c \
 					height_step.c hud.c load_game.c minimap.c minimap_utils.c ray_casting.c render.c time_bonus.c
-SRC_PARSER		=	generate_map.c generate_map_utils.c get_header.c get_map.c packed_level.c parser.c valid_header.c valid_map.c \
+SRC_PARSER		=	generate_map.c generate_map_utils.c get_header.c get_map.c map_border.c packed_level.c parser.c valid_header.c valid_map.c \
 					parsing_error.c header.c map.c security.c valid_header_check_bonus.c segment_check.c
 SRC_UTILS		=	allocation.c bsp_visibility.c error.c free.c init_game.c sectors.c sector_origin.c sound.c sound_utils.c
 

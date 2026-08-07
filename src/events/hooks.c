@@ -44,6 +44,15 @@ int	pressed(int key, t_game *g)
 {
 	if (key == KEY_ESC)
 		stop_game(g);
+	if (key == KEY_F11 || key == KEY_0)
+	{
+		toggle_fullscreen(g->mlx, g->mlx_win, g);
+		if (g->state == STATE_MENU)
+			render_menu(g);
+		else
+			render(g);
+		return (0);
+	}
 	if (g->state == STATE_MENU)
 		return (menu_key(key, g));
 	if (g->story_visible)
@@ -156,8 +165,8 @@ int	mouse_move(int x, int y, void *param)
 	g = (t_game *)param;
 	if (g->state == STATE_MENU)
 		return (0);
-	delta_x = x - (WIN_WIDTH / 2);
-	delta_y = y - (WIN_HEIGHT / 2);
+	delta_x = x - (g->window_width / 2);
+	delta_y = y - (g->window_height / 2);
 	if (delta_x == 0 && delta_y == 0)
 		return (0);
 	g->player.rotation_move = (double)delta_x * MOUSE_SENSITIVITY;
@@ -165,7 +174,8 @@ int	mouse_move(int x, int y, void *param)
 	g->player.mouse_move_pending = true;
 	g->player.mouse.x = x;
 	g->player.mouse.y = y;
-	move_mouse(g->mlx, g->mlx_win);
+	move_mouse_at(g->mlx, g->mlx_win, g->window_width / 2,
+		g->window_height / 2);
 	return (0);
 }
 

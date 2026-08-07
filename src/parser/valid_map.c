@@ -129,6 +129,8 @@ int	ft_valid_map(char **map, int lines, t_game *g)
 	}
 	if (vals[1])
 		return (ft_map_error(map, MAPCHAR, lines, 0));
+	if (!ft_solid_map_border(map, lines, ft_strlen(map[0])))
+		return (ft_map_error(map, MAPBORDER, lines, 0));
 	copy = ft_map_dup(map, lines, ft_strlen(map[0]));
 	if (!copy)
 		return (ft_map_error(map, NULL, lines, 0));

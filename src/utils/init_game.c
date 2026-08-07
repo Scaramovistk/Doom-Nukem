@@ -322,6 +322,11 @@ void	init_game_struct(t_game *g)
 	ft_int_image(&g->img);
 	g->mlx = NULL;
 	g->mlx_win = NULL;
+	g->window_width = WIN_WIDTH;
+	g->window_height = WIN_HEIGHT;
+	g->render_x = 0;
+	g->render_y = 0;
+	g->fullscreen = false;
 	g->unpacked_level = false;
 	g->last_frame_time = 0.0;
 	g->unpack_dir[0] = '\0';

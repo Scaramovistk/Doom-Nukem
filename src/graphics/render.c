@@ -29,7 +29,8 @@ int	render(t_game *g)
 	mlx = g->mlx;
 	win = g->mlx_win;
 	img = g->img.ptr;
-	mlx_put_image_to_window(mlx, win, img, 0, 0);
+	mlx_clear_window(mlx, win);
+	mlx_put_image_to_window(mlx, win, img, g->render_x, g->render_y);
 	return (EXIT_SUCCESS);
 }
 

@@ -766,6 +766,22 @@ static bool	write_all_assets(FILE *out, char *src)
 	return (true);
 }
 
+static bool	pack_source_valid(char *src)
+{
+	t_game	g;
+	char	*argv[2];
+	bool	valid;
+
+	init_game_struct(&g);
+	argv[0] = "doom-nukem";
+	argv[1] = src;
+	valid = ft_parse_file(2, argv, &g);
+	free_all(&g);
+	if (!valid)
+		ft_parsing_error("Refusing to pack an invalid level.", 0);
+	return (valid);
+}
+
 int	pack_level_file(char *src, char *dst)
 {
 	FILE	*out;
@@ -774,6 +790,8 @@ int	pack_level_file(char *src, char *dst)
 	int		i;
 
 	count = 0;
+	if (!pack_source_valid(src))
+		return (0);
 	if (!load_cub_text(src, lines, &count))
 		return (ft_parsing_error("Unable to read source level.", 0));
 	out = fopen(dst, "w");

@@ -13,12 +13,11 @@ sector metadata.
 ./doom-nukem tests/maps/door_map.dnk
 ```
 
-`--edit` opens an interactive terminal editor for the `.cub` and its optional
-same-basename `.sectors` file. Its commands edit map tokens, texture/header
-values, sector heights/slopes/light, sector-grid assignments, arbitrary wall
-segments, and delayed runtime action sequences; `save`, `validate`, and
-`pack [output.dnk]` finish the workflow.
-Type `help` in the editor for exact syntax. `--pack` is the non-interactive
+`--edit` opens a graphical editor for the `.cub` and its optional same-basename
+`.sectors` file. The map canvas and side panel edit map tokens, texture sets,
+sector heights/slopes/light, sector-grid assignments, objects, start/end cells,
+and delayed runtime actions. Save, Validate, and Pack finish the workflow.
+`--pack` is the non-interactive
 export command. `--check` parses a level without opening a window and prints
 map, sector, angled-wall, sprite, and item counts.
 

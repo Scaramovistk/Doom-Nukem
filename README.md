@@ -45,16 +45,19 @@ Or open the level select menu:
 
 ## Editor / Packing
 
-Open an editable `.cub` project in the interactive terminal editor:
+Open an editable `.cub` project in the graphical level editor:
 
 ```sh
 ./doom-nukem --edit tests/maps_src/door_map.cub tests/maps/door_map.dnk
 ```
 
-The editor can place map devices/entities, change texture headers, define floor
-and ceiling heights, slopes and lighting, assign sector cells, add arbitrary
-wall segments, save the `.cub`/`.sectors` sources, validate them, and pack the
-result. Type `help` in the editor for the complete command list.
+The editor presents the level as a clickable grid with geometry, entity and
+object tools. Its side panel also changes texture sets, floor/ceiling heights,
+slopes and lighting, assigns sector cells, adds actions, saves the editable
+sources, validates them, and packs the self-contained `.dnk` result. Keyboard
+shortcuts are printed in the editor window. Press `0` or `F11` in the editor,
+menu, or game to toggle fullscreen and windowed mode. The floor brush uses `Z`
+in the editor because `0` is reserved for the display-mode toggle.
 
 Wall height is defined in the same-basename `.sectors` sidecar, not in the
 `.cub` map. A sector line uses the following format:

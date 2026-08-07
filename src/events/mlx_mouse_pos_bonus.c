@@ -26,6 +26,12 @@ int	move_mouse(void *mlx, void *win)
 	return (0);
 }
 
+int	move_mouse_at(void *mlx, void *win, int x, int y)
+{
+	mlx_mouse_move(mlx, win, x, y);
+	return (0);
+}
+
 int	hide_mouse(void *mlx, void *win)
 {
 	mlx_mouse_hide(mlx, win);
@@ -45,6 +51,13 @@ int	move_mouse(void *mlx, void *win)
 {
 	(void)mlx;
 	mlx_mouse_move(win, WIN_WIDTH / 2, WIN_HEIGHT / 2);
+	return (0);
+}
+
+int	move_mouse_at(void *mlx, void *win, int x, int y)
+{
+	(void)mlx;
+	mlx_mouse_move(win, x, y);
 	return (0);
 }
 

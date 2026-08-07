@@ -30,10 +30,14 @@ int			pressed(int keycode, t_game *g);
 int			released(int keycode, t_game *g);
 int			mouse_move(int x, int y, void *param);
 int			mouse_press(int button, int x, int y, void *param);
+void		toggle_fullscreen(void *mlx, void *win, t_game *g);
+void		end_display_loop(void *mlx);
+void		destroy_display(void *mlx);
 
 // mlx_mouse_pos.c
 int			get_mouse_pos(void *mlx, void *win, int *x, int *y);
 int			move_mouse(void *mlx, void *win);
+int			move_mouse_at(void *mlx, void *win, int x, int y);
 int			hide_mouse(void *mlx, void *win);
 
 // game_loop.c
@@ -308,6 +312,7 @@ int			ft_get_header(char *map, int *ok, t_header *p);
 int			ft_extract_map(char **map, char *mapfile, int *dims);
 char		**ft_map_dup(char **map, int lines, int width);
 int			ft_valid_map(char **map, int lines, t_game *g);
+int			ft_solid_map_border(char **map, int lines, int width);
 
 // ----- PARSER UTILS ----- //
 // parsing_error.c

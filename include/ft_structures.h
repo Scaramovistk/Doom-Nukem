@@ -521,6 +521,11 @@ typedef struct s_game
 
 	void		*mlx;
 	void		*mlx_win;
+	int			window_width;
+	int			window_height;
+	int			render_x;
+	int			render_y;
+	bool		fullscreen;
 	t_img		img;
 	t_assets	assets;
 	t_hud		hud;

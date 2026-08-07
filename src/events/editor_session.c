@@ -11,22 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../include/cub3d.h"
-
-typedef struct s_editor_doc
-{
-	char	*cub[DNK_MAX_LINES];
-	int		cub_count;
-	int		map_start;
-	int		map_height;
-	int		map_width;
-	char	*sectors[DNK_MAX_LINES];
-	int		sector_count;
-	int		grid_start;
-	char	cub_path[LINE_SIZE];
-	char	sector_path[LINE_SIZE];
-	char	output_path[LINE_SIZE];
-	bool	dirty;
-} 			t_editor_doc;
+#include "../../include/editor.h"
 
 static char	*editor_dup(const char *text)
 {
@@ -57,6 +42,11 @@ static void	free_document(t_editor_doc *doc)
 	free_lines(doc->sectors, doc->sector_count);
 	doc->cub_count = 0;
 	doc->sector_count = 0;
+}
+
+void	editor_close(t_editor_doc *doc)
+{
+	free_document(doc);
 }
 
 static bool	read_lines(const char *path, char **lines, int *count)
@@ -206,6 +196,11 @@ static bool	load_document(t_editor_doc *doc, char *src, char *output)
 	return (true);
 }
 
+bool	editor_open(t_editor_doc *doc, char *src, char *output)
+{
+	return (load_document(doc, src, output));
+}
+
 static bool	write_lines(const char *path, char **lines, int count)
 {
 	char	tmp[LINE_SIZE];
@@ -230,6 +225,9 @@ static bool	write_lines(const char *path, char **lines, int count)
 
 static bool	save_document(t_editor_doc *doc)
 {
+	if (!editor_border_valid(doc))
+		return (printf("Map border must contain only solid walls ('1').\n"),
+			false);
 	if (!write_lines(doc->cub_path, doc->cub, doc->cub_count)
 		|| !write_lines(doc->sector_path, doc->sectors, doc->sector_count))
 		return (printf("Save failed.\n"), false);
@@ -255,6 +253,9 @@ static void	set_map_cell(t_editor_doc *doc, char *command)
 		|| x >= (int)ft_strlen(doc->cub[doc->map_start + y])
 		|| !valid_map_token(token))
 		return ((void)printf("Usage: set <x> <y> <map-token>\n"));
+	if ((x == 0 || y == 0 || x == doc->map_width - 1
+			|| y == doc->map_height - 1) && token != '1')
+		return ((void)printf("Border cells must remain solid walls ('1').\n"));
 	doc->cub[doc->map_start + y][x] = token;
 	doc->dirty = true;
 }
@@ -539,7 +540,7 @@ static void	pack_document(t_editor_doc *doc, char *command)
 		printf("Packed %s\n", output);
 }
 
-static bool	run_command(t_editor_doc *doc, char *command)
+bool	editor_command(t_editor_doc *doc, char *command)
 {
 	size_t	len;
 
@@ -581,7 +582,7 @@ static bool	run_command(t_editor_doc *doc, char *command)
 	return (true);
 }
 
-int	interactive_level_editor(char *src, char *default_output)
+int	terminal_level_editor(char *src, char *default_output)
 {
 	t_editor_doc	doc;
 	char			command[LINE_SIZE];
@@ -599,7 +600,7 @@ int	interactive_level_editor(char *src, char *default_output)
 			printf("dnk-edit> ");
 		if (!fgets(command, sizeof(command), stdin))
 			break ;
-		running = run_command(&doc, command);
+		running = editor_command(&doc, command);
 	}
 	if (doc.dirty)
 		printf("Unsaved changes discarded (use 'save' or 'pack').\n");

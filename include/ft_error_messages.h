@@ -24,6 +24,7 @@
 # define MAPCHAR "Invalid char present in map."
 # define MAPPLAYER "Invalid number of players."
 # define MAPCLOSED "Map is not closed."
+# define MAPBORDER "Map border must contain only solid wall tiles ('1')."
 # define HALWAY "A door has not been placed in a halway."
 # define PATHS "A texture from NO || EA || SO || WE || F || C || D isn't set."
 # define SXPM "Source for .xpm is to large"
