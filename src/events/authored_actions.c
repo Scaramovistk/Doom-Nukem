@@ -40,7 +40,8 @@ static bool	parse_sector_action(t_authored_action *a, char *kind, char *args)
 	if (a->type == AUTH_ACTION_LIGHT)
 		return (sscanf(args, "%d %d", &a->target, &a->value) == 2
 			&& a->value >= 0 && a->value <= 255);
-	return (sscanf(args, "%d %lf", &a->target, &a->values[0]) == 2);
+	return (sscanf(args, "%d %lf", &a->target, &a->values[0]) == 2
+		&& isfinite(a->values[0]));
 }
 
 static bool	parse_object_action(t_authored_action *a, char *kind, char *args)
@@ -49,7 +50,8 @@ static bool	parse_object_action(t_authored_action *a, char *kind, char *args)
 	{
 		a->type = AUTH_ACTION_OBJECT_MOVE;
 		return (sscanf(args, "%d %lf %lf", &a->target, &a->values[0],
-				&a->values[1]) == 3);
+				&a->values[1]) == 3 && isfinite(a->values[0])
+			&& isfinite(a->values[1]));
 	}
 	if (!ft_strcmp(kind, "OBJECT_BLOCK"))
 	{
@@ -61,7 +63,7 @@ static bool	parse_object_action(t_authored_action *a, char *kind, char *args)
 	{
 		a->type = AUTH_ACTION_OBJECT_SCALE;
 		return (sscanf(args, "%d %lf", &a->target, &a->values[0]) == 2
-			&& a->values[0] > 0.0);
+			&& isfinite(a->values[0]) && a->values[0] > 0.0);
 	}
 	if (ft_strcmp(kind, "OBJECT_TEXTURE"))
 		return (false);
@@ -77,7 +79,9 @@ static bool	parse_wall_action(t_authored_action *a, char *kind, char *args)
 		a->type = AUTH_ACTION_WALL_MOVE;
 		return (sscanf(args, "%d %lf %lf %lf %lf", &a->target,
 				&a->values[0], &a->values[1], &a->values[2],
-				&a->values[3]) == 5);
+				&a->values[3]) == 5 && isfinite(a->values[0])
+			&& isfinite(a->values[1]) && isfinite(a->values[2])
+			&& isfinite(a->values[3]));
 	}
 	if (ft_strcmp(kind, "WALL_TEXTURE"))
 		return (false);
@@ -95,7 +99,8 @@ static bool	parse_authored_action(const char *line, t_authored_action *a)
 	ft_bzero(a, sizeof(*a));
 	offset = 0;
 	if (sscanf(line, "ACTION %d %d %lf %23s %n", &a->trigger.x,
-			&a->trigger.y, &a->delay, kind, &offset) != 4 || a->delay < 0.0)
+			&a->trigger.y, &a->delay, kind, &offset) != 4
+		|| !isfinite(a->delay) || a->delay < 0.0)
 		return (false);
 	if (!ft_strcmp(kind, "BLOCK"))
 	{

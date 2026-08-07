@@ -330,7 +330,8 @@ static void	set_sector(t_editor_doc *doc, char *command)
 
 	if (sscanf(command, "sector %d %lf %lf %lf %lf %d", &id, &floor_z,
 			&ceil_z, &sx, &sy, &light) != 6 || id < 0 || id >= SECTOR_MAX
-		|| ceil_z <= floor_z || light < 0 || light > 255)
+		|| !isfinite(floor_z) || !isfinite(ceil_z) || !isfinite(sx)
+		|| !isfinite(sy) || ceil_z <= floor_z || light < 0 || light > 255)
 		return ((void)printf("Usage: sector <id> <floor> <ceil> <sx> <sy> <light>\n"));
 	snprintf(line, sizeof(line), "SECTOR %d %.3f %.3f %.4f %.4f %d",
 		id, floor_z, ceil_z, sx, sy, light);
@@ -385,7 +386,10 @@ static void	add_wall(t_editor_doc *doc, char *command)
 	char	line[LINE_SIZE];
 
 	if (sscanf(command, "wall add %lf %lf %lf %lf %d %d %d", &x1, &y1,
-			&x2, &y2, &texture, &sector, &transparent) != 7)
+		&x2, &y2, &texture, &sector, &transparent) != 7
+		|| !isfinite(x1) || !isfinite(y1) || !isfinite(x2) || !isfinite(y2)
+		|| texture < 0 || texture >= TEXTURES_NB || sector < 0
+		|| sector >= SECTOR_MAX || (transparent != 0 && transparent != 1))
 		return ((void)printf("Usage: wall add <x1> <y1> <x2> <y2> <texture> <sector> <0|1>\n"));
 	snprintf(line, sizeof(line), "WALL %.3f %.3f %.3f %.3f %d %d %d",
 		x1, y1, x2, y2, texture, sector, transparent != 0);

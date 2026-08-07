@@ -453,12 +453,14 @@ typedef struct s_audio_channel
 # ifdef AUDIO_ALSA
 	snd_pcm_t		*pcm;
 	pthread_t		thread;
+	pthread_mutex_t	mutex;
 	unsigned int	rate;
 	unsigned int	channels;
 	unsigned int	bits;
 	unsigned int	frame_size;
 	bool			stop;
 	bool			thread_started;
+	bool			mutex_initialized;
 # endif
 }				t_channel;
 

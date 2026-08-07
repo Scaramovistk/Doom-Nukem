@@ -32,6 +32,8 @@ int	ft_is_halway(char **map, int vert, int hor)
 	int	left;
 	int	right;
 
+	if (vert <= 0 || hor <= 0)
+		return (0);
 	left = map[vert][hor - 1];
 	right = map[vert][hor + 1];
 	up = map[vert - 1][hor];
@@ -60,6 +62,9 @@ int	ft_hallway(char **map, int *vals)
 			corridor = 0;
 			if (map[vert][hor] == '2')
 			{
+				if (vert == 0 || hor == 0 || vert == vals[0] - 1
+					|| hor == vals[1] - 1)
+					return (0);
 				corridor = ft_is_halway(map, vert, hor);
 				if (!corridor)
 					return (0);

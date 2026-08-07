@@ -44,14 +44,22 @@ void	close_channel(t_channel *channel)
 	if (channel->buf)
 		SDL_FreeWAV(channel->buf);
 # else
+	snd_pcm_t	*pcm;
+
+	if (!channel->mutex_initialized)
+		return (ft_bzero(channel, sizeof(*channel)));
+	pthread_mutex_lock(&channel->mutex);
 	channel->stop = true;
-	if (channel->pcm)
-		snd_pcm_drop(channel->pcm);
+	pcm = channel->pcm;
+	pthread_mutex_unlock(&channel->mutex);
+	if (pcm)
+		snd_pcm_drop(pcm);
 	if (channel->thread_started)
 		pthread_join(channel->thread, NULL);
-	if (channel->pcm)
-		snd_pcm_close(channel->pcm);
+	if (pcm)
+		snd_pcm_close(pcm);
 	free(channel->buf);
+	pthread_mutex_destroy(&channel->mutex);
 # endif
 	ft_bzero(channel, sizeof(*channel));
 }
@@ -120,6 +128,14 @@ void	load_channel_wav(t_channel *channel, const char *path, bool loop)
 	SDL_PauseAudioDevice(channel->device, 0);
 }
 # else
+
+static bool	init_channel_mutex(t_channel *channel)
+{
+	if (pthread_mutex_init(&channel->mutex, NULL) != 0)
+		return (false);
+	channel->mutex_initialized = true;
+	return (true);
+}
 
 static unsigned int	wav_u16(const unsigned char *p)
 {
@@ -223,29 +239,51 @@ static void	*audio_channel_thread(void *userdata)
 	t_channel		*channel;
 	snd_pcm_sframes_t	written;
 	unsigned int	frames;
+	snd_pcm_t		*pcm;
+	unsigned char	*buf;
+	unsigned int	pos;
+	bool			stopped;
 
 	channel = (t_channel *)userdata;
-	while (!channel->stop)
+	while (true)
 	{
+		pthread_mutex_lock(&channel->mutex);
+		if (channel->stop)
+		{
+			pthread_mutex_unlock(&channel->mutex);
+			break ;
+		}
 		if (channel->pos >= channel->len)
 		{
 			if (!channel->loop)
+			{
+				pthread_mutex_unlock(&channel->mutex);
 				break ;
+			}
 			channel->pos = 0;
 		}
 		frames = (channel->len - channel->pos) / channel->frame_size;
 		if (frames > 4096)
 			frames = 4096;
-		written = snd_pcm_writei(channel->pcm, channel->buf + channel->pos,
-			frames);
+		pcm = channel->pcm;
+		buf = channel->buf;
+		pos = channel->pos;
+		pthread_mutex_unlock(&channel->mutex);
+		written = snd_pcm_writei(pcm, buf + pos, frames);
 		if (written < 0)
-			written = snd_pcm_recover(channel->pcm, (int)written, 1);
+			written = snd_pcm_recover(pcm, (int)written, 1);
 		if (written < 0)
 			break ;
+		pthread_mutex_lock(&channel->mutex);
 		channel->pos += (unsigned int)written * channel->frame_size;
+		pthread_mutex_unlock(&channel->mutex);
 	}
-	if (!channel->stop)
-		snd_pcm_drain(channel->pcm);
+	pthread_mutex_lock(&channel->mutex);
+	stopped = channel->stop;
+	pcm = channel->pcm;
+	if (!stopped)
+		snd_pcm_drain(pcm);
+	pthread_mutex_unlock(&channel->mutex);
 	return (NULL);
 }
 
@@ -255,6 +293,8 @@ void	load_channel_wav(t_channel *channel, const char *path, bool loop)
 	size_t			size;
 
 	close_channel(channel);
+	if (!init_channel_mutex(channel))
+		return ;
 	file = NULL;
 	if (!read_wav_file(path, &file, &size)
 		|| !parse_wav(channel, file, size))
@@ -282,8 +322,21 @@ t_channel	*pick_sfx_channel(t_game *g)
 	while (i < SFX_CHANNELS_NB)
 	{
 		channel = &g->audio.sfx[i];
-		if (!channel->device || channel->pos >= channel->len)
+# ifdef AUDIO_SDL2
+		if (!channel->device)
 			return (channel);
+		SDL_LockAudioDevice(channel->device);
+		if (channel->pos >= channel->len)
+			return (SDL_UnlockAudioDevice(channel->device), channel);
+		SDL_UnlockAudioDevice(channel->device);
+# else
+		if (!channel->mutex_initialized)
+			return (channel);
+		pthread_mutex_lock(&channel->mutex);
+		if (!channel->device || channel->pos >= channel->len)
+			return (pthread_mutex_unlock(&channel->mutex), channel);
+		pthread_mutex_unlock(&channel->mutex);
+# endif
 		i++;
 	}
 	return (&g->audio.sfx[0]);
