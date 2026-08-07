@@ -1,0 +1,47 @@
+NO assets/images/textures/classic/greystone.xpm
+SO assets/images/textures/classic/greystone.xpm
+EA assets/images/textures/classic/bluestone.xpm
+WE assets/images/textures/classic/bluestone.xpm
+
+DO assets/images/textures/classic/door.xpm
+DC assets/images/textures/doom/bullet_holes_triple.xpm
+D1 assets/images/textures/doom/deco_grime_layer.xpm
+D2 assets/images/textures/doom/deco_rust_damage.xpm
+D3 assets/images/textures/doom/deco_scorch_marks.xpm
+D4 assets/images/textures/doom/deco_slime_drip.xpm
+D5 assets/images/textures/doom/deco_tech_decal.xpm
+D6 assets/images/textures/doom/deco_warning_stripes.xpm
+LT assets/images/textures/doom/laptop_table.xpm
+SP assets/images/textures/classic/barrel.xpm
+VM assets/images/textures/doom/vending_machine.xpm
+E0 assets/images/textures/doom/zombieman.xpm
+E1 assets/images/textures/doom/shotgunguy.xpm
+E2 assets/images/textures/doom/imp.xpm
+E3 assets/images/textures/doom/demon.xpm
+E4 assets/images/textures/doom/cacodemon.xpm
+F 35,45,50
+C 18,14,32
+NEXT tests/maps/ctf_3.dnk
+
+1111111111111111111111111111
+1N060gQ000000000000000000001
+1j000000000J0000000000000001
+1111111111111111101111111111
+1000000000000000001000000001
+10i0003K0000000000100000k001
+1I11111111111111111011111101
+1I00000000000000001000000001
+10l000000000I000001000000001
+1I11111111111111111011111101
+1I00000000000000001000000001
+10k0000000I00000001000000j01
+1011111111111111111011111101
+100000000II00000001000000001
+10i000700I000000002000000001
+1011111111111111111011111101
+1000000000000000001000000001
+10g0000000000000001000000J01
+1011111111111111111011111101
+1000000000000000001000000001
+10l00000000000000010000000G1
+1111111111111111111111111111

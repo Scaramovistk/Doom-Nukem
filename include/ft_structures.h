@@ -1,0 +1,547 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_structures.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gscarama <gscarama@student.s19.be>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/17 11:38:52 by gscarama          #+#    #+#             */
+/*   Updated: 2024/07/17 11:38:54 by gscarama         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef FT_STRUCTURES_H
+# define FT_STRUCTURES_H
+# include "ft_enumerations.h"
+# include "ft_libraries.h"
+# include "ft_macros.h"
+
+// ----- MAP ----- //
+
+typedef struct s_position
+{
+	double		x;
+	double		y;
+}				t_position;
+
+typedef struct s_coord
+{
+	int			x;
+	int			y;
+}				t_coord;
+
+typedef struct s_dimensions
+{
+	int			top;
+	int			bottom;
+	int			raw_top;
+}				t_dimensions;
+
+typedef struct s_door
+{
+	double		opening_state;
+	bool		is_opening;
+	bool		is_secret;
+	bool		is_locked;
+	bool		discovered;
+}				t_door;
+
+typedef struct s_item
+{
+	t_position	pos;
+	int			type;
+	int			quantity;
+	bool		blocks_passage;
+	bool		active;
+	int			sprite_index;
+}				t_item;
+
+typedef struct s_enemy
+{
+	t_position	pos;
+	int			health;
+	int			max_health;
+	int			sprite_index;
+	double		attack_timer;
+	int			type;
+	bool		is_ranged;
+	double		fire_timer;
+	bool		active;
+	double		move_speed;
+	int			contact_damage;
+	double		attack_delay;
+	double		attack_range_sq;
+	double		alert_range_sq;
+	double		fire_delay;
+	double		ranged_range_sq;
+	int			projectile_damage;
+	int			score_value;
+}				t_enemy;
+
+typedef struct s_decoration
+{
+	t_position	pos;
+	int			type;
+	int			sprite_index;
+	double		z_offset;
+	double		scale;
+}				t_decoration;
+
+typedef struct s_world_object
+{
+	t_position	pos;
+	int			sprite_index;
+	int			texture;
+	double		scale;
+	double		collision_radius;
+	bool		blocks_passage;
+}				t_world_object;
+
+typedef struct s_authored_action
+{
+	t_coord				trigger;
+	double				delay;
+	t_authored_action_type	type;
+	t_coord				cell;
+	int				target;
+	int				value;
+	double				values[4];
+}				t_authored_action;
+typedef struct s_vending_machine
+{
+	t_position	pos;
+	int			sprite_index;
+	bool		active;
+}				t_vending_machine;
+
+typedef struct s_laptop
+{
+	t_position	pos;
+	int			sprite_index;
+	bool		player_near;
+}				t_laptop;
+
+typedef struct s_sector
+{
+	double		floor_z;
+	double		ceil_z;
+	double		slope_x;
+	double		slope_y;
+	int			light;
+	bool		active;
+	bool		elevator_raised;
+	int			origin_x;
+	int			origin_y;
+}				t_sector;
+
+typedef struct s_wall_segment
+{
+	t_position	a;
+	t_position	b;
+	int			texture;
+	int			sector;
+	bool		transparent;
+}				t_wall_segment;
+
+typedef struct s_map
+{
+	t_block		**grid;
+	t_door		**doors;
+	int			**sector_grid;
+	t_sector	sectors[SECTOR_MAX];
+	int			sector_count;
+	t_wall_segment	segments[SEGMENT_WALL_MAX];
+	int			segment_count;
+	t_position	*sprites;
+	int			sprite_count;
+	t_enemy		*enemies;
+	int			enemy_count;
+	t_item		*items;
+	int			item_count;
+	t_decoration	*decorations;
+	int			decoration_count;
+	t_world_object	*objects;
+	int			object_count;
+	t_authored_action	actions[AUTHORED_ACTION_MAX];
+	int			action_count;
+	t_vending_machine	vending_machine;
+	t_laptop		*laptops;
+	int			laptop_count;
+	t_coord		*switches;
+	int			switch_count;
+	t_coord		*elevators;
+	int			elevator_count;
+	t_coord		*secrets;
+	int			secret_count;
+	t_coord		*locked_doors;
+	int			locked_door_count;
+	t_coord		*hazard_zones;
+	int			hazard_count;
+	t_coord		*message_zones;
+	int			message_count;
+	t_coord		*exit_zones;
+	int			exit_count;
+	bool			has_flag;
+	bool			flag_carried;
+	int			flag_sprite_index;
+	t_position	flag_pos;
+	t_position	flag_base;
+	int			width;
+	int			height;
+}				t_map;
+
+typedef struct s_player
+{
+	t_position	pos;
+	t_coord		mouse;
+	char		look;
+	double		orientation;
+	double		rotation_move;
+	double		key_rotation_move;
+	double		pitch;
+	double		pitch_move;
+	double		key_pitch_move;
+	double		z;
+	double		z_velocity;
+	double		eye_height;
+	bool		mouse_move_pending;
+	bool		is_running;
+	bool		is_crouching;
+	bool		is_flying;
+	bool		is_swimming;
+	bool		on_ground;
+	int			fly_move;
+	int			vertical_move;
+	int			lateral_move;
+}				t_player;
+
+// ----- GRAPHICS ----- //
+
+typedef struct s_resolution
+{
+	int32_t		width;
+	int32_t		height;
+}				t_resolution;
+
+typedef struct s_img
+{
+	void		*ptr;
+	char		*addr;
+	int			bits_per_pixel;
+	int			line_length;
+	int			endian;
+}				t_img;
+
+typedef struct s_texture
+{
+	char		*source;
+	t_img		img;
+	int			transparent_color;
+	bool		has_transparent_color;
+}				t_texture;
+
+typedef struct s_assets
+{
+	t_texture	textures[TEXTURES_NB];
+	t_texture	floor_texture;
+	t_texture	ceiling_texture;
+	t_texture	sky_texture;
+	t_texture	sprite_frames[SPRITE_FRAME_NB];
+	t_texture	hud_weapons[WEAPON_NB][WEAPON_STATE_NB];
+	t_texture	ammo_icon;
+	t_texture	item_icons[ITEM_TYPES_NB];
+	t_texture	enemy_icons[ENEMY_TYPES_NB];
+	t_texture	decoration_icons[DECORATION_TYPES_NB];
+	t_texture	vending_machine;
+	t_texture	laptop;
+	bool		has_sky;
+	bool		has_sprite_frames;
+	int			floor_color;
+	int			ceiling_color;
+}				t_assets;
+
+typedef struct s_floor_cast
+{
+	double	ray_dir_x0;
+	double	ray_dir_y0;
+	double	ray_dir_x1;
+	double	ray_dir_y1;
+	double	floor_x;
+	double	floor_y;
+	double	step_x;
+	double	step_y;
+	double	row_distance;
+}			t_floor_cast;
+
+typedef struct s_transparent_hit
+{
+	double	distance;
+	int		side;
+}			t_transparent_hit;
+
+typedef struct s_height_step
+{
+	double	distance;
+	int		side;
+	int		near_sector;
+	int		far_sector;
+}			t_height_step;
+
+typedef struct s_ray
+{
+	int			x;
+	double		angle;
+	t_position	dir;
+
+	double		distance;
+	int			side;
+	t_block		hit_block;
+	t_coord		hit_cell;
+
+	t_door		*hit_door;
+	double		door_distance;
+	int			door_side;
+	bool		hit_segment;
+	double		segment_u;
+	double		segment_distance;
+	int			segment_texture;
+	int			segment_sector;
+	t_transparent_hit	transparent_hits[TRANSPARENT_HIT_MAX];
+	int					transparent_count;
+	t_height_step		height_steps[HEIGHT_STEP_MAX];
+	int					height_step_count;
+}				t_ray;
+
+typedef struct s_sprite_draw
+{
+	t_position	pos;
+	double		distance;
+	double		transform_x;
+	double		transform_y;
+	int			screen_x;
+	int			height;
+	int			width;
+	int			raw_top;
+	int			top;
+	int			bottom;
+	int			left;
+	int			right;
+	int			sprite_index;
+}				t_sprite_draw;
+
+typedef struct s_dda
+{
+	t_position	step;
+	t_position	side_dist;
+	t_position	delta_dist;
+	t_coord		map;
+	int			side;
+	t_ray		*ray;
+}				t_dda;
+
+typedef struct s_step_ctx
+{
+	t_ray	*ray;
+	double	camera_height;
+	double	near_d;
+	double	far_d;
+	double	inv_cos;
+	bool	is_floor;
+}			t_step_ctx;
+
+typedef struct s_z_range
+{
+	double	lo;
+	double	hi;
+}			t_z_range;
+
+typedef struct s_texture_slice
+{
+	int			screen_x;
+	int			y_start;
+	int			y_end;
+	t_texture	*texture;
+	double		texture_x;
+	double		viewer_distance;
+	int			light;
+	int			raw_top;
+
+	int			texture_x_size;
+	double		height;
+	double		texture_step;
+	t_ray			*ray;
+}				t_texture_slice;
+
+typedef struct s_render_band
+{
+	void			*g;
+	t_ray			*rays;
+	double			*z_buffer;
+	int				x_start;
+	int				x_end;
+}				t_render_band;
+
+// ----- GAMEPLAY ----- //
+
+typedef struct s_hud
+{
+	int			health;
+	int			max_health;
+	int			magazine[WEAPON_NB];
+	int			score;
+	int			fps;
+	int			inventory[4];
+	int			selected_item;
+	int			selected_weapon;
+	double		weapon_flash;
+}				t_hud;
+
+typedef struct s_message
+{
+	char		text[HUD_MESSAGE_LEN];
+	double		timer;
+}				t_message;
+
+typedef struct s_world_event
+{
+	t_event_action	action;
+	double			timer;
+	double			reload;
+	int				value;
+	int				target;
+	double			from_value;
+	double			to_value;
+	t_coord			door_target;
+	bool			repeat;
+	bool			active;
+	char			message[HUD_MESSAGE_LEN];
+}				t_world_event;
+
+typedef struct s_level_flow
+{
+	bool			started;
+	bool			completed;
+	bool			failed;
+	double			end_timer;
+	int				required_items;
+	char			next_level[LINE_SIZE];
+}				t_level_flow;
+
+typedef struct s_audio_channel
+{
+	unsigned int	device;
+	unsigned char	*buf;
+	unsigned int	len;
+	unsigned int	pos;
+	bool			loop;
+# ifdef AUDIO_ALSA
+	snd_pcm_t		*pcm;
+	pthread_t		thread;
+	unsigned int	rate;
+	unsigned int	channels;
+	unsigned int	bits;
+	unsigned int	frame_size;
+	bool			stop;
+	bool			thread_started;
+# endif
+}				t_channel;
+
+typedef struct s_audio
+{
+	bool			enabled;
+	t_channel		music;
+	t_channel		sfx[SFX_CHANNELS_NB];
+	char			music_path[LINE_SIZE];
+	char			sound_dir[LINE_SIZE];
+}				t_audio;
+
+typedef struct s_projectile
+{
+	t_position		pos;
+	t_position		velocity;
+	double			z;
+	double			ttl;
+	int				damage;
+	int				size;
+	int				color;
+	bool			active;
+	bool			from_enemy;
+}				t_projectile;
+
+typedef struct s_shot_spec
+{
+	t_position		origin;
+	double			angle;
+	int				damage;
+	bool			from_enemy;
+}				t_shot_spec;
+
+typedef struct s_menu
+{
+	char			levels[MENU_MAX_LEVELS][LINE_SIZE];
+	int				level_count;
+	int				selected;
+	int				difficulty;
+	bool			active;
+}				t_menu;
+
+// ----- GENERAL ----- //
+
+typedef struct s_game
+{
+	t_list		*allocated_pointers;
+	int			exit_status;
+	t_game_state	state;
+	t_menu		menu;
+	bool			campaign_mode;
+	bool			story_visible;
+	bool			story_is_debrief;
+	int			campaign_level;
+
+	t_map		map;
+	t_player	player;
+
+	void		*mlx;
+	void		*mlx_win;
+	t_img		img;
+	t_assets	assets;
+	t_hud		hud;
+	t_message	message;
+	t_world_event	events[WORLD_EVENT_MAX];
+	t_level_flow	level;
+	t_audio		audio;
+	t_projectile	projectiles[PROJECTILE_MAX];
+	bool		unpacked_level;
+	char		unpack_dir[LINE_SIZE];
+	char		level_source[LINE_SIZE];
+
+	double		delta_time;
+	double		last_frame_time;
+	double		hazard_damage_accumulator;
+
+}				t_game;
+
+typedef struct s_header
+{
+	char		no[LINE_SIZE];
+	char		so[LINE_SIZE];
+	char		ea[LINE_SIZE];
+	char		we[LINE_SIZE];
+	char		door[LINE_SIZE];
+	char		floor_texture[LINE_SIZE];
+	char		ceiling_texture[LINE_SIZE];
+	char		sky_texture[LINE_SIZE];
+	char		sprite_texture[LINE_SIZE];
+	char		transparent_texture[LINE_SIZE];
+	char		decal_texture[LINE_SIZE];
+	char		sprite_frame_textures[SPRITE_FRAME_NB][LINE_SIZE];
+	char		enemy_texture[ENEMY_TYPES_NB][LINE_SIZE];
+	char		decoration_texture[DECORATION_TYPES_NB][LINE_SIZE];
+	char		vending_machine_texture[LINE_SIZE];
+	char		laptop_texture[LINE_SIZE];
+	char		next_level[LINE_SIZE];
+	int			floor[3];
+	int			ceiling[3];
+}				t_header;
+
+#endif

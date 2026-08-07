@@ -1,0 +1,41 @@
+WE assets/images/textures/blue/blue2.xpm
+EA assets/images/textures/blue/blue3.xpm
+NO assets/images/textures/blue/blue1.xpm
+SO assets/images/textures/blue/blue4.xpm
+
+DO assets/images/textures/classic/eagle.xpm
+
+SP assets/images/textures/blue/test_sprite.xpm
+SP0 assets/images/textures/blue/sprite_dir_0.xpm
+SP1 assets/images/textures/blue/sprite_dir_1.xpm
+SP2 assets/images/textures/blue/sprite_dir_2.xpm
+SP3 assets/images/textures/blue/sprite_dir_3.xpm
+SP4 assets/images/textures/blue/sprite_dir_4.xpm
+SP5 assets/images/textures/blue/sprite_dir_5.xpm
+SP6 assets/images/textures/blue/sprite_dir_6.xpm
+SP7 assets/images/textures/blue/sprite_dir_7.xpm
+
+TR assets/images/textures/blue/glass_wall.xpm
+DC assets/images/textures/blue/wall_decal.xpm
+
+F assets/images/textures/blue/floor_stone.xpm
+
+C assets/images/textures/blue/ceiling_panel.xpm
+
+111111111111111111111111
+1000000000000000000000X1
+1000000000000008N0000001
+100000000000000000000001
+10000011111B111111000001
+100000100000000004030001
+100000100033333335000001
+100000100000000001000001
+100000111111411111000001
+100000000000000000000001
+100000000001000000000001
+100000100000000010000001
+100000100001000010000001
+100000100000000010000001
+100000000001000000000001
+100000000000000000000001
+111111111111111111111111
