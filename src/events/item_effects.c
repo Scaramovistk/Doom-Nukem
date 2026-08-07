@@ -27,7 +27,6 @@ void	apply_ammo_pickup(t_game *g, int amount)
 	play_sound_effect(g, "pickup");
 }
 
-<<<<<<< HEAD
 bool	try_use_vending_machine_at(t_coord pos, t_game *g)
 {
 	t_coord	machine_cell;
@@ -43,7 +42,7 @@ bool	try_use_vending_machine_at(t_coord pos, t_game *g)
 	else
 	{
 		g->hud.score -= VENDING_MACHINE_PRICE;
-		g->hud.ammo += VENDING_MACHINE_AMMO;
+		g->hud.inventory[ITEM_AMMO] += VENDING_MACHINE_AMMO;
 		show_message(g, "AMMO BOUGHT: 10 AMMO FOR 5 POINTS",
 			MESSAGE_DISPLAY_TIME);
 		play_sound_effect(g, VENDING_MACHINE_SOUND);
@@ -52,9 +51,14 @@ bool	try_use_vending_machine_at(t_coord pos, t_game *g)
 }
 
 bool	consume_key(t_game *g)
-=======
+{
+	if (g->hud.inventory[ITEM_KEY] <= 0)
+		return (false);
+	g->hud.inventory[ITEM_KEY]--;
+	return (true);
+}
+
 static int	magazine_capacity(int weapon)
->>>>>>> origin/extras
 {
 	if (weapon == 1)
 		return (BLASTER_MAGAZINE_SIZE);
