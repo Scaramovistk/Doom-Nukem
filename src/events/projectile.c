@@ -27,7 +27,6 @@ static bool	is_item_sprite(t_game *g, int sprite_index)
 	return (false);
 }
 
-<<<<<<< HEAD
 static bool	is_vending_machine_sprite(t_game *g, int sprite_index)
 {
 	return (g->map.vending_machine.active
@@ -35,25 +34,28 @@ static bool	is_vending_machine_sprite(t_game *g, int sprite_index)
 }
 
 static bool	is_laptop_sprite(t_game *g, int sprite_index)
-=======
-static bool	is_decoration_sprite(t_game *g, int sprite_index)
->>>>>>> origin/extras
 {
 	int	i;
 
 	i = 0;
-<<<<<<< HEAD
 	while (i < g->map.laptop_count)
 	{
 		if (g->map.laptops[i++].sprite_index == sprite_index)
 			return (true);
-=======
+	}
+	return (false);
+}
+
+static bool	is_decoration_sprite(t_game *g, int sprite_index)
+{
+	int	i;
+
+	i = 0;
 	while (i < g->map.decoration_count)
 	{
 		if (g->map.decorations[i].sprite_index == sprite_index)
 			return (true);
 		i++;
->>>>>>> origin/extras
 	}
 	return (false);
 }
@@ -70,7 +72,6 @@ static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 			g->map.items[i].sprite_index = new_index;
 		i++;
 	}
-<<<<<<< HEAD
 	if (g->map.vending_machine.active
 		&& g->map.vending_machine.sprite_index == old_index)
 		g->map.vending_machine.sprite_index = new_index;
@@ -81,13 +82,20 @@ static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 	{
 		if (g->map.laptops[i].sprite_index == old_index)
 			g->map.laptops[i].sprite_index = new_index;
-=======
+		i++;
+	}
 	i = 0;
 	while (i < g->map.decoration_count)
 	{
 		if (g->map.decorations[i].sprite_index == old_index)
 			g->map.decorations[i].sprite_index = new_index;
->>>>>>> origin/extras
+		i++;
+	}
+	i = 0;
+	while (i < g->map.object_count)
+	{
+		if (g->map.objects[i].sprite_index == old_index)
+			g->map.objects[i].sprite_index = new_index;
 		i++;
 	}
 }
@@ -97,7 +105,8 @@ static void	remove_sprite_target(t_game *g, int index, int damage)
 	int	last;
 
 	if (index < 0 || index >= g->map.sprite_count || is_item_sprite(g, index)
-		|| is_vending_machine_sprite(g, index) || is_laptop_sprite(g, index))
+		|| is_vending_machine_sprite(g, index) || is_laptop_sprite(g, index)
+		|| is_decoration_sprite(g, index))
 		return ;
 	last = g->map.sprite_count - 1;
 	if (index != last)
@@ -120,7 +129,9 @@ bool	hit_sprite(t_game *g, t_projectile *p, t_position pos)
 	i = 0;
 	while (i < g->map.sprite_count)
 	{
-		if (is_decoration_sprite(g, i))
+		if (is_decoration_sprite(g, i)
+			|| is_vending_machine_sprite(g, i)
+			|| is_laptop_sprite(g, i))
 		{
 			i++;
 			continue ;
