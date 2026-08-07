@@ -108,6 +108,9 @@ clean:
 
 fclean:			clean
 				$(RM) $(NAME)
+				$(RM) ./tests/maps/
+				@mkdir -p ./tests/maps/
+				@touch ./tests/maps/hold.txt
 				@$(MAKE) --no-print-directory -C $(LIBFT_DIR) fclean
 
 re:				fclean all
