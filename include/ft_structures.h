@@ -204,6 +204,8 @@ typedef struct s_texture
 {
 	char		*source;
 	t_img		img;
+	int			transparent_color;
+	bool		has_transparent_color;
 }				t_texture;
 
 typedef struct s_assets

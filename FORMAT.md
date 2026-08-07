@@ -104,7 +104,7 @@ variants using `E1`, `E2`, `E3`, and `E4`, respectively.
 `4` is a transparent wall / glass. `5` is a decal wall, which can display the
 `DC` decal after a projectile hit.
 
-`6` is a health pickup (25 health), `7` is an ammo pickup (+10 ammo), `8` is a
+`6` is a health pickup (full the health), `7` is an ammo pickup (+10 ammo), `8` is a
 key pickup (+1 key), and `9` is an artifact pickup (+5 artifacts).
 
 `N`, `S`, `E`, and `W` set the player start and initial facing direction;
