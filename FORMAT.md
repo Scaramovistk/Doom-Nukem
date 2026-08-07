@@ -134,16 +134,13 @@ validation fail. In the editor, use `action add TX TY DELAY TYPE ARGUMENTS` or
 `DC` supplies the transparent decal drawn over a wall after it is hit by a
 projectile.
 
-<<<<<<< HEAD
-`VM path/to/vending_machine.xpm` supplies the sprite used for a `V` vending
-machine map tile. A map may contain at most one `V`; interact with it to buy
-10 ammo for 5 score points.
+`VM path/to/vending_machine.xpm` supplies the sprite used for a dedicated
+vending-machine map tile (campaign maps). Interact to buy 10 ammo for 5 score
+points. `LT path/to/laptop_table.xpm` supplies the laptop-table sprite.
 
 ## Map tile reference
 
-The map symbols are documented below.
-
-`0` is empty floor, `1` is a solid wall, and `2` is a door.
+`0` is empty floor, `1` is a solid wall, and `2` is a standard door.
 
 `3` is the default melee enemy using `E0`. `K`, `I`, `D`, and `C` are enemy
 variants using `E1`, `E2`, `E3`, and `E4`, respectively.
@@ -151,57 +148,42 @@ variants using `E1`, `E2`, `E3`, and `E4`, respectively.
 `4` is a transparent wall / glass. `5` is a decal wall, which can display the
 `DC` decal after a projectile hit.
 
-`6` is a health pickup (full the health), `7` is an ammo pickup (+10 ammo), `8` is a
-key pickup (+1 key), and `9` is an artifact pickup (+5 artifacts).
+`6` is a health pickup, `7` is reserve ammunition (select inventory slot 2 and
+press Enter / `R` to reload the magazine), `8` is a key pickup, and `9` is the
+jetpack/artifact pickup used to authorize flight.
 
 `N`, `S`, `E`, and `W` set the player start and initial facing direction;
 exactly one start tile is required.
 
 `T` is the general switch: it adds score, toggles doors after a short delay,
-then closes them. It uses the decal-wall rendering. `L` is an elevator switch
-that raises or lowers the floor in its sector. `P` is a secret switch that
-consumes one key and opens the nearest door.
+then closes them (or runs authored `ACTION` sequences when present). It uses
+the decal-wall rendering.
+
+`L` is an elevator panel: a solid wall device with a small billboard control
+sprite in front of its accessible face. Press `E` to raise/lower the sector
+floor over `ELEVATOR_DURATION`. The button sprite uses decoration texture `D5`.
+
+`P` is a secret door cell. It renders with the directional wall texture, is
+indistinguishable from a wall on the minimap, and opens automatically when
+approached.
+
+`B` is a locked door. Without a key it stays closed; press `E` with an `8` key
+in inventory to consume one key, unlock permanently, and open. Timed/global
+door events respect locks.
 
 `H` is a hazard zone, `M` is a message zone, and `X` is an exit zone.
 
 `G` is a capture-the-flag objective. Take the flag and return to the player
-start tile (your base) to complete the map; regular pickups and exits are not
-required for this mode. The player start is marked blue and the flag yellow on
-the minimap. Chain CTF maps with the normal `NEXT path/to/next-level.dnk`
-header directive.
+start tile (your base) to complete the map. Chain CTF maps with the normal
+`NEXT path/to/next-level.dnk` header directive.
 
-`V` is a vending-machine sprite: buy 10 ammo for 5 score points. At most one
-is permitted per map. `a` through `l` are decorative wall decals using
-header textures `D1` through `D6`, respectively; like `DC`, they overlay
-their wall surface.
+`V` (uppercase) in campaign/deco maps is the vending machine (at most one).
+In the extras object system, `V` is a solid world object and `v` is the same
+object as pass-through; collision is circular from object scale.
 
-`B` is a laptop-table sprite. Add `LT path/to/laptop_table.xpm` to its header.
-Entering its proximity range plays a short sound once; leaving and returning
-plays it again. Laptop tables are floor-aligned and intentionally have no
-minimap marker.
-=======
-Map device tokens are preserved inside the packed `BEGIN_CUB` data:
-
-- `L` is a solid wall device with a small billboard control sprite placed just
-  in front of its accessible face. Interacting with it animates every cell
-  assigned to the panel's sector. Its sprite uses decoration texture `D5`,
-  independently from the projectile-damage decal supplied by `DC`.
-- `P` is the actual secret-door cell. It renders with the directional wall
-  texture and is deliberately indistinguishable from a wall on the minimap;
-  proximity opens it automatically.
-- `B` is a locked door. Without a key it remains closed and displays feedback;
-  pressing `E` with an `8` key pickup in inventory consumes one key, unlocks
-  the door permanently, and opens it. Timed/global door events respect locks.
-- `9` is the jetpack/artifact pickup used to authorize flight.
-- `8` is a key pickup used by `B` doors.
-- `7` is reserve ammunition; selecting inventory slot 2 and pressing Enter
-  transfers it into the active weapon's magazine.
-- `V` places a solid generic world object using the `SP`/`SP0`-`SP7` visual.
-  `v` places the same object as pass-through. Collision is circular and derived
-  from the rendered object's scale rather than occupying its entire map cell.
-  Active enemies use the same radius-based player collision; pickups and
-  ordinary `a`-`f` decorations remain pass-through.
->>>>>>> origin/extras
+`a` through `l` are decorative sprites/decals using header textures `D1`–`D6`
+(and extended decoration set). Laptop tables (when authored via header `LT`)
+play a proximity sound once when entered.
 
 ## Non-grid rooms
 
