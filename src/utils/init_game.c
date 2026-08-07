@@ -174,17 +174,14 @@ void	ft_init_map(t_map *map)
 	map->item_count = 0;
 	map->decorations = NULL;
 	map->decoration_count = 0;
-<<<<<<< HEAD
 	map->vending_machine.pos = (t_position){0.0, 0.0};
 	map->vending_machine.sprite_index = -1;
 	map->vending_machine.active = false;
 	map->laptops = NULL;
 	map->laptop_count = 0;
-=======
 	map->objects = NULL;
 	map->object_count = 0;
 	map->action_count = 0;
->>>>>>> origin/extras
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;
