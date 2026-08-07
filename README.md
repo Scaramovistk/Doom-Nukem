@@ -55,6 +55,21 @@ The editor can place map devices/entities, change texture headers, define floor
 and ceiling heights, slopes and lighting, assign sector cells, add arbitrary
 wall segments, save the `.cub`/`.sectors` sources, validate them, and pack the
 result. Type `help` in the editor for the complete command list.
+
+Wall height is defined in the same-basename `.sectors` sidecar, not in the
+`.cub` map. A sector line uses the following format:
+
+```text
+SECTOR <id> <floor_height> <ceiling_height> <slope_x> <slope_y> <light>
+```
+
+For example, this gives sector `0` a floor at `0.0` and ceiling at `2.0`,
+making its walls two world units high:
+
+```text
+SECTOR 0 0.0 2.0 0.0 0.0 255
+```
+
 The map token `V` authors a solid sprite object and `v` authors its
 pass-through counterpart; collision is sized to the rendered object.
 `action add` attaches delayed runtime mutations to `T` switches, including
