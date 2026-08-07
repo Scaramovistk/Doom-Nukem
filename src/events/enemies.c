@@ -55,7 +55,6 @@ static void	remove_enemy_sprite(t_game *g, t_enemy *enemy)
 				g->map.enemies[i].sprite_index = enemy->sprite_index;
 			i++;
 		}
-<<<<<<< HEAD
 		if (g->map.vending_machine.active
 			&& g->map.vending_machine.sprite_index == last)
 			g->map.vending_machine.sprite_index = enemy->sprite_index;
@@ -66,7 +65,8 @@ static void	remove_enemy_sprite(t_game *g, t_enemy *enemy)
 		{
 			if (g->map.laptops[i].sprite_index == last)
 				g->map.laptops[i].sprite_index = enemy->sprite_index;
-=======
+			i++;
+		}
 		i = 0;
 		while (i < g->map.decoration_count)
 		{
@@ -79,7 +79,6 @@ static void	remove_enemy_sprite(t_game *g, t_enemy *enemy)
 		{
 			if (g->map.objects[i].sprite_index == last)
 				g->map.objects[i].sprite_index = enemy->sprite_index;
->>>>>>> origin/extras
 			i++;
 		}
 	}
