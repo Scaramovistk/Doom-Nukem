@@ -121,15 +121,15 @@ bool	hit_sprite(t_game *g, t_projectile *p, t_position pos)
 	i = 0;
 	while (i < g->map.sprite_count)
 	{
-		if (is_decoration_sprite(g, i))
+		dx = g->map.sprites[i].x - pos.x;
+		dy = g->map.sprites[i].y - pos.y;
+		if (dx * dx + dy * dy > PROJECTILE_HIT_RADIUS
+			* PROJECTILE_HIT_RADIUS)
 		{
 			i++;
 			continue ;
 		}
-		dx = g->map.sprites[i].x - pos.x;
-		dy = g->map.sprites[i].y - pos.y;
-		if (dx * dx + dy * dy <= PROJECTILE_HIT_RADIUS
-			* PROJECTILE_HIT_RADIUS)
+		if (!is_decoration_sprite(g, i))
 		{
 			if (damage_enemy_at_sprite(g, i, p->damage))
 				return (true);

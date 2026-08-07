@@ -201,6 +201,9 @@ typedef struct s_map
 	t_bsp_node	*bsp_nodes;
 	int			bsp_node_count;
 	bool			*visible_tiles;
+	t_position	visibility_origin;
+	double		visibility_angle;
+	bool			visibility_valid;
 }				t_map;
 
 typedef struct s_player

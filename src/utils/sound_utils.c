@@ -85,10 +85,26 @@ void	load_channel_wav(t_channel *channel, const char *path, bool loop)
 {
 	SDL_AudioSpec	want;
 	SDL_AudioSpec	spec;
+	Uint8				*buffer;
+	Uint32			length;
 
-	close_channel(channel);
-	if (!SDL_LoadWAV(path, &want, &channel->buf, &channel->len))
+	buffer = NULL;
+	length = 0;
+	if (!SDL_LoadWAV(path, &want, &buffer, &length))
 		return ;
+	if (channel->device)
+	{
+		SDL_LockAudioDevice(channel->device);
+		if (channel->buf)
+			SDL_FreeWAV(channel->buf);
+		channel->buf = buffer;
+		channel->len = length;
+		channel->pos = 0;
+		channel->loop = loop;
+		SDL_UnlockAudioDevice(channel->device);
+		SDL_PauseAudioDevice(channel->device, 0);
+		return ;
+	}
 	channel->pos = 0;
 	channel->loop = loop;
 	want.callback = audio_channel_callback;
@@ -96,10 +112,11 @@ void	load_channel_wav(t_channel *channel, const char *path, bool loop)
 	channel->device = SDL_OpenAudioDevice(NULL, 0, &want, &spec, 0);
 	if (!channel->device)
 	{
-		SDL_FreeWAV(channel->buf);
-		channel->buf = NULL;
+		SDL_FreeWAV(buffer);
 		return ;
 	}
+	channel->buf = buffer;
+	channel->len = length;
 	SDL_PauseAudioDevice(channel->device, 0);
 }
 # else

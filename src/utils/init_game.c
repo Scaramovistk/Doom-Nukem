@@ -206,6 +206,9 @@ void	ft_init_map(t_map *map)
 	map->bsp_nodes = NULL;
 	map->bsp_node_count = 0;
 	map->visible_tiles = NULL;
+	map->visibility_origin = (t_position){0.0, 0.0};
+	map->visibility_angle = 0.0;
+	map->visibility_valid = false;
 }
 
 void	ft_int_message(t_message *message)

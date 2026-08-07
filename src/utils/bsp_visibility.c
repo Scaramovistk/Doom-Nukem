@@ -104,9 +104,17 @@ void	update_bsp_visibility(t_game *g)
 {
 	if (!g->map.bsp_nodes || !g->map.visible_tiles)
 		return ;
+	if (g->map.visibility_valid
+		&& g->map.visibility_origin.x == g->player.pos.x
+		&& g->map.visibility_origin.y == g->player.pos.y
+		&& g->map.visibility_angle == g->player.orientation)
+		return ;
 	ft_bzero(g->map.visible_tiles, g->map.width * g->map.height
 		* sizeof(bool));
 	mark_visible_nodes(g, 0);
+	g->map.visibility_origin = g->player.pos;
+	g->map.visibility_angle = g->player.orientation;
+	g->map.visibility_valid = true;
 }
 
 bool	bsp_tile_visible(t_game *g, t_coord cell)
