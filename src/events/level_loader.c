@@ -85,6 +85,7 @@ bool	load_level_path(t_game *g, char *path)
 	g->story_visible = g->campaign_mode;
 	g->story_is_debrief = false;
 	compute_sector_origins(g);
+	init_bsp_visibility(g);
 	load_game(g);
 	apply_difficulty(g);
 	setup_hooks(g);

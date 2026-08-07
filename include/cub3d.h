@@ -57,6 +57,10 @@ void		init_default_sectors(t_game *g);
 bool		set_sector_cell(t_game *g, int x, int y, int sector);
 bool		set_sector_info(t_game *g, int id, t_sector sector);
 void		compute_sector_origins(t_game *g);
+void		init_bsp_visibility(t_game *g);
+void		update_bsp_visibility(t_game *g);
+bool		bsp_tile_visible(t_game *g, t_coord cell);
+bool		bsp_position_visible(t_game *g, t_position pos);
 bool		add_wall_segment(t_game *g, t_wall_segment segment);
 bool		segment_blocks_position(t_game *g, t_position pos);
 

@@ -143,6 +143,16 @@ typedef struct s_wall_segment
 	bool		transparent;
 }				t_wall_segment;
 
+typedef struct s_bsp_node
+{
+	int			min_x;
+	int			min_y;
+	int			max_x;
+	int			max_y;
+	int			left;
+	int			right;
+}				t_bsp_node;
+
 typedef struct s_map
 {
 	t_block		**grid;
@@ -188,6 +198,9 @@ typedef struct s_map
 	t_position	flag_base;
 	int			width;
 	int			height;
+	t_bsp_node	*bsp_nodes;
+	int			bsp_node_count;
+	bool			*visible_tiles;
 }				t_map;
 
 typedef struct s_player

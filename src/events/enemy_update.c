@@ -47,7 +47,9 @@ bool	update_enemies(t_game *g)
 	i = 0;
 	while (i < g->map.enemy_count)
 	{
-		if (g->map.enemies[i].active && update_one_enemy(&g->map.enemies[i], g))
+		if (g->map.enemies[i].active
+			&& bsp_position_visible(g, g->map.enemies[i].pos)
+			&& update_one_enemy(&g->map.enemies[i], g))
 			updated = true;
 		i++;
 	}

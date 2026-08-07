@@ -203,6 +203,9 @@ void	ft_init_map(t_map *map)
 	map->flag_base = (t_position){0.0, 0.0};
 	map->width = 0;
 	map->height = 0;
+	map->bsp_nodes = NULL;
+	map->bsp_node_count = 0;
+	map->visible_tiles = NULL;
 }
 
 void	ft_int_message(t_message *message)
