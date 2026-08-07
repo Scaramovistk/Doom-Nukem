@@ -60,7 +60,8 @@ bool	update_projectiles(t_game *g)
 	i = 0;
 	while (i < PROJECTILE_MAX)
 	{
-		if (g->projectiles[i].active)
+		if (g->projectiles[i].active
+			&& bsp_position_visible(g, g->projectiles[i].pos))
 		{
 			update_one_projectile(&g->projectiles[i], g, step);
 			if (g->projectiles[i].active)

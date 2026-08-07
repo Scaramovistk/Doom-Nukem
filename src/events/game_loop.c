@@ -54,6 +54,7 @@ int	game_loop(t_game *g)
 		render(g);
 		return (EXIT_SUCCESS);
 	}
+	update_bsp_visibility(g);
 	update_doors(&door_updated, g);
 	update_audio();
 	projectile_active = update_projectiles(g);
@@ -75,6 +76,7 @@ int	game_loop(t_game *g)
 	update_player_pos(&g->player, g);
 	update_item_pickups(g);
 	update_level_flow(g);
+	update_bsp_visibility(g);
 	render(g);
 	return (EXIT_SUCCESS);
 }

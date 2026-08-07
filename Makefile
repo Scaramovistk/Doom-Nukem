@@ -74,7 +74,7 @@ SRC_GRAPHICS	=	dda.c dda_utils.c draw_door_bonus.c draw_risers.c draw_scene.c dr
 					height_step.c hud.c load_game.c minimap.c minimap_utils.c ray_casting.c render.c time_bonus.c
 SRC_PARSER		=	generate_map.c generate_map_utils.c get_header.c get_map.c packed_level.c parser.c valid_header.c valid_map.c \
 					parsing_error.c header.c map.c security.c valid_header_check_bonus.c segment_check.c
-SRC_UTILS		=	allocation.c error.c free.c init_game.c sectors.c sector_origin.c sound.c sound_utils.c
+SRC_UTILS		=	allocation.c bsp_visibility.c error.c free.c init_game.c sectors.c sector_origin.c sound.c sound_utils.c
 
 SRC				=	$(SRC_MAIN) $(SRC_EVENTS) $(SRC_GRAPHICS) $(SRC_PARSER) $(SRC_UTILS)
 
@@ -108,6 +108,9 @@ clean:
 
 fclean:			clean
 				$(RM) $(NAME)
+				$(RM) ./tests/maps/
+				@mkdir -p ./tests/maps/
+				@touch ./tests/maps/hold.txt
 				@$(MAKE) --no-print-directory -C $(LIBFT_DIR) fclean
 
 re:				fclean all

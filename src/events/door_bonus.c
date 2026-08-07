@@ -59,7 +59,7 @@ void	update_doors(bool *door_updated, t_game *g)
 		pos.x = 0;
 		while (pos.x < g->map.width)
 		{
-			if (g->map.grid[pos.y][pos.x] == DOOR)
+			if (g->map.grid[pos.y][pos.x] == DOOR && bsp_tile_visible(g, pos))
 				if (update_one_door(&g->map.doors[pos.y][pos.x], g->delta_time))
 					*door_updated = true;
 			pos.x++;

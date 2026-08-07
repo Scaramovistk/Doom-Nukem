@@ -32,6 +32,7 @@ int	main(int argc, char *argv[])
 	if (argc != 2 || !ft_parse_file(argc, argv, &g))
 		return (ft_parsing_error(PARSINGP, 0));
 	compute_sector_origins(&g);
+	init_bsp_visibility(&g);
 	load_game(&g);
 	setup_hooks(&g);
 	start_game(&g);

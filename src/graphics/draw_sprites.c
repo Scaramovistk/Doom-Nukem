@@ -326,6 +326,7 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 {
 	t_sprite_draw	*sprites;
 	int				i;
+	int				count;
 
 	if (!g->map.sprite_count)
 		return ;
@@ -338,18 +339,18 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	if (!sprites)
 		return ;
 	i = 0;
+	count = 0;
 	while (i < g->map.sprite_count)
 	{
-		if (g->map.has_flag && g->map.flag_carried
-			&& g->map.flag_sprite_index == i)
-			sprites[i].distance = -1.0;
-		else
-			init_sprite_draw(&sprites[i], g->map.sprites[i], i, g);
+		if (!(g->map.has_flag && g->map.flag_carried
+				&& g->map.flag_sprite_index == i)
+			&& bsp_position_visible(g, g->map.sprites[i]))
+			init_sprite_draw(&sprites[count++], g->map.sprites[i], i, g);
 		i++;
 	}
-	sort_sprites(sprites, g->map.sprite_count);
+	sort_sprites(sprites, count);
 	i = 0;
-	while (i < g->map.sprite_count)
+	while (i < count)
 	{
 		if (sprites[i].distance >= 0.0)
 			draw_one_sprite(&sprites[i], g, z_buffer, rays);
@@ -401,7 +402,8 @@ void	draw_projectiles(t_game *g, double *z_buffer, t_ray *rays)
 	i = 0;
 	while (i < PROJECTILE_MAX)
 	{
-		if (g->projectiles[i].active)
+		if (g->projectiles[i].active
+			&& bsp_position_visible(g, g->projectiles[i].pos))
 		{
 			init_projectile_draw(&s, &g->projectiles[i], g);
 			if (s.transform_y > 0 && s.screen_x >= 0 && s.screen_x < WIN_WIDTH
