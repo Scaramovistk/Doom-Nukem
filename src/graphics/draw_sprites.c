@@ -140,7 +140,6 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 	int		frame;
 	int		i;
 
-<<<<<<< HEAD
 	if (g->map.has_flag && !g->map.flag_carried
 		&& g->map.flag_sprite_index == s->sprite_index)
 		return (&g->assets.item_icons[ITEM_ARTIFACT]);
@@ -156,11 +155,9 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 			return (&g->assets.laptop);
 		i++;
 	}
-=======
 	object = sprite_object(s, g);
 	if (object && object->texture != SPRITE_T)
 		return (&g->assets.textures[object->texture]);
->>>>>>> origin/extras
 	i = 0;
 	while (i < g->map.item_count)
 	{
@@ -172,8 +169,6 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 		i++;
 	}
 	i = 0;
-<<<<<<< HEAD
-=======
 	while (i < g->map.decoration_count)
 	{
 		if (g->map.decorations[i].sprite_index == s->sprite_index
@@ -182,7 +177,6 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 		i++;
 	}
 	i = 0;
->>>>>>> origin/extras
 	while (i < g->map.enemy_count)
 	{
 		if (g->map.enemies[i].active
