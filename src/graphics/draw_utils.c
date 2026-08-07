@@ -45,9 +45,15 @@ void	draw_texture_slice(t_texture_slice *s, t_game *g)
 	{
 		texture_y = ((int)(texture_y_pos)) & (TEXTURE_SIZE - 1);
 		texture_y_pos += s->texture_step;
-		pixel_color = get_pixel(&s->texture->img, s->texture_x_size, texture_y);
-		pixel_color = apply_light(pixel_color, s->light, s->viewer_distance);
-		put_pixel(&g->img, s->screen_x, screen_y, pixel_color);
+		if (!s->ray || !height_step_occludes_pixel(s->ray,
+				s->viewer_distance, screen_y, g))
+		{
+			pixel_color = get_pixel(&s->texture->img, s->texture_x_size,
+					texture_y);
+			pixel_color = apply_light(pixel_color, s->light,
+					s->viewer_distance);
+			put_pixel(&g->img, s->screen_x, screen_y, pixel_color);
+		}
 		screen_y++;
 	}
 }

@@ -99,9 +99,9 @@ bool	height_step_occludes_pixel(t_ray *ray, double depth, int y, t_game *g)
 			if (z_range_contains_screen_y(fmin(get_floor_z_at(g, near),
 					get_floor_z_at(g, far)), fmax(get_floor_z_at(g, near),
 					get_floor_z_at(g, far)), ray->height_steps[i].distance, y, g)
-				|| (!g->assets.has_sky && z_range_contains_screen_y(fmin(get_ceiling_z_at(g, near),
+				|| z_range_contains_screen_y(fmin(get_ceiling_z_at(g, near),
 					get_ceiling_z_at(g, far)), fmax(get_ceiling_z_at(g, near),
-					get_ceiling_z_at(g, far)), ray->height_steps[i].distance, y, g)))
+					get_ceiling_z_at(g, far)), ray->height_steps[i].distance, y, g))
 				return (true);
 		}
 		i++;

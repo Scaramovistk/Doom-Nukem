@@ -55,7 +55,7 @@ static void	draw_riser_slice(t_ray *ray, t_height_step *step, t_z_range z,
 	slice.viewer_distance = step->distance;
 	slice.light = wall_light(step->side, get_light_at(g,
 				ray_world_pos(ray, step->distance, g)), false);
-	slice.ray = ray;
+	slice.ray = NULL;
 	draw_texture_slice(&slice, g);
 }
 
@@ -93,7 +93,6 @@ void	draw_height_steps(t_ray *ray, t_game *g)
 {
 	t_step_ctx	ctx;
 	int			i;
-	double		near_d;
 	double		eye_z;
 
 	if (ray->height_step_count == 0)
@@ -101,20 +100,20 @@ void	draw_height_steps(t_ray *ray, t_game *g)
 	eye_z = g->player.z + g->player.eye_height;
 	ctx.ray = ray;
 	ctx.inv_cos = 1.0 / cos(g->player.orientation - ray->angle);
-	near_d = 0.0;
-	i = 0;
-	while (i <= ray->height_step_count)
+	i = ray->height_step_count;
+	while (i >= 0)
 	{
 		ctx.far_d = step_far_d(ray, i);
-		ctx.near_d = near_d;
+		if (i == 0)
+			ctx.near_d = 0.0;
+		else
+			ctx.near_d = ray->height_steps[i - 1].distance;
 		draw_band_pair(g, ctx, band_sector(ray, i), eye_z);
-		if (i < ray->height_step_count)
+		if (i > 0)
 		{
-			draw_one_riser(&ray->height_steps[i], ray, g, false);
-			if (!g->assets.has_sky)
-				draw_one_riser(&ray->height_steps[i], ray, g, true);
-			near_d = ray->height_steps[i].distance;
+			draw_one_riser(&ray->height_steps[i - 1], ray, g, false);
+			draw_one_riser(&ray->height_steps[i - 1], ray, g, true);
 		}
-		i++;
+		i--;
 	}
 }

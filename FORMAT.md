@@ -91,6 +91,42 @@ paths; legacy packs containing direct `.xpm` paths are rejected.
 `BEGIN_CUB` contains normal cub3D-compatible header and map data, except texture
 paths can be asset references.
 
+## `BEGIN_CUB` header reference
+
+The seven base directives are required. Each texture directive takes an `.xpm`
+path (or an `@asset_key` in a packed level); `F` and `C` additionally accept an
+`R,G,B` colour in place of a texture path.
+
+```text
+NO path/to/north-wall.xpm       # required: north-facing walls
+SO path/to/south-wall.xpm       # required: south-facing walls
+EA path/to/east-wall.xpm        # required: east-facing walls
+WE path/to/west-wall.xpm        # required: west-facing walls
+DO path/to/door.xpm             # required: normal and locked doors
+F path/to/floor.xpm | R,G,B     # required: floor surface
+C path/to/ceiling.xpm | R,G,B   # required: ceiling surface
+```
+
+The following directives are optional. They are particularly useful for a
+mission such as `flight_ops`:
+
+```text
+SK path/to/sky.xpm              # sky, used instead of a textured/colour ceiling
+DC path/to/damage-decal.xpm     # overlay left on a `5` decal wall when shot
+TR path/to/glass.xpm            # transparent-wall texture for `4` tiles
+SP path/to/object.xpm           # default visual for `V` and `v` objects
+SP0 ... SP7 path/to/frame.xpm   # optional eight directional object frames; all eight are required
+E0 ... E4 path/to/enemy.xpm     # visuals for enemy tiles 3, K, I, D, and C
+D1 ... D6 path/to/decal.xpm     # decoration visuals for a-f and g-l; D5 is also the lift-button icon
+VM path/to/vending_machine.xpm  # visual for `Q`
+LT path/to/laptop_table.xpm     # visual for `J`
+NEXT path/to/next-level.dnk     # optional level to load after a completed mission
+```
+
+`flight_ops.cub` is a minimal example of the required base set plus `SK`,
+`DC`, `D5`, `SP`, and the `E0`-`E4` enemy set. Its `F` directive uses a floor
+texture and its `C` directive uses the colour `18, 12, 10`.
+
 `SECTOR id floor_z ceil_z slope_x slope_y light` defines a room/area. Light is
 0-255. Slopes are applied continuously across every cell assigned to that
 sector, anchored to the sector's bounding-box origin, so a multi-cell sector
@@ -195,6 +231,33 @@ header directive.
 `D1` through `D6`. `g` through `l` are decorative wall decals using those same
 six textures; like `DC`, they overlay their wall surface. `Q` is the vending
 machine and `J` is the laptop table, using `VM` and `LT` respectively.
+
+## `flight_ops` authoring example
+
+`tests/maps_src/flight_ops.cub` and its `.sectors` sidecar are a compact
+reference mission for the four feature requirements. Start at `N`, collect the
+`7` ammo pickup and reload it with `R` (or inventory slot 2 + Enter), then use
+the `P` cell as the automatically opening hidden passage. The `L` panel is at
+map coordinate `(13, 6)` (zero-based `x, y`); it controls sector `2`, because
+that is the sector assigned to the panel cell. Give the map a `D5` header to
+supply its button icon.
+
+The lower area demonstrates a flight-gated crossing. Sector `3` has a raised
+floor (`1.00`) while the shaft, sector `4`, has floor `-1.00` and lower light
+(`105`); both share a ceiling of `2.40`. The `9` artifact lies beyond the lift
+and is required to fly across the deep shaft to the `X` exit. The relevant
+sidecar data is:
+
+```text
+SECTOR 2 0.00 2.25 0.00 0.00 255
+SECTOR 3 1.00 2.40 0.00 0.00 205
+SECTOR 4 -1.00 2.40 0.00 0.00 105
+```
+
+`GRID` rows use the same zero-based map coordinates as the `.cub` map. In the
+example, the lift platform is sector `2`; the rows below it assign sector `3`
+to the raised approach and sector `4` to the shaft. The outer `0` assignments
+retain the base sector 0 values.
 
 ## Non-grid rooms
 
