@@ -122,6 +122,12 @@ void	ft_destroy_textures(t_game *g)
 		if (img->ptr)
 			mlx_destroy_image(g->mlx, img->ptr);
 	}
+	img = &g->assets.vending_machine.img;
+	if (img->ptr)
+		mlx_destroy_image(g->mlx, img->ptr);
+	img = &g->assets.laptop.img;
+	if (img->ptr)
+		mlx_destroy_image(g->mlx, img->ptr);
 }
 
 #ifdef __linux__

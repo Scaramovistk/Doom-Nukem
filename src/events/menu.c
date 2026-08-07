@@ -36,6 +36,16 @@ static bool	is_new_game_entry(const char *name)
 	return (ft_strcmp((char *)name, "e1m1.dnk") == 0);
 }
 
+static bool	is_ctf_level(const char *name)
+{
+	return (ft_strncmp(name, "ctf_", 4) == 0);
+}
+
+static bool	is_ctf_mode_entry(const char *name)
+{
+	return (ft_strcmp(name, "ctf_1.dnk") == 0);
+}
+
 static bool	file_exists(const char *path)
 {
 	int	fd;
@@ -57,10 +67,13 @@ static void	load_menu_levels(t_menu *menu)
 		return ;
 	if (file_exists(MENU_LEVEL_DIR "/e1m1.dnk"))
 		add_level(menu, "e1m1.dnk");
+	if (file_exists(MENU_LEVEL_DIR "/ctf_1.dnk"))
+		add_level(menu, "ctf_1.dnk");
 	entry = readdir(dir);
 	while (entry)
 	{
-		if (is_level_file(entry->d_name) && !is_new_game_entry(entry->d_name))
+		if (is_level_file(entry->d_name) && !is_new_game_entry(entry->d_name)
+			&& !is_ctf_level(entry->d_name))
 			add_level(menu, entry->d_name);
 		entry = readdir(dir);
 	}
@@ -101,6 +114,8 @@ static char	*menu_entry_label(t_menu *menu, int i)
 {
 	if (i == 0 && is_new_game_entry(level_basename(menu->levels[0])))
 		return ("New Game (Doom E1M1-E1M5)");
+	if (is_ctf_mode_entry(level_basename(menu->levels[i])))
+		return ("Capture the Flag (3 maps)");
 	return (level_basename(menu->levels[i]));
 }
 

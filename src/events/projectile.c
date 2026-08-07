@@ -41,6 +41,25 @@ static bool	is_decoration_sprite(t_game *g, int sprite_index)
 	return (false);
 }
 
+static bool	is_vending_machine_sprite(t_game *g, int sprite_index)
+{
+	return (g->map.vending_machine.active
+		&& g->map.vending_machine.sprite_index == sprite_index);
+}
+
+static bool	is_laptop_sprite(t_game *g, int sprite_index)
+{
+	int	i;
+
+	i = 0;
+	while (i < g->map.laptop_count)
+	{
+		if (g->map.laptops[i++].sprite_index == sprite_index)
+			return (true);
+	}
+	return (false);
+}
+
 static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 {
 	int	i;
@@ -60,13 +79,26 @@ static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 			g->map.decorations[i].sprite_index = new_index;
 		i++;
 	}
+	if (g->map.vending_machine.active
+		&& g->map.vending_machine.sprite_index == old_index)
+		g->map.vending_machine.sprite_index = new_index;
+	if (g->map.has_flag && g->map.flag_sprite_index == old_index)
+		g->map.flag_sprite_index = new_index;
+	i = 0;
+	while (i < g->map.laptop_count)
+	{
+		if (g->map.laptops[i].sprite_index == old_index)
+			g->map.laptops[i].sprite_index = new_index;
+		i++;
+	}
 }
 
 static void	remove_sprite_target(t_game *g, int index, int damage)
 {
 	int	last;
 
-	if (index < 0 || index >= g->map.sprite_count || is_item_sprite(g, index))
+	if (index < 0 || index >= g->map.sprite_count || is_item_sprite(g, index)
+		|| is_vending_machine_sprite(g, index) || is_laptop_sprite(g, index))
 		return ;
 	last = g->map.sprite_count - 1;
 	if (index != last)

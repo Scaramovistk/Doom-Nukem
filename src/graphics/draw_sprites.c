@@ -127,10 +127,10 @@ static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 		s->right = WIN_WIDTH - 1;
 }
 
-static bool	is_sprite_transparent(t_texture *texture, int color)
+static bool	is_sprite_transparent(int transparent_color, int color)
 {
 	return ((color & 0x00FFFFFF) == 0x00FF00FF
-		|| color == get_pixel(&texture->img, 0, 0));
+		|| color == transparent_color);
 }
 
 static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
@@ -143,6 +143,21 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 	object = sprite_object(s, g);
 	if (object && object->texture != SPRITE_T)
 		return (&g->assets.textures[object->texture]);
+	if (g->map.has_flag && !g->map.flag_carried
+		&& g->map.flag_sprite_index == s->sprite_index)
+		return (&g->assets.item_icons[ITEM_ARTIFACT]);
+	if (g->map.vending_machine.active
+		&& g->map.vending_machine.sprite_index == s->sprite_index
+		&& g->assets.vending_machine.img.ptr)
+		return (&g->assets.vending_machine);
+	i = 0;
+	while (i < g->map.laptop_count)
+	{
+		if (g->map.laptops[i].sprite_index == s->sprite_index
+			&& g->assets.laptop.img.ptr)
+			return (&g->assets.laptop);
+		i++;
+	}
 	i = 0;
 	while (i < g->map.item_count)
 	{
@@ -192,6 +207,8 @@ static int	sprite_texture_size(t_texture *texture, t_game *g)
 			return (32);
 		i++;
 	}
+	if (texture == &g->assets.item_icons[ITEM_ARTIFACT])
+		return (32);
 	return (TEXTURE_SIZE);
 }
 
@@ -224,7 +241,8 @@ static int	blend_sprite_glass(int color, int y, double sprite_depth,
 	double	save_distance;
 	int		save_side;
 
-	if (!g->assets.textures[TRANSPARENT_T].img.ptr)
+	if (!g->assets.textures[TRANSPARENT_T].img.ptr
+		|| !ray->transparent_count)
 		return (color);
 	save_distance = ray->distance;
 	save_side = ray->side;
@@ -243,7 +261,7 @@ static int	blend_sprite_glass(int color, int y, double sprite_depth,
 }
 
 static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
-		t_texture *texture, t_ray *ray)
+		t_texture *texture, t_ray *ray, int light, int transparent_color)
 {
 	int	tex_x;
 	int	tex_y;
@@ -259,9 +277,9 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
 	{
 		tex_y = (y - s->raw_top) * texture_size / s->height;
 		color = get_pixel(&texture->img, tex_x, tex_y);
-		if (!is_sprite_transparent(texture, color))
+		if (!is_sprite_transparent(transparent_color, color))
 		{
-			color = apply_light(color, get_light_at(g, s->pos), s->transform_y);
+			color = apply_light(color, light, s->transform_y);
 			color = blend_sprite_glass(color, y, s->transform_y, ray, g);
 			if (!door_occludes_pixel(ray, s->transform_y, y, g)
 				&& !height_step_occludes_pixel(ray, s->transform_y, y, g))
@@ -275,18 +293,31 @@ static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer,
 		t_ray *rays)
 {
 	int	stripe;
+	int	light;
+	int	transparent_color;
 	t_texture	*texture;
 
 	if (s->transform_y <= 0)
 		return ;
 	set_sprite_bounds(s, g);
 	texture = get_sprite_texture(s, g);
+	light = get_light_at(g, s->pos);
+	transparent_color = get_pixel(&texture->img, 0, 0);
+	if (texture == &g->assets.laptop)
+	{
+		s->bottom += s->height * 11 / TEXTURE_SIZE;
+		s->raw_top += s->height * 11 / TEXTURE_SIZE;
+		s->top += s->height * 11 / TEXTURE_SIZE;
+		if (s->bottom >= WIN_HEIGHT)
+			s->bottom = WIN_HEIGHT - 1;
+	}
 	stripe = s->left;
 	while (stripe < s->right)
 	{
 		if (s->transform_y > 0 && stripe > 0 && stripe < WIN_WIDTH
 			&& s->transform_y < z_buffer[stripe])
-			draw_sprite_stripe(s, stripe, g, texture, &rays[stripe]);
+			draw_sprite_stripe(s, stripe, g, texture, &rays[stripe], light,
+				transparent_color);
 		stripe++;
 	}
 }
@@ -309,13 +340,21 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 	i = 0;
 	while (i < g->map.sprite_count)
 	{
-		init_sprite_draw(&sprites[i], g->map.sprites[i], i, g);
+		if (g->map.has_flag && g->map.flag_carried
+			&& g->map.flag_sprite_index == i)
+			sprites[i].distance = -1.0;
+		else
+			init_sprite_draw(&sprites[i], g->map.sprites[i], i, g);
 		i++;
 	}
 	sort_sprites(sprites, g->map.sprite_count);
 	i = 0;
 	while (i < g->map.sprite_count)
-		draw_one_sprite(&sprites[i++], g, z_buffer, rays);
+	{
+		if (sprites[i].distance >= 0.0)
+			draw_one_sprite(&sprites[i], g, z_buffer, rays);
+		i++;
+	}
 	free(sprites);
 }
 

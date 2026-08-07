@@ -12,6 +12,15 @@
 
 #include "../../include/cub3d.h"
 
+static void	set_decoration_transparency(t_texture *texture, int type)
+{
+	if (type == 5)
+		texture->transparent_color = get_pixel(&texture->img, 4, 0);
+	else
+		texture->transparent_color = get_pixel(&texture->img, 0, 0);
+	texture->has_transparent_color = true;
+}
+
 void	load_game(t_game *g)
 {
 	if (!g->mlx)
@@ -51,7 +60,12 @@ void	load_all_textures(t_game *g)
 		load_texture(&g->assets.textures[TRANSPARENT_T], &size, g);
 	size = TEXTURE_SIZE;
 	if (g->assets.textures[DECAL_T].source)
+	{
 		load_texture(&g->assets.textures[DECAL_T], &size, g);
+		g->assets.textures[DECAL_T].transparent_color = get_pixel(
+				&g->assets.textures[DECAL_T].img, 0, 0);
+		g->assets.textures[DECAL_T].has_transparent_color = true;
+	}
 	i = 0;
 	while (i < SPRITE_FRAME_NB)
 	{
@@ -97,9 +111,18 @@ void	load_all_textures(t_game *g)
 	{
 		size = TEXTURE_SIZE;
 		if (g->assets.decoration_icons[i].source)
+		{
 			load_texture(&g->assets.decoration_icons[i], &size, g);
+			set_decoration_transparency(&g->assets.decoration_icons[i], i);
+		}
 		i++;
 	}
+	size = TEXTURE_SIZE;
+	if (g->assets.vending_machine.source)
+		load_texture(&g->assets.vending_machine, &size, g);
+	size = TEXTURE_SIZE;
+	if (g->assets.laptop.source)
+		load_texture(&g->assets.laptop, &size, g);
 }
 
 void	load_texture(t_texture *t, int *size, t_game *g)

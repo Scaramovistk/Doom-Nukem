@@ -14,7 +14,15 @@
 
 static int	ft_is_wall_like(char c)
 {
-	return (c == '1' || c == '4' || c == '5' || c == 'T');
+	return (c == '1' || c == '4' || c == '5' || c == 'T' || c == 'L'
+		|| (c >= 'g' && c <= 'l'));
+}
+
+static int	ft_is_floor_like(char c)
+{
+	return (c == '0' || c == '3' || (c >= '6' && c <= '9')
+		|| (c >= 'a' && c <= 'f')
+		|| ft_strchr("NWSETHMXKIDCVvGQJ", c));
 }
 
 int	ft_is_halway(char **map, int vert, int hor)
@@ -29,10 +37,10 @@ int	ft_is_halway(char **map, int vert, int hor)
 	up = map[vert - 1][hor];
 	down = map[vert + 1][hor];
 	if (ft_is_wall_like(left) && ft_is_wall_like(right)
-		&& up == '0' && down == '0')
+		&& ft_is_floor_like(up) && ft_is_floor_like(down))
 		return (1);
 	if (ft_is_wall_like(up) && ft_is_wall_like(down)
-		&& left == '0' && right == '0')
+		&& ft_is_floor_like(left) && ft_is_floor_like(right))
 		return (1);
 	return (0);
 }

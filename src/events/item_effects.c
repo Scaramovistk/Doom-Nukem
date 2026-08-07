@@ -27,6 +27,37 @@ void	apply_ammo_pickup(t_game *g, int amount)
 	play_sound_effect(g, "pickup");
 }
 
+bool	try_use_vending_machine_at(t_coord pos, t_game *g)
+{
+	t_coord	machine_cell;
+
+	if (!g->map.vending_machine.active)
+		return (false);
+	machine_cell.x = (int)g->map.vending_machine.pos.x;
+	machine_cell.y = (int)g->map.vending_machine.pos.y;
+	if (machine_cell.x != pos.x || machine_cell.y != pos.y)
+		return (false);
+	if (g->hud.score < VENDING_MACHINE_PRICE)
+		show_message(g, "NEED 5 POINTS FOR AMMO", MESSAGE_DISPLAY_TIME);
+	else
+	{
+		g->hud.score -= VENDING_MACHINE_PRICE;
+		g->hud.inventory[ITEM_AMMO] += VENDING_MACHINE_AMMO;
+		show_message(g, "AMMO BOUGHT: 10 AMMO FOR 5 POINTS",
+			MESSAGE_DISPLAY_TIME);
+		play_sound_effect(g, VENDING_MACHINE_SOUND);
+	}
+	return (true);
+}
+
+bool	consume_key(t_game *g)
+{
+	if (g->hud.inventory[ITEM_KEY] <= 0)
+		return (false);
+	g->hud.inventory[ITEM_KEY]--;
+	return (true);
+}
+
 static int	magazine_capacity(int weapon)
 {
 	if (weapon == 1)

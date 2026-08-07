@@ -37,6 +37,7 @@ bool	wall_collision(t_dda *dda, t_ray *ray, t_game *g)
 	{
 		ray->side = dda->side;
 		ray->hit_block = block;
+		ray->hit_cell = dda->map;
 		apply_cross_distance(dda, &ray->distance, ray->side, g);
 		return (true);
 	}

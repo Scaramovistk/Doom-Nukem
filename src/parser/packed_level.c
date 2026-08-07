@@ -544,11 +544,17 @@ static void	write_cub_line(FILE *out, char *line)
 {
 	char	key[32];
 	char	path[LINE_SIZE];
+	size_t	len;
 
 	if (header_asset_key(line, key, path))
 		fprintf(out, "%s @%s\n", key, key);
 	else
+	{
 		fprintf(out, "%s", line);
+		len = ft_strlen(line);
+		if (!len || line[len - 1] != '\n')
+			fputc('\n', out);
+	}
 }
 
 static bool	write_sound_assets(FILE *out)
@@ -639,7 +645,8 @@ static bool	is_map_source_line(char *line)
 	has_map_char = 0;
 	while (line[i] && line[i] != '\n' && line[i] != '\r')
 	{
-		if (!ft_strchr("0123456789 NWSETHMXKLPIDCVBabcdefv", line[i]))
+		if (!ft_strchr("0123456789 NWSETHMXKLPIDCVBGQJabcdefghijklv",
+				line[i]))
 			return (false);
 		if (line[i] != ' ')
 			has_map_char = 1;

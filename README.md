@@ -100,6 +100,10 @@ slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 - Enter: use the selected inventory slot (`2` reloads, `4` toggles jetpack)
 - Esc or window close button: quit cleanly
 
+Campaign maps use one `Q` vending-machine tile. Interact with it to spend
+5 score points on 10 ammo. Its texture is configured with the map's `VM`
+header and its replaceable sound is `assets/sounds/vending.wav`.
+
 ## Menu
 
 Launching without a map opens the level select menu. Up/Down chooses a `.cub`
@@ -194,6 +198,30 @@ Levels can use `X` in the map as an exit tile. The current mission flow starts
 with an objective message, requires active pickup items to be collected, then
 completes when the player reaches an exit. Dropping health to zero fails the
 mission after a short message.
+
+Capture-the-flag maps use `G` for the flag. Their only objective is to take it
+and return to the player start tile (the base); no enemy kills, pickups, or
+exit tile are required. The menu's **Capture the Flag (3 maps)** mode starts
+`ctf_1.dnk` and chains through `ctf_2.dnk` and `ctf_3.dnk`. On its minimap,
+the base is blue and the flag is yellow.
+
+To author another CTF map, use exactly one player start (`N`, `S`, `E`, or
+`W`), place one `G`, and optionally add `NEXT path/to/next-level.dnk` to
+chain it to another map. The player start is automatically the return base.
+
+## Laptop Tables
+
+Laptop tables are decorative, non-interactive `J` map tiles. Add this header
+line to use the supplied texture:
+
+```text
+LT assets/images/textures/doom/laptop_table.xpm
+```
+
+When the player enters a laptop's proximity radius, it plays a one-shot sound.
+It does not repeat while the player remains nearby; leaving the radius and
+returning triggers it again. Laptop tables sit on the ground and are hidden
+from the minimap.
 
 ## Audio
 

@@ -26,6 +26,7 @@ void	ft_int_assets(t_assets *assets)
 	int	i;
 	int	j;
 
+	ft_bzero(assets, sizeof(*assets));
 	i = TEXTURES_NB;
 	while (i--)
 	{
@@ -85,8 +86,13 @@ void	ft_int_assets(t_assets *assets)
 	{
 		ft_int_image(&assets->decoration_icons[i].img);
 		assets->decoration_icons[i].source = NULL;
+		assets->decoration_icons[i].has_transparent_color = false;
 		i++;
 	}
+	ft_int_image(&assets->vending_machine.img);
+	assets->vending_machine.source = NULL;
+	ft_int_image(&assets->laptop.img);
+	assets->laptop.source = NULL;
 	assets->has_sky = false;
 	assets->has_sprite_frames = false;
 	assets->ceiling_color = -1;
@@ -171,6 +177,11 @@ void	ft_init_map(t_map *map)
 	map->objects = NULL;
 	map->object_count = 0;
 	map->action_count = 0;
+	map->vending_machine.pos = (t_position){0.0, 0.0};
+	map->vending_machine.sprite_index = -1;
+	map->vending_machine.active = false;
+	map->laptops = NULL;
+	map->laptop_count = 0;
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;
@@ -185,6 +196,11 @@ void	ft_init_map(t_map *map)
 	map->message_count = 0;
 	map->exit_zones = NULL;
 	map->exit_count = 0;
+	map->has_flag = false;
+	map->flag_carried = false;
+	map->flag_sprite_index = -1;
+	map->flag_pos = (t_position){0.0, 0.0};
+	map->flag_base = (t_position){0.0, 0.0};
 	map->width = 0;
 	map->height = 0;
 }

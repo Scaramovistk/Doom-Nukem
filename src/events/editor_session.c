@@ -88,7 +88,7 @@ static bool	is_map_line(const char *line)
 	int			i;
 	bool		non_space;
 
-	valid = "0123456789 NWSETHMXKLPIDCVBabcdefv";
+	valid = "0123456789 NWSETHMXKLPIDCVBGQJabcdefghijklv";
 	i = 0;
 	non_space = false;
 	while (line[i])
@@ -240,7 +240,8 @@ static bool	save_document(t_editor_doc *doc)
 
 static bool	valid_map_token(char token)
 {
-	return (ft_strchr("0123456789NWSETHMXKLPIDCVBabcdefv", token) != NULL);
+	return (ft_strchr("0123456789NWSETHMXKLPIDCVBGQJabcdefghijklv",
+			token) != NULL);
 }
 
 static void	set_map_cell(t_editor_doc *doc, char *command)
