@@ -25,11 +25,7 @@ int	ft_map_line(const char *str)
 
 int	ft_invalid_line(const char *str)
 {
-<<<<<<< HEAD
-	const char	*valid_chars = "0123456789 NWSETHMXKLPIDCVBGabcdefghijkl";
-=======
-	const char	*valid_chars = "0123456789 NWSETHMXKLPIDCVBabcdefv";
->>>>>>> origin/extras
+	const char	*valid_chars = "0123456789 NWSETHMXKLPIDCVBGabcdefghijklv";
 
 	while (*str)
 	{
@@ -49,15 +45,10 @@ int	ft_find_access_map(char **map, int vert, int hor, int *vals)
 	pos = map[vert][hor];
 	if (pos == '0' || pos == (char)vals[2] || pos == '2' || pos == '3'
 		|| pos == 'K' || (pos >= '6' && pos <= '9') || pos == 'H'
-<<<<<<< HEAD
 		|| pos == 'M' || pos == 'X' || pos == 'L' || pos == 'P'
 		|| pos == 'I' || pos == 'D' || pos == 'C' || pos == 'V' || pos == 'B'
-		|| pos == 'G')
-=======
-		|| pos == 'M' || pos == 'X' || pos == 'L' || pos == 'P' || pos == 'B'
-		|| pos == 'I' || pos == 'D' || pos == 'C' || pos == 'V' || pos == 'v'
-		|| (pos >= 'a' && pos <= 'f'))
->>>>>>> origin/extras
+		|| pos == 'G' || pos == 'v'
+		|| (pos >= 'a' && pos <= 'l'))
 	{
 		map[vert][hor] = 'R';
 		ft_find_access_map(map, vert + 1, hor, vals);
