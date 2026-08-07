@@ -87,7 +87,6 @@ typedef struct s_decoration
 	double		scale;
 }				t_decoration;
 
-<<<<<<< HEAD
 typedef struct s_vending_machine
 {
 	t_position	pos;
@@ -101,7 +100,7 @@ typedef struct s_laptop
 	int			sprite_index;
 	bool		player_near;
 }				t_laptop;
-=======
+
 typedef struct s_world_object
 {
 	t_position	pos;
@@ -122,7 +121,6 @@ typedef struct s_authored_action
 	int				value;
 	double				values[4];
 }				t_authored_action;
->>>>>>> origin/extras
 
 typedef struct s_sector
 {
@@ -163,16 +161,13 @@ typedef struct s_map
 	int			item_count;
 	t_decoration	*decorations;
 	int			decoration_count;
-<<<<<<< HEAD
 	t_vending_machine	vending_machine;
 	t_laptop		*laptops;
 	int			laptop_count;
-=======
 	t_world_object	*objects;
 	int			object_count;
 	t_authored_action	actions[AUTHORED_ACTION_MAX];
 	int			action_count;
->>>>>>> origin/extras
 	t_coord		*switches;
 	int			switch_count;
 	t_coord		*elevators;
