@@ -72,7 +72,6 @@ static bool	apply_message(t_game *g, t_coord cell)
 	return (false);
 }
 
-<<<<<<< HEAD
 static bool	update_laptop_proximity(t_game *g)
 {
 	int		i;
@@ -99,7 +98,8 @@ static bool	update_laptop_proximity(t_game *g)
 		i++;
 	}
 	return (active);
-=======
+}
+
 static bool	open_nearby_secret(t_game *g)
 {
 	t_coord	secret;
@@ -121,7 +121,6 @@ static bool	open_nearby_secret(t_game *g)
 		}
 	}
 	return (false);
->>>>>>> origin/extras
 }
 
 bool	update_proximity_triggers(t_game *g)
@@ -134,9 +133,6 @@ bool	update_proximity_triggers(t_game *g)
 	cell.y = (int)g->player.pos.y;
 	hazard = apply_hazard(g, cell);
 	message = apply_message(g, cell);
-<<<<<<< HEAD
-	return (hazard || message || update_laptop_proximity(g));
-=======
-	return (hazard || message || open_nearby_secret(g));
->>>>>>> origin/extras
+	return (hazard || message || update_laptop_proximity(g)
+		|| open_nearby_secret(g));
 }
