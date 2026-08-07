@@ -112,6 +112,12 @@ fclean:			clean
 
 re:				fclean all
 
+maps:			$(NAME)
+				@set -e; for map in tests/maps_src/*.cub; do \
+					output="tests/maps/$$(basename "$$map" .cub).dnk"; \
+					./$(NAME) --pack "$$map" "$$output"; \
+				done
+
 -include $(DEP)
 
-.PHONY:			all clean fclean re
+.PHONY:			all clean fclean re maps

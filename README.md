@@ -66,6 +66,12 @@ For a non-interactive rebuild, use:
 ./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
 ```
 
+To rebuild every editable map into `tests/maps/`, run:
+
+```sh
+make maps
+```
+
 Packing embeds every referenced texture plus the HUD, elevator control, music,
 and sound effects. Export fails instead of leaving a partial `.dnk` when any
 required asset cannot be read.
