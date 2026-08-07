@@ -55,6 +55,18 @@ static void	remove_enemy_sprite(t_game *g, t_enemy *enemy)
 				g->map.enemies[i].sprite_index = enemy->sprite_index;
 			i++;
 		}
+		if (g->map.vending_machine.active
+			&& g->map.vending_machine.sprite_index == last)
+			g->map.vending_machine.sprite_index = enemy->sprite_index;
+		if (g->map.has_flag && g->map.flag_sprite_index == last)
+			g->map.flag_sprite_index = enemy->sprite_index;
+		i = 0;
+		while (i < g->map.laptop_count)
+		{
+			if (g->map.laptops[i].sprite_index == last)
+				g->map.laptops[i].sprite_index = enemy->sprite_index;
+			i++;
+		}
 	}
 	g->map.sprite_count--;
 	enemy->sprite_index = -1;

@@ -83,10 +83,10 @@ static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 		s->right = WIN_WIDTH - 1;
 }
 
-static bool	is_sprite_transparent(t_texture *texture, int color)
+static bool	is_sprite_transparent(int transparent_color, int color)
 {
 	return ((color & 0x00FFFFFF) == 0x00FF00FF
-		|| color == get_pixel(&texture->img, 0, 0));
+		|| color == transparent_color);
 }
 
 static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
@@ -185,7 +185,8 @@ static int	blend_sprite_glass(int color, int y, double sprite_depth,
 	double	save_distance;
 	int		save_side;
 
-	if (!g->assets.textures[TRANSPARENT_T].img.ptr)
+	if (!g->assets.textures[TRANSPARENT_T].img.ptr
+		|| !ray->transparent_count)
 		return (color);
 	save_distance = ray->distance;
 	save_side = ray->side;
@@ -204,7 +205,7 @@ static int	blend_sprite_glass(int color, int y, double sprite_depth,
 }
 
 static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
-		t_texture *texture, t_ray *ray)
+		t_texture *texture, t_ray *ray, int light, int transparent_color)
 {
 	int	tex_x;
 	int	tex_y;
@@ -220,9 +221,9 @@ static void	draw_sprite_stripe(t_sprite_draw *s, int stripe, t_game *g,
 	{
 		tex_y = (y - s->raw_top) * texture_size / s->height;
 		color = get_pixel(&texture->img, tex_x, tex_y);
-		if (!is_sprite_transparent(texture, color))
+		if (!is_sprite_transparent(transparent_color, color))
 		{
-			color = apply_light(color, get_light_at(g, s->pos), s->transform_y);
+			color = apply_light(color, light, s->transform_y);
 			color = blend_sprite_glass(color, y, s->transform_y, ray, g);
 			if (!door_occludes_pixel(ray, s->transform_y, y, g)
 				&& !height_step_occludes_pixel(ray, s->transform_y, y, g))
@@ -236,12 +237,16 @@ static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer,
 		t_ray *rays)
 {
 	int	stripe;
+	int	light;
+	int	transparent_color;
 	t_texture	*texture;
 
 	if (s->transform_y <= 0)
 		return ;
 	set_sprite_bounds(s, g);
 	texture = get_sprite_texture(s, g);
+	light = get_light_at(g, s->pos);
+	transparent_color = get_pixel(&texture->img, 0, 0);
 	if (texture == &g->assets.laptop)
 	{
 		s->bottom += s->height * 11 / TEXTURE_SIZE;
@@ -255,7 +260,8 @@ static void	draw_one_sprite(t_sprite_draw *s, t_game *g, double *z_buffer,
 	{
 		if (s->transform_y > 0 && stripe > 0 && stripe < WIN_WIDTH
 			&& s->transform_y < z_buffer[stripe])
-			draw_sprite_stripe(s, stripe, g, texture, &rays[stripe]);
+			draw_sprite_stripe(s, stripe, g, texture, &rays[stripe], light,
+				transparent_color);
 		stripe++;
 	}
 }

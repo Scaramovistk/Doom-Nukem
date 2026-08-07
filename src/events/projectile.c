@@ -58,6 +58,18 @@ static void	relink_moved_sprite(t_game *g, int old_index, int new_index)
 			g->map.items[i].sprite_index = new_index;
 		i++;
 	}
+	if (g->map.vending_machine.active
+		&& g->map.vending_machine.sprite_index == old_index)
+		g->map.vending_machine.sprite_index = new_index;
+	if (g->map.has_flag && g->map.flag_sprite_index == old_index)
+		g->map.flag_sprite_index = new_index;
+	i = 0;
+	while (i < g->map.laptop_count)
+	{
+		if (g->map.laptops[i].sprite_index == old_index)
+			g->map.laptops[i].sprite_index = new_index;
+		i++;
+	}
 }
 
 static void	remove_sprite_target(t_game *g, int index, int damage)

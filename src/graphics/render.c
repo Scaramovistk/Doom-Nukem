@@ -21,7 +21,8 @@ int	render(t_game *g)
 	update_time(g);
 	if (g->delta_time > 0.0)
 		g->hud.fps = (int)(1.0 / g->delta_time);
-	ft_regenerate_image(g);
+	if (!g->img.ptr)
+		init_display_img(&g->img, g);
 	draw_scene(g);
 	draw_minimap(g);
 	draw_hud(g);

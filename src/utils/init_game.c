@@ -26,6 +26,7 @@ void	ft_int_assets(t_assets *assets)
 	int	i;
 	int	j;
 
+	ft_bzero(assets, sizeof(*assets));
 	i = TEXTURES_NB;
 	while (i--)
 	{
@@ -85,6 +86,7 @@ void	ft_int_assets(t_assets *assets)
 	{
 		ft_int_image(&assets->decoration_icons[i].img);
 		assets->decoration_icons[i].source = NULL;
+		assets->decoration_icons[i].has_transparent_color = false;
 		i++;
 	}
 	ft_int_image(&assets->vending_machine.img);

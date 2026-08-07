@@ -479,11 +479,17 @@ static void	write_cub_line(FILE *out, char *line)
 {
 	char	key[32];
 	char	path[LINE_SIZE];
+	size_t	len;
 
 	if (header_asset_key(line, key, path))
 		fprintf(out, "%s @%s\n", key, key);
 	else
+	{
 		fprintf(out, "%s", line);
+		len = ft_strlen(line);
+		if (!len || line[len - 1] != '\n')
+			fputc('\n', out);
+	}
 }
 
 static void	write_sound_assets(FILE *out)

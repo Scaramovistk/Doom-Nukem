@@ -115,17 +115,13 @@ void	draw_wall_decal(t_dimensions wall, t_ray *ray, t_game *g)
 {
 	t_texture_slice	slice;
 	t_texture		*texture;
-	int				height;
-	int				margin;
 
 	texture = get_decal_texture(ray, g);
 	if (!texture->img.ptr)
 		return ;
-	height = wall.bottom - wall.top;
-	margin = height / 5;
 	slice.screen_x = ray->x;
-	slice.y_start = wall.top + margin;
-	slice.y_end = wall.bottom - margin;
+	slice.y_start = wall.top;
+	slice.y_end = wall.bottom;
 	slice.raw_top = wall.raw_top;
 	slice.texture = texture;
 	slice.texture_x = get_texture_x(ray, ray->distance, ray->side, g);
