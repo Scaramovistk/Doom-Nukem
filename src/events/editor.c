@@ -15,7 +15,7 @@
 static void	usage(void)
 {
 	printf("Doom-Nukem level editor/exporter\n");
-	printf("  ./doom-nukem --edit <source.cub> <output.dnk>\n");
+	printf("  ./doom-nukem --edit <source.cub> [output.dnk]\n");
 	printf("  ./doom-nukem --pack <source.cub> <output.dnk>\n");
 	printf("  ./doom-nukem --edit <output.dnk>\n");
 }
@@ -36,11 +36,11 @@ static int	create_starter_level(char *dst)
 {
 	const char	*starter;
 
-	starter = "tests/maps/door_map.cub";
+	starter = "tests/maps_src/door_map.cub";
 	if (pack_level_file((char *)starter, dst))
 	{
-		printf("Created editable packed level: %s\n", dst);
-		printf("Edit the BEGIN_CUB map and BEGIN_SECTORS data, then run it with:\n");
+		printf("Created starter packed level: %s\n", dst);
+		printf("Run it with:\n");
 		printf("  ./doom-nukem %s\n", dst);
 		return (EXIT_SUCCESS);
 	}
@@ -69,12 +69,22 @@ int	run_editor(int argc, char *argv[])
 {
 	char	dst[LINE_SIZE];
 
-	if (argc == 4)
+	if (!ft_strcmp(argv[1], "--pack") && argc == 4)
 		return (export_level(argv[2], argv[3]));
-	if (argc == 3 && ft_cub_extension(argv[2]))
+	if (!ft_strcmp(argv[1], "--pack") && argc == 3
+		&& ft_cub_extension(argv[2]))
 	{
 		default_dnk_path(dst, argv[2]);
 		return (export_level(argv[2], dst));
+	}
+	if (!ft_strcmp(argv[1], "--edit") && argc == 4
+		&& ft_cub_extension(argv[2]) && ft_dnk_extension(argv[3]))
+		return (interactive_level_editor(argv[2], argv[3]));
+	if (!ft_strcmp(argv[1], "--edit") && argc == 3
+		&& ft_cub_extension(argv[2]))
+	{
+		default_dnk_path(dst, argv[2]);
+		return (interactive_level_editor(argv[2], dst));
 	}
 	if (argc == 3 && ft_dnk_extension(argv[2]))
 		return (create_starter_level(argv[2]));
@@ -87,6 +97,8 @@ int	check_level_file(char *path)
 	t_game	g;
 	char	*argv[2];
 	int		ok;
+	int		i;
+	int		blocking;
 
 	init_game_struct(&g);
 	argv[0] = "doom-nukem";
@@ -102,7 +114,16 @@ int	check_level_file(char *path)
 	printf("  sectors: %d\n", g.map.sector_count);
 	printf("  angled walls: %d\n", g.map.segment_count);
 	printf("  sprites: %d\n", g.map.sprite_count);
+	blocking = 0;
+	i = 0;
+	while (i < g.map.object_count)
+		blocking += g.map.objects[i++].blocks_passage;
+	printf("  world objects: %d (%d blocking)\n", g.map.object_count, blocking);
+	printf("  authored actions: %d\n", g.map.action_count);
 	printf("  items: %d\n", g.map.item_count);
+	printf("  elevator panels: %d\n", g.map.elevator_count);
+	printf("  secret doors: %d\n", g.map.secret_count);
+	printf("  locked doors: %d\n", g.map.locked_door_count);
 	check_segment_loops(&g);
 	free_all(&g);
 	return (EXIT_SUCCESS);

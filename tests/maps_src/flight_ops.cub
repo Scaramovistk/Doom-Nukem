@@ -1,0 +1,33 @@
+NO assets/images/textures/doom/uac_metal_wall.xpm
+SO assets/images/textures/doom/uac_metal_wall.xpm
+EA assets/images/textures/doom/level1_concrete.xpm
+WE assets/images/textures/doom/level1_concrete.xpm
+
+DO assets/images/textures/doom/uac_metal_wall.xpm
+DC assets/images/textures/doom/bullet_holes_triple.xpm
+D5 assets/images/textures/doom/uac_panel_tech.xpm
+
+SP assets/images/textures/classic/barrel.xpm
+E0 assets/images/textures/doom/zombieman.xpm
+E1 assets/images/textures/doom/shotgunguy.xpm
+E2 assets/images/textures/doom/imp.xpm
+E3 assets/images/textures/doom/demon.xpm
+E4 assets/images/textures/doom/cacodemon.xpm
+
+F assets/images/textures/doom/level1_grate_floor.xpm
+SK assets/images/textures/doom/sky_mars.xpm
+C 18, 12, 10
+
+111111111111111111111111
+1N0000010000000100000001
+100070010000000100000001
+1000000P0000000100000001
+100000010000000100000001
+100000010000000000000001
+1111111111111L0111111111
+111111110000000000000001
+111111110000000000000001
+111111110000900000000X01
+111111110000000000000001
+111111110000000000000001
+111111111111111111111111

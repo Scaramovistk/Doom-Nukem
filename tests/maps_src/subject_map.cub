@@ -1,14 +1,14 @@
 
 
-SO tests/textures_classic/redbrick.xpm
+SO assets/images/textures/classic/redbrick.xpm
 
-WE tests/textures_classic/greystone.xpm
+WE assets/images/textures/classic/greystone.xpm
 
-EA tests/textures_classic/bluestone.xpm
+EA assets/images/textures/classic/bluestone.xpm
 
-NO tests/textures_classic/colorstone.xpm
+NO assets/images/textures/classic/colorstone.xpm
 
-DO tests/textures_classic/eagle.xpm
+DO assets/images/textures/classic/eagle.xpm
 
 F 7, 0, 77
 
@@ -22,7 +22,7 @@ C 25,25,25
 111111111011000001110000000000001
 100000000000000001110111111111111
 11110111111111011100000010001
-111121011111111101110101001001
+1111210111111111011101010010X1
 11000000111010111000000100011
 100000000000001100000010001
 100000000000000110101000001

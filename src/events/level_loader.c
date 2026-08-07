@@ -28,6 +28,7 @@ static void	reset_map_state(t_game *g)
 	g->unpack_dir[0] = '\0';
 	g->level_source[0] = '\0';
 	g->level.next_level[0] = '\0';
+	g->hazard_damage_accumulator = 0.0;
 }
 
 static void	apply_difficulty(t_game *g)
@@ -36,14 +37,14 @@ static void	apply_difficulty(t_game *g)
 	{
 		g->hud.health = 150;
 		g->hud.max_health = 150;
-		g->hud.ammo += 20;
+		g->hud.inventory[ITEM_AMMO] += 20;
 	}
 	else if (g->menu.difficulty == 2)
 	{
 		g->hud.health = 75;
 		g->hud.max_health = 75;
-		if (g->hud.ammo > 10)
-			g->hud.ammo -= 10;
+		if (g->hud.inventory[ITEM_AMMO] > 10)
+			g->hud.inventory[ITEM_AMMO] -= 10;
 	}
 }
 

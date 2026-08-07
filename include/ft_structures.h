@@ -41,6 +41,9 @@ typedef struct s_door
 {
 	double		opening_state;
 	bool		is_opening;
+	bool		is_secret;
+	bool		is_locked;
+	bool		discovered;
 }				t_door;
 
 typedef struct s_item
@@ -79,8 +82,12 @@ typedef struct s_decoration
 {
 	t_position	pos;
 	int			type;
+	int			sprite_index;
+	double		z_offset;
+	double		scale;
 }				t_decoration;
 
+<<<<<<< HEAD
 typedef struct s_vending_machine
 {
 	t_position	pos;
@@ -94,6 +101,28 @@ typedef struct s_laptop
 	int			sprite_index;
 	bool		player_near;
 }				t_laptop;
+=======
+typedef struct s_world_object
+{
+	t_position	pos;
+	int			sprite_index;
+	int			texture;
+	double		scale;
+	double		collision_radius;
+	bool		blocks_passage;
+}				t_world_object;
+
+typedef struct s_authored_action
+{
+	t_coord				trigger;
+	double				delay;
+	t_authored_action_type	type;
+	t_coord				cell;
+	int				target;
+	int				value;
+	double				values[4];
+}				t_authored_action;
+>>>>>>> origin/extras
 
 typedef struct s_sector
 {
@@ -134,15 +163,24 @@ typedef struct s_map
 	int			item_count;
 	t_decoration	*decorations;
 	int			decoration_count;
+<<<<<<< HEAD
 	t_vending_machine	vending_machine;
 	t_laptop		*laptops;
 	int			laptop_count;
+=======
+	t_world_object	*objects;
+	int			object_count;
+	t_authored_action	actions[AUTHORED_ACTION_MAX];
+	int			action_count;
+>>>>>>> origin/extras
 	t_coord		*switches;
 	int			switch_count;
 	t_coord		*elevators;
 	int			elevator_count;
 	t_coord		*secrets;
 	int			secret_count;
+	t_coord		*locked_doors;
+	int			locked_door_count;
 	t_coord		*hazard_zones;
 	int			hazard_count;
 	t_coord		*message_zones;
@@ -355,7 +393,7 @@ typedef struct s_hud
 {
 	int			health;
 	int			max_health;
-	int			ammo;
+	int			magazine[WEAPON_NB];
 	int			score;
 	int			fps;
 	int			inventory[4];
@@ -444,13 +482,6 @@ typedef struct s_shot_spec
 	bool			from_enemy;
 }				t_shot_spec;
 
-typedef struct s_door_search
-{
-	t_coord			pos;
-	t_coord			best;
-	long			best_dist;
-}				t_door_search;
-
 typedef struct s_menu
 {
 	char			levels[MENU_MAX_LEVELS][LINE_SIZE];
@@ -491,6 +522,8 @@ typedef struct s_game
 	char		level_source[LINE_SIZE];
 
 	double		delta_time;
+	double		last_frame_time;
+	double		hazard_damage_accumulator;
 
 }				t_game;
 

@@ -239,6 +239,43 @@ static bool	read_dnk(char *path, t_dnk *dnk, t_game *g)
 	return (ok && dnk->cub_count > 0);
 }
 
+static bool	packed_cub_is_self_contained(t_dnk *dnk)
+{
+	char	key[32];
+	char	value[LINE_SIZE];
+	int		i;
+
+	i = 0;
+	while (i < dnk->cub_count)
+	{
+		if (sscanf(dnk->cub_lines[i], "%31s %299s", key, value) == 2
+			&& ft_xpm_extension(value) && value[0] != '@')
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+static void	clear_packed_fallbacks(t_game *g)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < WEAPON_NB)
+	{
+		j = 0;
+		while (j < WEAPON_STATE_NB)
+			g->assets.hud_weapons[i][j++].source = NULL;
+		i++;
+	}
+	g->assets.ammo_icon.source = NULL;
+	i = 0;
+	while (i < ITEM_TYPES_NB)
+		g->assets.item_icons[i++].source = NULL;
+	g->audio.sound_dir[0] = '\0';
+}
+
 static const char	*find_asset_path(t_dnk *dnk, const char *key)
 {
 	int	i;
@@ -331,13 +368,15 @@ static void	apply_sector_grid_line(t_game *g, char *line, int y)
 	}
 }
 
-static void	parse_sector_line(t_game *g, char *line, int *grid_y)
+static bool	parse_sector_line(t_game *g, char *line, int *grid_y)
 {
 	t_sector	sector;
 	t_wall_segment	wall;
 	int			id;
 	int			transparent;
 
+	if (starts_with(line, "ACTION "))
+		return (add_authored_action(g, line));
 	if (starts_with(line, "SECTOR "))
 	{
 		sector.active = true;
@@ -365,9 +404,10 @@ static void	parse_sector_line(t_game *g, char *line, int *grid_y)
 		*grid_y = 0;
 	else if (*grid_y >= 0 && *grid_y < g->map.height)
 		apply_sector_grid_line(g, line, (*grid_y)++);
+	return (true);
 }
 
-static void	apply_packed_sectors(t_dnk *dnk, t_game *g)
+static bool	apply_packed_sectors(t_dnk *dnk, t_game *g)
 {
 	int	i;
 	int	grid_y;
@@ -376,7 +416,11 @@ static void	apply_packed_sectors(t_dnk *dnk, t_game *g)
 	i = 0;
 	grid_y = -1;
 	while (i < dnk->sector_count)
-		parse_sector_line(g, dnk->sector_lines[i++], &grid_y);
+	{
+		if (!parse_sector_line(g, dnk->sector_lines[i++], &grid_y))
+			return (false);
+	}
+	return (true);
 }
 
 static void	set_hud_source(char **field, const char *key, t_dnk *dnk,
@@ -406,6 +450,16 @@ static void	apply_packed_hud(t_dnk *dnk, t_game *g)
 	set_hud_source(&g->assets.item_icons[3].source, "hud_item3", dnk, g);
 }
 
+static void	apply_packed_defaults(t_dnk *dnk, t_game *g)
+{
+	const char	*path;
+
+	path = find_asset_path(dnk, "elevator_button");
+	if (path && !g->assets.decoration_icons[ELEVATOR_BUTTON_DECORATION].source)
+		g->assets.decoration_icons[ELEVATOR_BUTTON_DECORATION].source
+			= s_alloc(ft_strdup(path), g);
+}
+
 int	ft_parse_packed_file(int argc, char *argv[], t_game *g)
 {
 	t_dnk	dnk;
@@ -414,13 +468,17 @@ int	ft_parse_packed_file(int argc, char *argv[], t_game *g)
 	(void)argc;
 	ft_bzero(&dnk, sizeof(dnk));
 	make_unpack_dir(&dnk, g);
-	if (!read_dnk(argv[1], &dnk, g) || !write_temp_cub(&dnk))
+	clear_packed_fallbacks(g);
+	if (!read_dnk(argv[1], &dnk, g) || !packed_cub_is_self_contained(&dnk)
+		|| !write_temp_cub(&dnk))
 		return (ft_parsing_error("Unable to unpack .dnk level.", 0));
 	cub_argv[0] = argv[0];
 	cub_argv[1] = dnk.cub_path;
 	if (!ft_parse_file(2, cub_argv, g))
 		return (0);
-	apply_packed_sectors(&dnk, g);
+	if (!apply_packed_sectors(&dnk, g))
+		return (ft_parsing_error("Invalid authored action.", 0));
+	apply_packed_defaults(&dnk, g);
 	apply_packed_hud(&dnk, g);
 	ft_strlcpy(g->level_source, argv[1], LINE_SIZE);
 	return (1);
@@ -449,16 +507,23 @@ static bool	read_file_hex(FILE *out, const char *path)
 	return (true);
 }
 
-static void	write_asset_block(FILE *out, const char *key, const char *path)
+static bool	write_asset_block(FILE *out, const char *key, const char *path)
 {
 	const char	*ext;
+	int			fd;
 
 	ext = ft_strrchr((char *)path, '.');
 	if (!ext || !*(ext + 1))
-		return ;
+		return (false);
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+		return (false);
+	close(fd);
 	fprintf(out, "ASSET %s %s\n", key, ext + 1);
-	read_file_hex(out, path);
+	if (!read_file_hex(out, path))
+		return (false);
 	fprintf(out, "END_ASSET\n");
+	return (true);
 }
 
 static bool	header_asset_key(char *line, char *key, char *path)
@@ -492,7 +557,7 @@ static void	write_cub_line(FILE *out, char *line)
 	}
 }
 
-static void	write_sound_assets(FILE *out)
+static bool	write_sound_assets(FILE *out)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -503,7 +568,7 @@ static void	write_sound_assets(FILE *out)
 
 	dir = opendir(SOUND_DIR);
 	if (!dir)
-		return ;
+		return (false);
 	entry = readdir(dir);
 	while (entry)
 	{
@@ -518,19 +583,21 @@ static void	write_sound_assets(FILE *out)
 				*dot = '\0';
 			ft_strlcat(key, name, sizeof(key));
 			snprintf(path, LINE_SIZE, "%s%s", SOUND_DIR, entry->d_name);
-			write_asset_block(out, key, path);
+			if (!write_asset_block(out, key, path))
+				return (closedir(dir), false);
 		}
 		entry = readdir(dir);
 	}
 	closedir(dir);
+	return (true);
 }
 
-static void	write_hud_assets(FILE *out)
+static bool	write_hud_assets(FILE *out)
 {
-	static const char	*keys[HUD_ASSET_NB] = {"hud_pistol_idle",
+	const char *const	keys[HUD_ASSET_NB] = {"hud_pistol_idle",
 		"hud_pistol_fire", "hud_blaster_idle", "hud_blaster_fire",
 		"hud_ammo", "hud_item0", "hud_item1", "hud_item2", "hud_item3"};
-	static const char	*paths[HUD_ASSET_NB] = {HUD_PISTOL_IDLE,
+	const char *const	paths[HUD_ASSET_NB] = {HUD_PISTOL_IDLE,
 		HUD_PISTOL_FIRE, HUD_BLASTER_IDLE, HUD_BLASTER_FIRE,
 		HUD_AMMO_ICON, HUD_ITEM0_ICON, HUD_ITEM1_ICON, HUD_ITEM2_ICON,
 		HUD_ITEM3_ICON};
@@ -539,12 +606,14 @@ static void	write_hud_assets(FILE *out)
 	i = 0;
 	while (i < HUD_ASSET_NB)
 	{
-		write_asset_block(out, keys[i], paths[i]);
+		if (!write_asset_block(out, keys[i], paths[i]))
+			return (false);
 		i++;
 	}
+	return (true);
 }
 
-static void	write_cub_assets(FILE *out, char *src)
+static bool	write_cub_assets(FILE *out, char *src)
 {
 	int		fd;
 	char	*line;
@@ -553,16 +622,18 @@ static void	write_cub_assets(FILE *out, char *src)
 
 	fd = open(src, O_RDONLY);
 	if (fd < 0)
-		return ;
+		return (false);
 	line = get_next_line(fd, false);
 	while (line)
 	{
-		if (header_asset_key(line, key, path))
-			write_asset_block(out, key, path);
+		if (header_asset_key(line, key, path)
+			&& !write_asset_block(out, key, path))
+			return (close(fd), free(line), false);
 		free(line);
 		line = get_next_line(fd, false);
 	}
 	close(fd);
+	return (true);
 }
 
 static bool	is_map_source_line(char *line)
@@ -574,7 +645,11 @@ static bool	is_map_source_line(char *line)
 	has_map_char = 0;
 	while (line[i] && line[i] != '\n' && line[i] != '\r')
 	{
+<<<<<<< HEAD
 		if (!ft_strchr("0123456789 NWSETHMXKLPIDCVBGabcdefghijkl", line[i]))
+=======
+		if (!ft_strchr("0123456789 NWSETHMXKLPIDCVBabcdefv", line[i]))
+>>>>>>> origin/extras
 			return (false);
 		if (line[i] != ' ')
 			has_map_char = 1;
@@ -639,6 +714,33 @@ static void	write_default_sector_grid(FILE *out, char **lines, int count)
 	fprintf(out, "END_SECTORS\n");
 }
 
+static bool	write_sector_sidecar(FILE *out, char *src)
+{
+	char	path[LINE_SIZE];
+	char	line[LINE_SIZE];
+	char	*extension;
+	FILE	*sidecar;
+
+	ft_strlcpy(path, src, LINE_SIZE);
+	extension = ft_strrchr(path, '.');
+	if (extension && ft_strcmp(extension, ".cub") == 0)
+		ft_strlcpy(extension, ".sectors", LINE_SIZE - (extension - path));
+	else
+		ft_strlcat(path, ".sectors", LINE_SIZE);
+	sidecar = fopen(path, "r");
+	if (!sidecar)
+		return (false);
+	line[0] = '\0';
+	fprintf(out, "BEGIN_SECTORS\n");
+	while (fgets(line, sizeof(line), sidecar))
+		fputs(line, out);
+	if (line[0] && line[ft_strlen(line) - 1] != '\n')
+		fputc('\n', out);
+	fprintf(out, "END_SECTORS\n");
+	fclose(sidecar);
+	return (true);
+}
+
 static bool	load_cub_text(char *src, char **lines, int *count)
 {
 	int		fd;
@@ -658,11 +760,13 @@ static bool	load_cub_text(char *src, char **lines, int *count)
 	return (*count > 0);
 }
 
-static void	write_all_assets(FILE *out, char *src)
+static bool	write_all_assets(FILE *out, char *src)
 {
-	write_cub_assets(out, src);
-	write_sound_assets(out);
-	write_hud_assets(out);
+	if (!write_cub_assets(out, src)
+		|| !write_asset_block(out, "elevator_button", ELEVATOR_BUTTON_ICON)
+		|| !write_sound_assets(out) || !write_hud_assets(out))
+		return (false);
+	return (true);
 }
 
 int	pack_level_file(char *src, char *dst)
@@ -679,13 +783,22 @@ int	pack_level_file(char *src, char *dst)
 	if (!out)
 		return (ft_parsing_error("Unable to write packed level.", 0));
 	fprintf(out, "%s\n", DNK_MAGIC);
-	write_all_assets(out, src);
+	if (!write_all_assets(out, src))
+	{
+		fclose(out);
+		unlink(dst);
+		i = 0;
+		while (i < count)
+			free(lines[i++]);
+		return (ft_parsing_error("Unable to embed every level asset.", 0));
+	}
 	fprintf(out, "BEGIN_CUB\n");
 	i = 0;
 	while (i < count)
 		write_cub_line(out, lines[i++]);
 	fprintf(out, "END_CUB\n");
-	write_default_sector_grid(out, lines, count);
+	if (!write_sector_sidecar(out, src))
+		write_default_sector_grid(out, lines, count);
 	fclose(out);
 	i = 0;
 	while (i < count)

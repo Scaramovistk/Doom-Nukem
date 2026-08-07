@@ -1,8 +1,9 @@
-NO tests/textures_classic/greystone.xpm
-SO tests/textures_classic/greystone.xpm
-EA tests/textures_classic/bluestone.xpm
-WE tests/textures_classic/bluestone.xpm
+NO assets/images/textures/classic/greystone.xpm
+SO assets/images/textures/classic/greystone.xpm
+EA assets/images/textures/classic/bluestone.xpm
+WE assets/images/textures/classic/bluestone.xpm
 
+<<<<<<< HEAD
 DO tests/textures_classic/door.xpm
 DC tests/textures_doom/bullet_holes_triple.xpm
 D1 tests/textures_doom/deco_grime_layer.xpm
@@ -21,8 +22,25 @@ E1 tests/textures_doom/shotgunguy.xpm
 E2 tests/textures_doom/imp.xpm
 E3 tests/textures_doom/demon.xpm
 E4 tests/textures_doom/cacodemon.xpm
+=======
+DO assets/images/textures/classic/door.xpm
+DC assets/images/textures/doom/bullet_holes_triple.xpm
+D1 assets/images/textures/doom/deco_grime_layer.xpm
+D2 assets/images/textures/doom/deco_rust_damage.xpm
+D3 assets/images/textures/doom/deco_scorch_marks.xpm
+D4 assets/images/textures/doom/deco_slime_drip.xpm
+D5 assets/images/textures/doom/deco_tech_decal.xpm
+D6 assets/images/textures/doom/deco_warning_stripes.xpm
 
-F tests/textures_doom/toxic_floor.xpm
+SP assets/images/textures/classic/barrel.xpm
+E0 assets/images/textures/doom/zombieman.xpm
+E1 assets/images/textures/doom/shotgunguy.xpm
+E2 assets/images/textures/doom/imp.xpm
+E3 assets/images/textures/doom/demon.xpm
+E4 assets/images/textures/doom/cacodemon.xpm
+>>>>>>> origin/extras
+
+F assets/images/textures/doom/toxic_floor.xpm
 C 78, 15, 10
 
 NEXT tests/maps/e1m4.dnk
@@ -37,6 +55,7 @@ NEXT tests/maps/e1m4.dnk
 1111111d0000000B100000e000111111111111
 1111111c0000000010000b0000111111111111
 11111111112111111111111111111111111111
+<<<<<<< HEAD
 11111c00000000100000000B1000000d001111
 11111d000000001000000D001000000c001111
 11111c00030600100D000e001007000d001111
@@ -52,4 +71,21 @@ NEXT tests/maps/e1m4.dnk
 1111111110000c0000000010000d00000B1111
 1111111110000d0000000010000c00000B1111
 11111111100000000000001BBBBBBBBBBB1111
+=======
+11111000000000100000000010000000001111
+111110000000001000000D0010000000001111
+11111000030600100D00000010070000001111
+11111000000000000000000020000900001111
+11111000000000100000D00010000000001111
+11111000000000100000000010000000001111
+11111000000000100000000010000000001111
+111111111111111111P1111111111111111111
+11111111100000000000001000000000001111
+11111111100000000000001000000000001111
+11111111100000000000001000000000001111
+1111111110000080000000000000X000001111
+11111111100000000000001000000000001111
+11111111100000000000001000000000001111
+11111111100000000000001000000000001111
+>>>>>>> origin/extras
 11111111111111111111111111111111111111

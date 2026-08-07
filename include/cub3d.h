@@ -20,6 +20,7 @@
 int			main(int argc, char *argv[]);
 int			run_editor(int argc, char *argv[]);
 int			check_level_file(char *path);
+int			interactive_level_editor(char *src, char *default_output);
 
 // ----- EVENTS ----- //
 
@@ -85,15 +86,19 @@ bool		load_level_path(t_game *g, char *path);
 
 // pickup.c
 void		update_item_pickups(t_game *g);
-bool		is_item_blocking(t_coord cell, t_game *g);
+bool		is_object_blocking(t_position pos, t_game *g);
 void		collect_item(t_item *item, t_game *g);
 
 // item_effects.c
 void		apply_health_pickup(t_game *g, int amount);
 void		apply_ammo_pickup(t_game *g, int amount);
+<<<<<<< HEAD
 bool		try_use_vending_machine_at(t_coord pos, t_game *g);
 bool		consume_key(t_game *g);
+=======
+>>>>>>> origin/extras
 void		use_selected_item(t_game *g);
+void		reload_weapon(t_game *g);
 
 // interact.c
 void		interact(t_game *g);
@@ -106,6 +111,10 @@ void		show_context_message(t_game *g);
 bool		update_world_events(t_game *g);
 void		queue_world_event(t_game *g, t_world_event event);
 void		trigger_switch_sequence(t_game *g);
+bool		authored_action_line_valid(const char *line);
+bool		add_authored_action(t_game *g, const char *line);
+bool		trigger_authored_actions(t_game *g, t_coord trigger);
+void		run_authored_action(t_game *g, int index);
 
 // sector_events.c
 void		make_event_sector(t_world_event *event, int target,
@@ -117,6 +126,8 @@ bool		animate_sector_event(t_game *g, t_world_event *event);
 // switch_targets.c
 void		trigger_elevator_switch(t_game *g, t_coord pos);
 void		trigger_secret_switch(t_game *g, t_coord pos);
+bool		is_secret_cell(t_game *g, t_coord pos);
+bool		is_locked_cell(t_game *g, t_coord pos);
 
 // message.c
 void		show_message(t_game *g, const char *text, double duration);
@@ -268,6 +279,7 @@ void		ft_populate_info(t_header *h, t_game *g);
 // generate_map_utils.c
 void		add_elevators(char **map, int lines, int width, t_game *g);
 void		add_secrets(char **map, int lines, int width, t_game *g);
+void		add_locked_doors(char **map, int lines, int width, t_game *g);
 
 // get_header.c
 void		ft_setup_header(t_header *header);

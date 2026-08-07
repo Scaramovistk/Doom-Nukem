@@ -22,7 +22,8 @@ static void	set_all_doors(t_game *g, bool opening)
 		pos.x = 0;
 		while (pos.x < g->map.width)
 		{
-			if (g->map.grid[pos.y][pos.x] == DOOR)
+			if (g->map.grid[pos.y][pos.x] == DOOR
+				&& !g->map.doors[pos.y][pos.x].is_locked)
 				g->map.doors[pos.y][pos.x].is_opening = opening;
 			pos.x++;
 		}
@@ -40,7 +41,8 @@ static void	toggle_all_doors(t_game *g)
 		pos.x = 0;
 		while (pos.x < g->map.width)
 		{
-			if (g->map.grid[pos.y][pos.x] == DOOR)
+			if (g->map.grid[pos.y][pos.x] == DOOR
+				&& !g->map.doors[pos.y][pos.x].is_locked)
 				g->map.doors[pos.y][pos.x].is_opening
 					= !g->map.doors[pos.y][pos.x].is_opening;
 			pos.x++;
@@ -74,6 +76,8 @@ static void	run_event_action(t_game *g, t_world_event *event)
 		show_event_message(g, event);
 	else if (event->action == EVENT_OPEN_ONE_DOOR)
 		open_one_door(g, event->door_target);
+	else if (event->action == EVENT_AUTHORED_ACTION)
+		run_authored_action(g, event->target);
 }
 
 void	queue_world_event(t_game *g, t_world_event event)
@@ -143,7 +147,7 @@ static t_world_event	make_event(t_event_action action, double timer, int value)
 void	trigger_switch_sequence(t_game *g)
 {
 	t_world_event	event;
-	static const char	*messages[5] = {
+	const char *const	messages[5] = {
 		"HANGAR POWER ROUTED", "LAB LOCKDOWN OVERRIDDEN",
 		"INFERNAL SEAL UNLATCHED", "TELEPORTER COORDINATES SET",
 		"EARTH GATE CHARGING"

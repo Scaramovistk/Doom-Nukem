@@ -75,9 +75,12 @@ void	fire_projectile(t_game *g)
 	t_shot_spec		spec;
 
 	ammo_cost = weapon_ammo_cost(g);
-	if (g->hud.ammo < ammo_cost)
+	if (g->hud.magazine[g->hud.selected_weapon] < ammo_cost)
 	{
-		show_message(g, "NO AMMO", MESSAGE_DISPLAY_TIME);
+		if (g->hud.inventory[ITEM_AMMO] > 0)
+			show_message(g, "RELOAD FROM AMMO INVENTORY", MESSAGE_DISPLAY_TIME);
+		else
+			show_message(g, "NO AMMO", MESSAGE_DISPLAY_TIME);
 		return ;
 	}
 	spec = (t_shot_spec){g->player.pos, g->player.orientation, 10, false};
@@ -85,7 +88,7 @@ void	fire_projectile(t_game *g)
 	if (index < 0)
 		return ;
 	setup_projectile_weapon(&g->projectiles[index], g);
-	g->hud.ammo -= ammo_cost;
+	g->hud.magazine[g->hud.selected_weapon] -= ammo_cost;
 	g->hud.weapon_flash = WEAPON_FLASH_TIME;
 	play_sound_effect(g, "shoot");
 }

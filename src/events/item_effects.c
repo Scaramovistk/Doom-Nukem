@@ -22,11 +22,12 @@ void	apply_health_pickup(t_game *g, int amount)
 
 void	apply_ammo_pickup(t_game *g, int amount)
 {
-	g->hud.ammo += amount;
-	show_message(g, "AMMO PACK PICKED UP", MESSAGE_DISPLAY_TIME);
+	g->hud.inventory[ITEM_AMMO] += amount;
+	show_message(g, "AMMO ADDED TO INVENTORY", MESSAGE_DISPLAY_TIME);
 	play_sound_effect(g, "pickup");
 }
 
+<<<<<<< HEAD
 bool	try_use_vending_machine_at(t_coord pos, t_game *g)
 {
 	t_coord	machine_cell;
@@ -51,24 +52,45 @@ bool	try_use_vending_machine_at(t_coord pos, t_game *g)
 }
 
 bool	consume_key(t_game *g)
+=======
+static int	magazine_capacity(int weapon)
+>>>>>>> origin/extras
 {
-	if (g->hud.inventory[ITEM_KEY] <= 0)
-		return (false);
-	g->hud.inventory[ITEM_KEY]--;
-	return (true);
+	if (weapon == 1)
+		return (BLASTER_MAGAZINE_SIZE);
+	return (PISTOL_MAGAZINE_SIZE);
+}
+
+void	reload_weapon(t_game *g)
+{
+	int	weapon;
+	int	needed;
+	int	loaded;
+
+	weapon = g->hud.selected_weapon;
+	needed = magazine_capacity(weapon) - g->hud.magazine[weapon];
+	if (needed <= 0)
+		return (show_message(g, "MAGAZINE FULL", 1.0));
+	if (g->hud.inventory[ITEM_AMMO] <= 0)
+		return (show_message(g, "NO RESERVE AMMO", MESSAGE_DISPLAY_TIME));
+	loaded = needed;
+	if (loaded > g->hud.inventory[ITEM_AMMO])
+		loaded = g->hud.inventory[ITEM_AMMO];
+	g->hud.inventory[ITEM_AMMO] -= loaded;
+	g->hud.magazine[weapon] += loaded;
+	show_message(g, "WEAPON RELOADED", 1.0);
+	play_sound_effect(g, "switch");
 }
 
 void	use_selected_item(t_game *g)
 {
-	if (g->hud.selected_item != ITEM_ARTIFACT
-		|| g->hud.inventory[ITEM_ARTIFACT] <= 0)
+	if (g->hud.selected_item == ITEM_AMMO)
+		return (reload_weapon(g));
+	if (g->hud.selected_item == ITEM_ARTIFACT
+		&& g->hud.inventory[ITEM_ARTIFACT] > 0)
 	{
-		show_message(g, "NOTHING TO USE", MESSAGE_DISPLAY_TIME);
+		toggle_fly_mode(&g->player, g);
 		return ;
 	}
-	g->hud.inventory[ITEM_ARTIFACT]--;
-	g->hud.ammo += ARTIFACT_AMMO_BONUS;
-	g->hud.health = g->hud.max_health;
-	show_message(g, "ARTIFACT USED: OVERDRIVE", MESSAGE_DISPLAY_TIME);
-	play_sound_effect(g, "pickup");
+	show_message(g, "NOTHING TO USE", MESSAGE_DISPLAY_TIME);
 }

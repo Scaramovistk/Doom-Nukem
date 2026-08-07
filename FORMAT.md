@@ -13,9 +13,19 @@ sector metadata.
 ./doom-nukem tests/maps/door_map.dnk
 ```
 
-`--edit` and `--pack` export a self-contained `.dnk` from a `.cub`. `--check`
-parses a level without opening a window and prints map, sector, angled-wall,
-sprite, and item counts.
+`--edit` opens an interactive terminal editor for the `.cub` and its optional
+same-basename `.sectors` file. Its commands edit map tokens, texture/header
+values, sector heights/slopes/light, sector-grid assignments, arbitrary wall
+segments, and delayed runtime action sequences; `save`, `validate`, and
+`pack [output.dnk]` finish the workflow.
+Type `help` in the editor for exact syntax. `--pack` is the non-interactive
+export command. `--check` parses a level without opening a window and prints
+map, sector, angled-wall, sprite, and item counts.
+
+`./doom-nukem --edit output.dnk` creates a starter packed level. Source editing
+is done with `--edit source.cub [output.dnk]` so that the `.cub` and `.sectors`
+files remain the editable project and the `.dnk` remains the self-contained
+deliverable.
 
 ## Directory convention
 
@@ -24,6 +34,12 @@ packed `.dnk` builds — this is what the in-game menu scans (`MENU_LEVEL_DIR`),
 so keeping `.cub` files out of it avoids duplicate menu entries for the same
 level. After editing a `.cub` source, re-run `--pack` to refresh its `.dnk` in
 `tests/maps/`.
+
+For authored heights and devices, place a same-basename `.sectors` file beside
+the source (for example `flight_ops.cub` + `flight_ops.sectors`). It contains
+the `SECTOR`, optional `WALL`, and `GRID` lines without section wrappers. The
+packer embeds it as `BEGIN_SECTORS`; if absent, it generates the legacy default
+two-sector grid.
 
 ## Layout
 
@@ -67,8 +83,10 @@ HUD assets are embedded automatically by `--pack`/`--edit` under fixed keys:
 `hud_ammo`, and `hud_item0` through `hud_item3` (health/ammo/key/artifact
 pickup icons). They unpack to `hud/` inside the level's temp directory and
 override the game's built-in HUD sprites, making a packed `.dnk` fully
-self-sufficient. `.dnk` files packed before this feature have no `hud_*`
-assets and fall back to the built-in sprites with no error.
+self-sufficient. Export also embeds sound/music and the default elevator-button
+sprite. Missing source assets make packing fail and remove the incomplete
+output. Packed levels never fall back to repository texture, HUD, or audio
+paths; legacy packs containing direct `.xpm` paths are rejected.
 
 `BEGIN_CUB` contains normal cub3D-compatible header and map data, except texture
 paths can be asset references.
@@ -85,9 +103,38 @@ ids 10-35.
 segment. `texture` uses the texture enum order from `ft_enumerations.h`:
 0 north, 1 south, 2 east, 3 west, 4 door, 5 sprite, 6 transparent, 7 decal.
 
+## Authored runtime actions
+
+Place `ACTION` records after `SECTOR`/`WALL` declarations and before `GRID` in
+the `.sectors` sidecar. `trigger_x trigger_y` must identify a `T` switch in the
+map. Each matching action is queued independently, so increasing delays define
+a sequence:
+
+```text
+ACTION trigger_x trigger_y delay BLOCK x y EMPTY|WALL|DOOR|GLASS|DECAL
+ACTION trigger_x trigger_y delay FLOOR sector height
+ACTION trigger_x trigger_y delay CEILING sector height
+ACTION trigger_x trigger_y delay LIGHT sector value
+ACTION trigger_x trigger_y delay TEXTURE_SWAP texture_a texture_b
+ACTION trigger_x trigger_y delay OBJECT_MOVE object_index x y
+ACTION trigger_x trigger_y delay OBJECT_BLOCK object_index 0|1
+ACTION trigger_x trigger_y delay OBJECT_SCALE object_index scale
+ACTION trigger_x trigger_y delay OBJECT_TEXTURE object_index texture
+ACTION trigger_x trigger_y delay WALL_MOVE wall_index x1 y1 x2 y2
+ACTION trigger_x trigger_y delay WALL_TEXTURE wall_index texture
+```
+
+Texture numbers use the enum order listed above. Object indices follow `V`/`v`
+map scan order, top-to-bottom then left-to-right; wall indices follow `WALL`
+declaration order. A level supports up to 32 authored actions. Invalid syntax,
+missing switches, and out-of-range sector/object/wall references make packed
+validation fail. In the editor, use `action add TX TY DELAY TYPE ARGUMENTS` or
+`action clear`.
+
 `DC` supplies the transparent decal drawn over a wall after it is hit by a
 projectile.
 
+<<<<<<< HEAD
 `VM path/to/vending_machine.xpm` supplies the sprite used for a `V` vending
 machine map tile. A map may contain at most one `V`; interact with it to buy
 10 ammo for 5 score points.
@@ -132,6 +179,29 @@ their wall surface.
 Entering its proximity range plays a short sound once; leaving and returning
 plays it again. Laptop tables are floor-aligned and intentionally have no
 minimap marker.
+=======
+Map device tokens are preserved inside the packed `BEGIN_CUB` data:
+
+- `L` is a solid wall device with a small billboard control sprite placed just
+  in front of its accessible face. Interacting with it animates every cell
+  assigned to the panel's sector. Its sprite uses decoration texture `D5`,
+  independently from the projectile-damage decal supplied by `DC`.
+- `P` is the actual secret-door cell. It renders with the directional wall
+  texture and is deliberately indistinguishable from a wall on the minimap;
+  proximity opens it automatically.
+- `B` is a locked door. Without a key it remains closed and displays feedback;
+  pressing `E` with an `8` key pickup in inventory consumes one key, unlocks
+  the door permanently, and opens it. Timed/global door events respect locks.
+- `9` is the jetpack/artifact pickup used to authorize flight.
+- `8` is a key pickup used by `B` doors.
+- `7` is reserve ammunition; selecting inventory slot 2 and pressing Enter
+  transfers it into the active weapon's magazine.
+- `V` places a solid generic world object using the `SP`/`SP0`-`SP7` visual.
+  `v` places the same object as pass-through. Collision is circular and derived
+  from the rendered object's scale rather than occupying its entire map cell.
+  Active enemies use the same radius-based player collision; pickups and
+  ordinary `a`-`f` decorations remain pass-through.
+>>>>>>> origin/extras
 
 ## Non-grid rooms
 

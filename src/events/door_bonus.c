@@ -28,11 +28,19 @@ void	init_door_grid(t_game *g)
 			{
 				g->map.doors[pos.y][pos.x].opening_state = 0.0;
 				g->map.doors[pos.y][pos.x].is_opening = false;
+				g->map.doors[pos.y][pos.x].is_secret
+					= is_secret_cell(g, pos);
+				g->map.doors[pos.y][pos.x].is_locked
+					= is_locked_cell(g, pos);
+				g->map.doors[pos.y][pos.x].discovered = false;
 			}
 			else
 			{
 				g->map.doors[pos.y][pos.x].opening_state = -1.0;
 				g->map.doors[pos.y][pos.x].is_opening = false;
+				g->map.doors[pos.y][pos.x].is_secret = false;
+				g->map.doors[pos.y][pos.x].is_locked = false;
+				g->map.doors[pos.y][pos.x].discovered = false;
 			}
 			pos.x++;
 		}
@@ -89,5 +97,6 @@ void	open_one_door(t_game *g, t_coord target)
 		return ;
 	if (g->map.grid[target.y][target.x] != DOOR)
 		return ;
-	g->map.doors[target.y][target.x].is_opening = true;
+	if (!g->map.doors[target.y][target.x].is_locked)
+		g->map.doors[target.y][target.x].is_opening = true;
 }

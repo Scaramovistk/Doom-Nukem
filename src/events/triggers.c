@@ -28,9 +28,19 @@ static bool	in_zone(t_coord cell, t_coord *zones, int count)
 
 static bool	apply_hazard(t_game *g, t_coord cell)
 {
+	int	damage;
+
 	if (!in_zone(cell, g->map.hazard_zones, g->map.hazard_count))
+	{
+		g->hazard_damage_accumulator = 0.0;
 		return (false);
-	g->hud.health -= (int)(HAZARD_DAMAGE_PER_SEC * g->delta_time);
+	}
+	g->hazard_damage_accumulator += HAZARD_DAMAGE_PER_SEC * g->delta_time;
+	damage = (int)(g->hazard_damage_accumulator + HAZARD_DAMAGE_EPSILON);
+	g->hazard_damage_accumulator -= damage;
+	if (g->hazard_damage_accumulator < 0.0)
+		g->hazard_damage_accumulator = 0.0;
+	g->hud.health -= damage;
 	if (g->hud.health < 0)
 		g->hud.health = 0;
 	return (true);
@@ -38,7 +48,7 @@ static bool	apply_hazard(t_game *g, t_coord cell)
 
 void	show_context_message(t_game *g)
 {
-	static const char	*logs[5] = {
+	const char *const	logs[5] = {
 		"UAC LOG: PHOBOS EVACUATION FAILED",
 		"LAB LOG: QUARANTINE BREACH CONFIRMED",
 		"HELL RELAY: THE SIGNAL COMES FROM BELOW",
@@ -62,6 +72,7 @@ static bool	apply_message(t_game *g, t_coord cell)
 	return (false);
 }
 
+<<<<<<< HEAD
 static bool	update_laptop_proximity(t_game *g)
 {
 	int		i;
@@ -88,6 +99,29 @@ static bool	update_laptop_proximity(t_game *g)
 		i++;
 	}
 	return (active);
+=======
+static bool	open_nearby_secret(t_game *g)
+{
+	t_coord	secret;
+	double	dx;
+	double	dy;
+	int		i;
+
+	i = 0;
+	while (i < g->map.secret_count)
+	{
+		secret = g->map.secrets[i++];
+		dx = secret.x + 0.5 - g->player.pos.x;
+		dy = secret.y + 0.5 - g->player.pos.y;
+		if (dx * dx + dy * dy <= SECRET_OPEN_RADIUS * SECRET_OPEN_RADIUS
+			&& !g->map.doors[secret.y][secret.x].discovered)
+		{
+			trigger_secret_switch(g, secret);
+			return (true);
+		}
+	}
+	return (false);
+>>>>>>> origin/extras
 }
 
 bool	update_proximity_triggers(t_game *g)
@@ -100,5 +134,9 @@ bool	update_proximity_triggers(t_game *g)
 	cell.y = (int)g->player.pos.y;
 	hazard = apply_hazard(g, cell);
 	message = apply_message(g, cell);
+<<<<<<< HEAD
 	return (hazard || message || update_laptop_proximity(g));
+=======
+	return (hazard || message || open_nearby_secret(g));
+>>>>>>> origin/extras
 }

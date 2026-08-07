@@ -45,6 +45,37 @@ static void	relink_moved_item(t_game *g, int old_index, int new_index)
 			g->map.laptops[i].sprite_index = new_index;
 		i++;
 	}
+	i = 0;
+	while (i < g->map.decoration_count)
+	{
+		if (g->map.decorations[i].sprite_index == old_index)
+		{
+			g->map.decorations[i].sprite_index = new_index;
+			return ;
+		}
+		i++;
+	}
+	i = 0;
+	while (i < g->map.object_count)
+	{
+		if (g->map.objects[i].sprite_index == old_index)
+		{
+			g->map.objects[i].sprite_index = new_index;
+			return ;
+		}
+		i++;
+	}
+	i = 0;
+	while (i < g->map.enemy_count)
+	{
+		if (g->map.enemies[i].active
+			&& g->map.enemies[i].sprite_index == old_index)
+		{
+			g->map.enemies[i].sprite_index = new_index;
+			return ;
+		}
+		i++;
+	}
 }
 
 static void	remove_item_sprite(t_item *item, t_game *g)
@@ -91,21 +122,46 @@ void	update_item_pickups(t_game *g)
 	}
 }
 
-bool	is_item_blocking(t_coord cell, t_game *g)
+static bool	inside_collision_radius(t_position a, t_position b, double radius)
 {
+	double	dx;
+	double	dy;
+
+	dx = a.x - b.x;
+	dy = a.y - b.y;
+	return (dx * dx + dy * dy < radius * radius);
+}
+
+bool	is_object_blocking(t_position pos, t_game *g)
+{
+	double	radius;
 	int		i;
-	t_coord	item_cell;
 
 	i = 0;
 	while (i < g->map.item_count)
 	{
-		if (g->map.items[i].active && g->map.items[i].blocks_passage)
-		{
-			item_cell.x = (int)g->map.items[i].pos.x;
-			item_cell.y = (int)g->map.items[i].pos.y;
-			if (item_cell.x == cell.x && item_cell.y == cell.y)
-				return (true);
-		}
+		if (g->map.items[i].active && g->map.items[i].blocks_passage
+			&& inside_collision_radius(pos, g->map.items[i].pos,
+				ITEM_PICKUP_RADIUS + COLLISION_SAFETY))
+			return (true);
+		i++;
+	}
+	i = 0;
+	while (i < g->map.object_count)
+	{
+		radius = g->map.objects[i].collision_radius + COLLISION_SAFETY;
+		if (g->map.objects[i].blocks_passage
+			&& inside_collision_radius(pos, g->map.objects[i].pos, radius))
+			return (true);
+		i++;
+	}
+	i = 0;
+	while (i < g->map.enemy_count)
+	{
+		if (g->map.enemies[i].active && inside_collision_radius(pos,
+				g->map.enemies[i].pos,
+				ENEMY_COLLISION_RADIUS + COLLISION_SAFETY))
+			return (true);
 		i++;
 	}
 	return (false);

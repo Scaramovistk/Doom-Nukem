@@ -64,11 +64,55 @@ static void	init_sprite_draw(t_sprite_draw *s, t_position pos, int index,
 				/ s->transform_y));
 }
 
+static t_decoration	*sprite_decoration(t_sprite_draw *s, t_game *g)
+{
+	int	i;
+
+	i = 0;
+	while (i < g->map.decoration_count)
+	{
+		if (g->map.decorations[i].sprite_index == s->sprite_index)
+			return (&g->map.decorations[i]);
+		i++;
+	}
+	return (NULL);
+}
+
+static t_world_object	*sprite_object(t_sprite_draw *s, t_game *g)
+{
+	int	i;
+
+	i = 0;
+	while (i < g->map.object_count)
+	{
+		if (g->map.objects[i].sprite_index == s->sprite_index)
+			return (&g->map.objects[i]);
+		i++;
+	}
+	return (NULL);
+}
+
 static void	set_sprite_bounds(t_sprite_draw *s, t_game *g)
 {
-	s->height = abs((int)(WIN_HEIGHT / s->transform_y));
+	t_decoration	*decoration;
+	t_world_object	*object;
+	double			scale;
+	double			bottom_z;
+
+	scale = 1.0;
+	bottom_z = get_floor_z_at(g, s->pos);
+	decoration = sprite_decoration(s, g);
+	if (decoration)
+	{
+		scale = decoration->scale;
+		bottom_z += decoration->z_offset;
+	}
+	object = sprite_object(s, g);
+	if (object)
+		scale = object->scale;
+	s->height = abs((int)(WIN_HEIGHT * scale / s->transform_y));
 	s->width = s->height;
-	s->bottom = project_world_z(get_floor_z_at(g, s->pos), s->transform_y, g);
+	s->bottom = project_world_z(bottom_z, s->transform_y, g);
 	s->raw_top = s->bottom - s->height;
 	s->top = s->raw_top;
 	if (s->top < 0)
@@ -91,10 +135,12 @@ static bool	is_sprite_transparent(int transparent_color, int color)
 
 static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 {
+	t_world_object	*object;
 	double	angle;
 	int		frame;
 	int		i;
 
+<<<<<<< HEAD
 	if (g->map.has_flag && !g->map.flag_carried
 		&& g->map.flag_sprite_index == s->sprite_index)
 		return (&g->assets.item_icons[ITEM_ARTIFACT]);
@@ -110,6 +156,11 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 			return (&g->assets.laptop);
 		i++;
 	}
+=======
+	object = sprite_object(s, g);
+	if (object && object->texture != SPRITE_T)
+		return (&g->assets.textures[object->texture]);
+>>>>>>> origin/extras
 	i = 0;
 	while (i < g->map.item_count)
 	{
@@ -121,6 +172,17 @@ static t_texture	*get_sprite_texture(t_sprite_draw *s, t_game *g)
 		i++;
 	}
 	i = 0;
+<<<<<<< HEAD
+=======
+	while (i < g->map.decoration_count)
+	{
+		if (g->map.decorations[i].sprite_index == s->sprite_index
+			&& g->assets.decoration_icons[g->map.decorations[i].type].img.ptr)
+			return (&g->assets.decoration_icons[g->map.decorations[i].type]);
+		i++;
+	}
+	i = 0;
+>>>>>>> origin/extras
 	while (i < g->map.enemy_count)
 	{
 		if (g->map.enemies[i].active
@@ -275,7 +337,8 @@ void	draw_sprites(t_game *g, double *z_buffer, t_ray *rays)
 		return ;
 	if (!g->assets.textures[SPRITE_T].img.ptr && !g->assets.has_sprite_frames
 		&& !g->assets.item_icons[0].img.ptr
-		&& !g->assets.enemy_icons[0].img.ptr)
+		&& !g->assets.enemy_icons[0].img.ptr
+		&& !g->assets.decoration_icons[ELEVATOR_BUTTON_DECORATION].img.ptr)
 		return ;
 	sprites = malloc(g->map.sprite_count * sizeof(t_sprite_draw));
 	if (!sprites)

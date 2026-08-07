@@ -41,7 +41,9 @@ static void	clamp_player_z(t_player *p, t_game *g)
 	double	max_z;
 
 	floor_z = get_floor_z_at(g, p->pos);
-	max_z = floor_z + PLAYER_MAX_Z;
+	max_z = get_ceiling_z_at(g, p->pos) - p->eye_height;
+	if (max_z > floor_z + PLAYER_MAX_Z)
+		max_z = floor_z + PLAYER_MAX_Z;
 	if (p->z < floor_z)
 		p->z = floor_z;
 	else if (p->z > max_z)
@@ -67,6 +69,10 @@ void	toggle_fly_mode(t_player *p, t_game *g)
 		else
 			p->on_ground = false;
 	}
+	else
+		show_message(g, "JETPACK ENGAGED", 1.0);
+	if (!p->is_flying)
+		show_message(g, "JETPACK DISENGAGED", 1.0);
 }
 
 void	jump_player(t_player *p)
@@ -169,9 +175,19 @@ bool	is_position_legal(t_position pos, t_game *g)
 	target_floor = get_floor_z_at(g, pos);
 	if (segment_blocks_position(g, pos))
 		return (false);
-	if (target_floor > current_floor + PLAYER_STEP_HEIGHT)
+	if (is_object_blocking(pos, g))
 		return (false);
-	if (get_ceiling_z_at(g, pos) - target_floor < g->player.eye_height)
+	if (!has_free_movement(&g->player)
+		&& target_floor > current_floor + PLAYER_STEP_HEIGHT)
+		return (false);
+	if (has_free_movement(&g->player)
+		&& target_floor > g->player.z + PLAYER_STEP_HEIGHT)
+		return (false);
+	if (has_free_movement(&g->player)
+		&& g->player.z + g->player.eye_height > get_ceiling_z_at(g, pos))
+		return (false);
+	if (!has_free_movement(&g->player)
+		&& get_ceiling_z_at(g, pos) - target_floor < g->player.eye_height)
 		return (false);
 	i = 0;
 	while (i < 4)
@@ -181,8 +197,6 @@ bool	is_position_legal(t_position pos, t_game *g)
 		if (block == WALL || block == TRANSPARENT_WALL || block == DECAL_WALL)
 			return (false);
 		if (block == DOOR && !is_door_open(cell, g->map.doors))
-			return (false);
-		if (is_item_blocking(cell, g))
 			return (false);
 		i++;
 	}

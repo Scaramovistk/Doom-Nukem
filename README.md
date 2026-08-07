@@ -45,11 +45,32 @@ Or open the level select menu:
 
 ## Editor / Packing
 
-Create or refresh a self-contained packed level:
+Open an editable `.cub` project in the interactive terminal editor:
 
 ```sh
-./doom-nukem --edit tests/maps/door_map.cub tests/maps/door_map.dnk
+./doom-nukem --edit tests/maps_src/door_map.cub tests/maps/door_map.dnk
 ```
+
+The editor can place map devices/entities, change texture headers, define floor
+and ceiling heights, slopes and lighting, assign sector cells, add arbitrary
+wall segments, save the `.cub`/`.sectors` sources, validate them, and pack the
+result. Type `help` in the editor for the complete command list.
+The map token `V` authors a solid sprite object and `v` authors its
+pass-through counterpart; collision is sized to the rendered object.
+`action add` attaches delayed runtime mutations to `T` switches, including
+geometry, sector height/light, texture, object, and arbitrary-wall changes.
+
+For a non-interactive rebuild, use:
+
+```sh
+./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
+```
+
+Packing embeds every referenced texture plus the HUD, elevator control, music,
+and sound effects. Export fails instead of leaving a partial `.dnk` when any
+required asset cannot be read.
+
+To create a starter packed level, use `./doom-nukem --edit output.dnk`.
 
 Validate a level without opening a window:
 
@@ -62,7 +83,7 @@ slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 
 ## Controls
 
-- `W` / `S`: move forward and backward
+- `W` / `S` or Arrow Up / Down: move forward and backward
 - `A` / `D`: strafe
 - Arrow left/right: rotate
 - Mouse: look around
@@ -70,11 +91,13 @@ slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
 - Shift: run
 - Ctrl: crouch, or descend while flying/swimming
 - Space: jump, or ascend while flying/swimming
-- `F`: toggle fly mode
-- `E`: interact with doors
-- Left mouse or `R`: fire projectile
+- `F`: engage/disengage the jetpack after collecting the artifact pickup
+- `E`: interact with doors, switches, elevator panels, and keyed doors
+- Left mouse: fire projectile
+- `R`: reload the selected weapon from reserve ammo
 - `Q`: switch weapon
 - `1` / `2` / `3` / `4`: select carried artifact slot
+- Enter: use the selected inventory slot (`2` reloads, `4` toggles jetpack)
 - Esc or window close button: quit cleanly
 
 Campaign maps use one `V` vending-machine tile. Interact with it to spend
@@ -89,11 +112,23 @@ starts the selected level.
 
 ## HUD
 
-The frame buffer HUD renders health, ammo, inventory slots, and score/currency
+The frame buffer HUD renders health, the selected weapon's magazine, inventory
+slots, and score/currency
 as separate overlay elements. The minimap is shown in the top-left, score is
 centered at the top, FPS is shown in the top-right, and the view includes a
 crosshair plus a bottom-center XPM weapon sprite. Ammo and inventory slots use
 the same HUD icon asset set as pickup items.
+
+## Asset Layout
+
+All project-owned runtime media is grouped under `assets/`:
+
+- `assets/images/hud/` contains HUD and weapon sprites.
+- `assets/images/textures/blue/`, `classic/`, and `doom/` contain level images.
+- `assets/sounds/` contains sound effects and music.
+
+See `assets/README.md` for the packing convention. MiniLibX's own test fixtures
+remain inside `lib/` with the vendored dependency.
 
 ## Scripted Events
 
@@ -102,12 +137,32 @@ it shows a message, adds score, toggles doors after a short delay, then closes
 doors again after a timer. Two additional switch types target a single
 specific device instead of every door on the map:
 
-- `L` — elevator switch. Animates the floor of the sector beneath it between
-  its resting height and a raised height over `ELEVATOR_DURATION` seconds,
-  clamped so it can never rise into the ceiling. Triggering it again lowers it
-  back down.
-- `P` — secret-passage switch. Opens the single nearest `2` door tile after a
-  short delay, leaving every other door on the map untouched.
+- `L` — solid wall device with a dedicated, hand-height button sprite. The
+  sector assigned to its map cell is the lift target. Press `E` at the button
+  to raise/lower that sector over `ELEVATOR_DURATION`; a grounded player on the
+  platform rides it smoothly. The button sprite is separate from damage decals.
+- `P` — disguised secret door. It uses the surrounding wall texture, is drawn
+  as an ordinary wall on the minimap, and opens automatically when approached.
+  It does not require a key or the interact key.
+- `B` — locked door. Collect an `8` key pickup and press `E` at the door to
+  consume one key, permanently unlock it, and begin the normal door animation.
+  `door_map.dnk` demonstrates the complete pickup-to-unlock path.
+
+## Reloading and Flight
+
+Ammo pickups go into inventory slot 2 as reserve ammunition rather than
+directly filling the gun. Each weapon has its own magazine. Select slot 2 and
+press Enter to reload, or use `R` as the shortcut. Empty-magazine feedback
+points the player back to the ammo inventory.
+
+The slot-4 artifact is a jetpack. Once collected, select it and press Enter (or
+press `F`) to engage flight. Space/Ctrl ascend and descend, and looking up or
+down while moving adds smooth pitch-directed climb. Flight respects floors,
+ceilings, walls, and raised ledges.
+
+`tests/maps/flight_ops.dnk` is the hand-in showcase mission for all four
+features: hidden passage, inventory reload, wall-panel elevator, and a required
+jetpack crossing over a deep shaft.
 
 ## Text Overlay
 

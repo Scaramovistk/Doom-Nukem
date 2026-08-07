@@ -132,7 +132,8 @@ void	ft_int_hud(t_hud *hud)
 
 	hud->health = 100;
 	hud->max_health = 100;
-	hud->ammo = 30;
+	hud->magazine[0] = PISTOL_MAGAZINE_SIZE;
+	hud->magazine[1] = BLASTER_MAGAZINE_SIZE;
 	hud->score = 0;
 	hud->fps = 0;
 	hud->selected_item = 0;
@@ -141,6 +142,7 @@ void	ft_int_hud(t_hud *hud)
 	i = 0;
 	while (i < 4)
 		hud->inventory[i++] = 0;
+	hud->inventory[ITEM_AMMO] = STARTING_RESERVE_AMMO;
 }
 
 void	ft_init_map(t_map *map)
@@ -172,17 +174,25 @@ void	ft_init_map(t_map *map)
 	map->item_count = 0;
 	map->decorations = NULL;
 	map->decoration_count = 0;
+<<<<<<< HEAD
 	map->vending_machine.pos = (t_position){0.0, 0.0};
 	map->vending_machine.sprite_index = -1;
 	map->vending_machine.active = false;
 	map->laptops = NULL;
 	map->laptop_count = 0;
+=======
+	map->objects = NULL;
+	map->object_count = 0;
+	map->action_count = 0;
+>>>>>>> origin/extras
 	map->switches = NULL;
 	map->switch_count = 0;
 	map->elevators = NULL;
 	map->elevator_count = 0;
 	map->secrets = NULL;
 	map->secret_count = 0;
+	map->locked_doors = NULL;
+	map->locked_door_count = 0;
 	map->hazard_zones = NULL;
 	map->hazard_count = 0;
 	map->message_zones = NULL;
@@ -310,7 +320,9 @@ void	init_game_struct(t_game *g)
 	g->mlx = NULL;
 	g->mlx_win = NULL;
 	g->unpacked_level = false;
+	g->last_frame_time = 0.0;
 	g->unpack_dir[0] = '\0';
 	g->level_source[0] = '\0';
 	g->delta_time = 0.0;
+	g->hazard_damage_accumulator = 0.0;
 }
