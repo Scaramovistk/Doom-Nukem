@@ -12,6 +12,27 @@
 
 #include "../../include/cub3d.h"
 
+static void	init_door_cell(t_game *g, t_coord pos)
+{
+	t_door	*door;
+
+	door = &g->map.doors[pos.y][pos.x];
+	door->is_opening = false;
+	door->discovered = false;
+	if (g->map.grid[pos.y][pos.x] == DOOR)
+	{
+		door->opening_state = 0.0;
+		door->is_secret = is_secret_cell(g, pos);
+		door->is_locked = is_locked_cell(g, pos);
+	}
+	else
+	{
+		door->opening_state = -1.0;
+		door->is_secret = false;
+		door->is_locked = false;
+	}
+}
+
 void	init_door_grid(t_game *g)
 {
 	t_coord	pos;
@@ -24,24 +45,7 @@ void	init_door_grid(t_game *g)
 		pos.x = 0;
 		while (pos.x < g->map.width)
 		{
-			if (g->map.grid[pos.y][pos.x] == DOOR)
-			{
-				g->map.doors[pos.y][pos.x].opening_state = 0.0;
-				g->map.doors[pos.y][pos.x].is_opening = false;
-				g->map.doors[pos.y][pos.x].is_secret
-					= is_secret_cell(g, pos);
-				g->map.doors[pos.y][pos.x].is_locked
-					= is_locked_cell(g, pos);
-				g->map.doors[pos.y][pos.x].discovered = false;
-			}
-			else
-			{
-				g->map.doors[pos.y][pos.x].opening_state = -1.0;
-				g->map.doors[pos.y][pos.x].is_opening = false;
-				g->map.doors[pos.y][pos.x].is_secret = false;
-				g->map.doors[pos.y][pos.x].is_locked = false;
-				g->map.doors[pos.y][pos.x].discovered = false;
-			}
+			init_door_cell(g, pos);
 			pos.x++;
 		}
 		pos.y++;

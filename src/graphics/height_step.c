@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   height_step.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ int	get_sector_id_at_cell(t_game *g, t_coord cell)
 	return (id);
 }
 
-static bool	sector_height_differs(t_game *g, t_position near,
-		t_position far)
+static bool	sector_height_differs(t_game *g, t_position near, t_position far)
 {
 	return (fabs(get_floor_z_at(g, near) - get_floor_z_at(g, far)) > 0.01
 		|| fabs(get_ceiling_z_at(g, near) - get_ceiling_z_at(g, far)) > 0.01);
@@ -34,9 +33,9 @@ static bool	sector_height_differs(t_game *g, t_position near,
 
 void	record_height_step(t_dda *dda, t_ray *ray, t_game *g, int *prev_sector)
 {
-	int	new_sector;
-	int	n;
-	double	distance;
+	int			new_sector;
+	int			n;
+	double		distance;
 	t_position	near;
 	t_position	far;
 
@@ -69,42 +68,4 @@ double	step_far_d(t_ray *ray, int i)
 	if (i < ray->height_step_count)
 		return (ray->height_steps[i].distance);
 	return (ray->distance);
-}
-
-static bool	z_range_contains_screen_y(double low, double high,
-		double distance, int y, t_game *g)
-{
-	int	top;
-	int	bottom;
-
-	top = project_world_z(high, distance, g);
-	bottom = project_world_z(low, distance, g);
-	return (y >= top && y < bottom);
-}
-
-bool	height_step_occludes_pixel(t_ray *ray, double depth, int y, t_game *g)
-{
-	t_position	near;
-	t_position	far;
-	int			i;
-
-	i = 0;
-	while (i < ray->height_step_count)
-	{
-		if (depth > ray->height_steps[i].distance)
-		{
-			near = ray_world_pos(ray, ray->height_steps[i].distance, g);
-			far.x = near.x + ray->dir.x * 0.02;
-			far.y = near.y + ray->dir.y * 0.02;
-			if (z_range_contains_screen_y(fmin(get_floor_z_at(g, near),
-					get_floor_z_at(g, far)), fmax(get_floor_z_at(g, near),
-					get_floor_z_at(g, far)), ray->height_steps[i].distance, y, g)
-				|| z_range_contains_screen_y(fmin(get_ceiling_z_at(g, near),
-					get_ceiling_z_at(g, far)), fmax(get_ceiling_z_at(g, near),
-					get_ceiling_z_at(g, far)), ray->height_steps[i].distance, y, g))
-				return (true);
-		}
-		i++;
-	}
-	return (false);
 }

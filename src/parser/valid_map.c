@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   valid_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 21:53:10 by rperez-t          #+#    #+#             */
 /*   Updated: 2024/07/16 21:53:13 by rperez-t         ###   ########.fr       */
@@ -115,10 +115,9 @@ int	ft_valid_map_helper(char **map, char **cp, int lines, int *player)
 
 int	ft_valid_map(char **map, int lines, t_game *g)
 {
-	int				vals[2];
-	char			**copy;
-	int				player[3];
-	const double	calibrate = COLLISION_SAFETY * 4;
+	int		vals[2];
+	char	**copy;
+	int		player[3];
 
 	vals[0] = -1;
 	vals[1] = 0;
@@ -138,9 +137,6 @@ int	ft_valid_map(char **map, int lines, t_game *g)
 	vals[0] = ft_valid_map_helper(map, copy, lines, player);
 	if (!vals[0])
 		return (ft_map_error(NULL, NULL, 0, 0));
-	g->player.pos.y = player[0] + calibrate;
-	g->player.pos.x = player[1] + calibrate;
-	g->map.flag_base = (t_position){player[1] + 0.5, player[0] + 0.5};
-	g->player.look = map[player[0]][player[1]];
+	ft_set_player_from_map(g, map, player);
 	return (1);
 }

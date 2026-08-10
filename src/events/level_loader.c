@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   level_loader.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 00:00:00 by rperez-t          #+#    #+#             */
 /*   Updated: 2026/07/27 00:00:00 by rperez-t         ###   ########.fr       */
@@ -58,10 +58,22 @@ static int	campaign_level_from_path(char *path)
 	else
 		name = path;
 	if (ft_strlen(name) == 8 && name[0] == 'e' && name[1] == '1'
-		&& name[2] == 'm' && name[3] >= '1' && name[3] <= '5'
-		&& !ft_strcmp(name + 4, ".dnk"))
+		&& name[2] == 'm' && name[3] >= '1' && name[3] <= '5' && !ft_strcmp(name
+			+ 4, ".dnk"))
 		return (name[3] - '0');
 	return (0);
+}
+
+static void	finish_level_load(t_game *g)
+{
+	compute_sector_origins(g);
+	init_bsp_visibility(g);
+	load_game(g);
+	apply_difficulty(g);
+	setup_hooks(g);
+	start_level_flow(g);
+	start_background_music(g);
+	render(g);
 }
 
 bool	load_level_path(t_game *g, char *path)
@@ -84,13 +96,6 @@ bool	load_level_path(t_game *g, char *path)
 		g->campaign_mode = false;
 	g->story_visible = g->campaign_mode;
 	g->story_is_debrief = false;
-	compute_sector_origins(g);
-	init_bsp_visibility(g);
-	load_game(g);
-	apply_difficulty(g);
-	setup_hooks(g);
-	start_level_flow(g);
-	start_background_music(g);
-	render(g);
+	finish_level_load(g);
 	return (true);
 }

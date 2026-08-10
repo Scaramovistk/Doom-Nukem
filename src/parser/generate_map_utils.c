@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   generate_map_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ void	add_locked_doors(char **map, int lines, int width, t_game *g)
 	g->map.locked_door_count = count_char_at(map, lines, width, 'B');
 	if (!g->map.locked_door_count)
 		return ;
-	g->map.locked_doors = calloc_s(g->map.locked_door_count,
-			sizeof(t_coord), g);
+	g->map.locked_doors = calloc_s(g->map.locked_door_count, sizeof(t_coord),
+			g);
 	i = 0;
 	vert = -1;
 	while (++vert < lines)

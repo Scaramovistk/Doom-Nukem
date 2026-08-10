@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   valid_header_check_bonus.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 21:52:50 by rperez-t          #+#    #+#             */
 /*   Updated: 2024/07/16 22:06:37 by rperez-t         ###   ########.fr       */

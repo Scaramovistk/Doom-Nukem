@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_step_bands.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ static int	sample_texture(t_texture *tex, t_position world)
 	int	tex_x;
 	int	tex_y;
 
-	tex_x = (int)(TEXTURE_SIZE * (world.x - floor(world.x)))
-		& (TEXTURE_SIZE - 1);
-	tex_y = (int)(TEXTURE_SIZE * (world.y - floor(world.y)))
-		& (TEXTURE_SIZE - 1);
+	tex_x = (int)(TEXTURE_SIZE * (world.x - floor(world.x))) & (TEXTURE_SIZE
+			- 1);
+	tex_y = (int)(TEXTURE_SIZE * (world.y - floor(world.y))) & (TEXTURE_SIZE
+			- 1);
 	return (get_pixel(&tex->img, tex_x, tex_y));
 }
 

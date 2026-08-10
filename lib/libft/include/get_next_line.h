@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 18:54:25 by gscarama          #+#    #+#             */
 /*   Updated: 2024/06/27 18:23:45 by rperez-t         ###   ########.fr       */
@@ -28,11 +28,11 @@
 #  error "Unsupported operating system"
 # endif
 
+# include <limits.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <limits.h>
-# include <stdbool.h>
 
 char	*get_next_line(int fd, bool cleaner);
 char	*extract_line(char *line, char *stash, int *eol_loc, int fd);

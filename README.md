@@ -1,256 +1,420 @@
 # Doom-Nukem
 
-Single-executable Doom-Nukem raycaster built from the cub3D base.
+`Doom-Nukem` is a software-rendered first-person game written in C. It starts
+with the ray-casting ideas used by Wolfenstein 3D and cub3D, then adds the
+rooms, heights, objects, enemies, interactions, projectiles, story, sound, and
+level editor expected from a small Doom or Duke Nukem-style engine.
+
+The executable does more than run the game. It can also edit source levels,
+pack them with all their assets, and validate the resulting self-contained
+level files.
+
+## What kind of game is this?
+
+The player explores a world from a first-person point of view. Walls are not
+drawn with a 3D graphics library. Instead, the engine sends rays into a 2D map
+and calculates which surfaces each ray reaches.
+
+Think of each vertical screen column as one distance measurement:
+
+```text
+player -> ray -> nearest wall, door, glass, or angled segment
+                  |
+                  +----> distance
+                  +----> texture position
+                  +----> floor and ceiling height
+                  +----> sector light
+                              |
+                              v
+                       one screen column
+```
+
+Repeating this across the window creates the 3D view. Floors, ceilings,
+sprites, transparent surfaces, projectiles, and the HUD are drawn around that
+wall pass.
+
+## A few basic words
+
+- **Ray casting:** tracing rays through a 2D world to calculate a first-person
+  image.
+- **Sector:** an area with its own floor height, ceiling height, slopes, and
+  light level.
+- **Sprite:** a 2D image placed in the world and projected toward the camera.
+- **Billboard:** a sprite that always faces the player.
+- **HUD:** the health, ammunition, inventory, score, weapon, minimap, and other
+  information drawn over the world.
+- **Source level:** an editable `.cub` map and its optional `.sectors` file.
+- **Packed level:** a self-contained `.dnk` file containing the map, sectors,
+  textures, HUD images, sound effects, and music.
+
+## How does the renderer work?
+
+For every frame, the engine first calculates the player's direction and view
+plane. A ray is then sent through every horizontal position in the window.
+
+The grid DDA pass finds walls and devices such as doors, glass, secret
+passages, and elevator panels. A second intersection pass handles arbitrary
+angled wall segments. The renderer keeps the closest visible result while
+also recording transparent surfaces and height changes that may affect later
+drawing.
+
+The frame is assembled in this order:
+
+```text
+floor, ceiling, and sky
+          |
+          v
+walls, doors, glass, decals, and height transitions
+          |
+          v
+objects, decorations, enemies, items, and projectiles
+          |
+          v
+messages, minimap, crosshair, weapon, and HUD
+```
+
+Wall columns are divided into bands and rendered with POSIX threads. The
+threads are joined before sprites and overlays are drawn, so depth information
+is complete before the final passes begin.
+
+## World and gameplay features
+
+The engine supports:
+
+- textured walls, floors, ceilings, and skies;
+- rooms with different floor and ceiling heights;
+- continuous sloped floors and ceilings;
+- arbitrary angled wall segments and non-rectangular rooms;
+- transparent walls, wall decorations, and projectile decals;
+- billboard decorations and direction-aware object sprites;
+- sector lighting applied to walls, objects, and characters;
+- walking, strafing, running, jumping, crouching, falling, and flight;
+- doors, locked doors, switches, elevators, hazards, and secret passages;
+- pickups, inventory slots, magazines, reserve ammunition, and a jetpack;
+- melee and ranged enemies with movement, attacks, health, and score rewards;
+- player and enemy projectiles with world and entity collision;
+- timed authored actions that can change geometry and world properties;
+- campaign missions, exits, failure states, and capture-the-flag levels;
+- overlapping sound effects, looping music, text messages, and a multi-part
+  HUD.
+
+## Project requirements
+
+- The executable is named `doom-nukem`.
+- The project is written in C and follows the 42 Norm.
+- Rendering is performed in software without a hardware-accelerated 3D API.
+- MinilibX is used for window, image, pixel, and input management.
+- No mutable global variables are used.
+- Errors must not cause crashes, double frees, or unexpected exits.
+- A level editor and a self-contained packed level format are included.
 
 ## Dependencies
 
-- MinilibX (bundled under `lib/`)
-- SDL2 or ALSA (sound and music playback). SDL2 is preferred when available;
-  on Linux the Makefile automatically falls back to native ALSA
-  (`libasound2-dev`) when SDL2 is not installed.
+MinilibX and libft are included under `lib/`.
 
-MiniLibX uses AppKit/OpenGL on macOS and X11 on Linux. The game itself always
-renders ray-cast pixels in software; it does not use OpenGL as a 3D renderer,
-which keeps it within the subject's no-hardware-acceleration requirement.
+On Linux, MinilibX uses X11. SDL2 is preferred for audio when it is installed;
+otherwise the Makefile uses ALSA. The usual development dependencies are:
 
-## Build
+```text
+compiler, make, pkg-config, X11/Xext, and either SDL2 or ALSA
+```
+
+On macOS, MinilibX uses AppKit and OpenGL for window management, while SDL2 is
+required for audio. OpenGL is not used as the game's 3D renderer.
+
+## Building the program
+
+Build the executable:
 
 ```sh
 make
 ```
 
-This produces:
-
-```text
-./doom-nukem
-```
-
-## Run
-
-```sh
-./doom-nukem tests/maps/simple_map.cub
-```
-
-Packed, self-contained `.dnk` levels are also supported:
-
-```sh
-./doom-nukem tests/maps/door_map.dnk
-```
-
-Or open the level select menu:
-
-```sh
-./doom-nukem
-```
-
-## Editor / Packing
-
-Open an editable `.cub` project in the graphical level editor:
-
-```sh
-./doom-nukem --edit tests/maps_src/door_map.cub tests/maps/door_map.dnk
-```
-
-The editor presents the level as a clickable grid with geometry, entity and
-object tools. Its side panel also changes texture sets, floor/ceiling heights,
-slopes and lighting, assigns sector cells, adds actions, saves the editable
-sources, validates them, and packs the self-contained `.dnk` result. Keyboard
-shortcuts are printed in the editor window. Press `0` or `F11` in the editor,
-menu, or game to toggle fullscreen and windowed mode. The floor brush uses `Z`
-in the editor because `0` is reserved for the display-mode toggle.
-
-Wall height is defined in the same-basename `.sectors` sidecar, not in the
-`.cub` map. A sector line uses the following format:
-
-```text
-SECTOR <id> <floor_height> <ceiling_height> <slope_x> <slope_y> <light>
-```
-
-For example, this gives sector `0` a floor at `0.0` and ceiling at `2.0`,
-making its walls two world units high:
-
-```text
-SECTOR 0 0.0 2.0 0.0 0.0 255
-```
-
-The map token `V` authors a solid sprite object and `v` authors its
-pass-through counterpart; collision is sized to the rendered object.
-`action add` attaches delayed runtime mutations to `T` switches, including
-geometry, sector height/light, texture, object, and arbitrary-wall changes.
-
-For a non-interactive rebuild, use:
-
-```sh
-./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
-```
-
-To rebuild every editable map into `tests/maps/`, run:
+Build every editable map into `tests/maps/`:
 
 ```sh
 make maps
 ```
 
-Packing embeds every referenced texture plus the HUD, elevator control, music,
-and sound effects. Export fails instead of leaving a partial `.dnk` when any
-required asset cannot be read.
+Remove object files:
 
-To create a starter packed level, use `./doom-nukem --edit output.dnk`.
+```sh
+make clean
+```
 
-Validate a level without opening a window:
+Remove the executable, objects, and generated packed maps:
+
+```sh
+make fclean
+```
+
+Rebuild everything:
+
+```sh
+make re
+```
+
+The Makefile lists every source explicitly and does not relink the executable
+when its inputs have not changed.
+
+## Running the game
+
+Open the level-selection menu:
+
+```sh
+./doom-nukem
+```
+
+The menu scans `tests/maps/`. Run `make maps` first when that directory does
+not contain packed levels.
+
+Run an editable source map directly:
+
+```sh
+./doom-nukem tests/maps_src/e1m1.cub
+```
+
+Run a packed level:
+
+```sh
+./doom-nukem tests/maps/e1m1.dnk
+```
+
+In the menu, Up and Down select a level, Left and Right select Easy, Normal,
+or Hard difficulty, and Enter starts the game. Choosing `e1m1.dnk` starts the
+five-level campaign. Choosing `ctf_1.dnk` starts the three-map capture-the-flag
+sequence.
+
+## Game controls
+
+- `W` / `S` or Up / Down: move forward and backward.
+- `A` / `D`: strafe left and right.
+- Left / Right: rotate without the mouse.
+- Mouse: rotate and look up or down.
+- Page Up / Page Down: keyboard look fallback.
+- Shift: run.
+- Space: jump, or ascend while flying.
+- Ctrl: crouch, or descend while flying.
+- `E`: interact with doors, switches, panels, vending machines, and locks.
+- Left mouse button: fire the selected weapon.
+- `Q`: switch weapon.
+- `R`: reload from reserve ammunition.
+- `1` / `2` / `3` / `4`: select an inventory slot.
+- Enter: use the selected inventory item.
+- `F`: toggle the jetpack after collecting it.
+- `0` or F11: toggle fullscreen and windowed mode.
+- Esc or the window close button: exit cleanly.
+
+## The level editor
+
+Open an existing `.cub` source project:
+
+```sh
+./doom-nukem --edit tests/maps_src/door_map.cub
+```
+
+Choose the packed output path explicitly:
+
+```sh
+./doom-nukem --edit tests/maps_src/door_map.cub tests/maps/door_map.dnk
+```
+
+The option is `--edit` with two hyphens. A single-hyphen `-edit` is not a
+recognized editor option.
+
+The editor opens the `.cub` file and the same-basename `.sectors` file when it
+exists. The map is displayed as a clickable grid. Select a brush in the right
+panel, then click a map cell to place it.
+
+The `< TOOL PAGE >` heading changes between four brush pages. Together they
+expose all 43 map-cell values accepted by the parser:
+
+- walls, floor, doors, glass, and decal walls;
+- every player direction and enemy type;
+- health, ammunition, key, and jetpack pickups;
+- switches, hazards, messages, exits, flags, locks, secrets, and elevators;
+- solid and pass-through objects, vending machines, and laptop tables;
+- six billboard decorations and six wall decorations;
+- `_`, which writes an outside/void space for irregular map shapes.
+
+The editor side panel and keyboard also provide:
+
+- `[` / `]`: select a sector id;
+- `C`: assign the selected sector to the selected map cell;
+- `F` / `R`: adjust floor or ceiling height;
+- `G` / `H`: adjust floor slopes;
+- `L`: adjust sector light;
+- `A`: add a door action at the selected cell;
+- `T`: change the texture preset;
+- `S`: save the `.cub` and `.sectors` sources;
+- `K`: validate the project;
+- `P`: pack the output `.dnk` file;
+- Esc: close the editor.
+
+Border cells are kept as solid walls. This prevents a ray from leaving the
+map when a level is incomplete.
+
+## Source and packed levels
+
+An editable project has two layers:
+
+```text
+level.cub       map cells, player start, texture paths, and optional assets
+level.sectors   heights, slopes, lights, angled walls, and timed actions
+       |
+       +---- doom-nukem --pack ----> level.dnk
+                                      |
+                                      +-- map and sector data
+                                      +-- textures and HUD images
+                                      +-- sounds and music
+```
+
+The `.sectors` file is optional. When it is missing, the packer creates a
+default two-sector layout.
+
+A sector definition looks like this:
+
+```text
+SECTOR 0 0.00 2.00 0.00 0.00 255
+```
+
+The values are the sector id, floor height, ceiling height, shared X/Y slope,
+and light level. A `GRID` below the definitions assigns one sector id to every
+map cell. `WALL` records add arbitrary angled segments, and `ACTION` records
+describe delayed world changes triggered by a switch.
+
+See [FORMAT.md](FORMAT.md) for the complete header, sector, wall, action, map
+token, and packed-file reference.
+
+## Packing and validating levels
+
+Pack one source project without opening the editor:
+
+```sh
+./doom-nukem --pack tests/maps_src/door_map.cub tests/maps/door_map.dnk
+```
+
+When no destination is supplied, the output uses the source basename with a
+`.dnk` extension:
+
+```sh
+./doom-nukem --pack tests/maps_src/door_map.cub
+```
+
+Validate a source or packed level without opening a game window:
 
 ```sh
 ./doom-nukem --check tests/maps/door_map.dnk
 ```
 
-The packed format embeds XPM textures and sound assets, carries sector height,
-slope, and lighting data, and can define angled wall segments. See `FORMAT.md`.
+Packing stops if the source level or any required asset is invalid. An
+incomplete packed output is removed instead of being left behind.
 
-## Controls
+A packed file begins with `DNK1`. Its embedded files are hexadecimal text, so
+the map needs only the `doom-nukem` executable and its `.dnk` file at runtime.
+When loaded, the assets are unpacked into a temporary directory, referenced by
+a generated `.cub`, and cleaned up when the game exits.
 
-- `W` / `S` or Arrow Up / Down: move forward and backward
-- `A` / `D`: strafe
-- Arrow left/right: rotate
-- Mouse: look around
-- Page Up / Page Down: keyboard pitch fallback
-- Shift: run
-- Ctrl: crouch, or descend while flying/swimming
-- Space: jump, or ascend while flying/swimming
-- `F`: engage/disengage the jetpack after collecting the artifact pickup
-- `E`: interact with doors, switches, elevator panels, and keyed doors
-- Left mouse: fire projectile
-- `R`: reload the selected weapon from reserve ammo
-- `Q`: switch weapon
-- `1` / `2` / `3` / `4`: select carried artifact slot
-- Enter: use the selected inventory slot (`2` reloads, `4` toggles jetpack)
-- Esc or window close button: quit cleanly
+To generate a starter packed level from the bundled editor template:
 
-Campaign maps use one `Q` vending-machine tile. Interact with it to spend
-5 score points on 10 ammo. Its texture is configured with the map's `VM`
-header and its replaceable sound is `assets/sounds/vending.wav`.
-
-## Menu
-
-Launching without a map opens the level select menu. Up/Down chooses a `.cub`
-or `.dnk` level from `tests/maps`, Left/Right changes difficulty, and Enter
-starts the selected level.
-
-## HUD
-
-The frame buffer HUD renders health, the selected weapon's magazine, inventory
-slots, and score/currency
-as separate overlay elements. The minimap is shown in the top-left, score is
-centered at the top, FPS is shown in the top-right, and the view includes a
-crosshair plus a bottom-center XPM weapon sprite. Ammo and inventory slots use
-the same HUD icon asset set as pickup items.
-
-## Asset Layout
-
-All project-owned runtime media is grouped under `assets/`:
-
-- `assets/images/hud/` contains HUD and weapon sprites.
-- `assets/images/textures/blue/`, `classic/`, and `doom/` contain level images.
-- `assets/sounds/` contains sound effects and music.
-
-See `assets/README.md` for the packing convention. MiniLibX's own test fixtures
-remain inside `lib/` with the vendored dependency.
-
-## Scripted Events
-
-Switch interactions enqueue timed world events. Map `T` is the default switch:
-it shows a message, adds score, toggles doors after a short delay, then closes
-doors again after a timer. Two additional switch types target a single
-specific device instead of every door on the map:
-
-- `L` — solid wall device with a dedicated, hand-height button sprite. The
-  sector assigned to its map cell is the lift target. Press `E` at the button
-  to raise/lower that sector over `ELEVATOR_DURATION`; a grounded player on the
-  platform rides it smoothly. The button sprite is separate from damage decals.
-- `P` — disguised secret door. It uses the surrounding wall texture, is drawn
-  as an ordinary wall on the minimap, and opens automatically when approached.
-  It does not require a key or the interact key.
-- `B` — locked door. Collect an `8` key pickup and press `E` at the door to
-  consume one key, permanently unlock it, and begin the normal door animation.
-  `door_map.dnk` demonstrates the complete pickup-to-unlock path.
-
-## Reloading and Flight
-
-Ammo pickups go into inventory slot 2 as reserve ammunition rather than
-directly filling the gun. Each weapon has its own magazine. Select slot 2 and
-press Enter to reload, or use `R` as the shortcut. Empty-magazine feedback
-points the player back to the ammo inventory.
-
-The slot-4 artifact is a jetpack. Once collected, select it and press Enter (or
-press `F`) to engage flight. Space/Ctrl ascend and descend, and looking up or
-down while moving adds smooth pitch-directed climb. Flight respects floors,
-ceilings, walls, and raised ledges.
-
-`tests/maps/flight_ops.dnk` is the hand-in showcase mission for all four
-features: hidden passage, inventory reload, wall-panel elevator, and a required
-jetpack crossing over a deep shaft.
-
-## Text Overlay
-
-Timed overlay messages are drawn over the frame for pickups, story/message
-zones, and scripted events.
-
-## Projectiles
-
-The player can fire physical projectiles that consume HUD ammo, travel forward,
-stop on solid walls/closed doors, leave wall decals, and hit non-item sprite
-targets. `Q` switches between pistol and blaster behavior. Enemy-fired
-projectiles use the same travel/collision code but can only damage the player,
-never other sprites, and player-fired projectiles can never hit the player.
-
-## Enemies
-
-Map `3` sprites are melee enemies: they alert when the player is nearby, chase
-through legal floor cells, deal timed contact damage, take projectile damage,
-and award score when defeated. Map `K` sprites are ranged enemies: instead of
-contact damage they fire a projectile at the player on a cooldown once in
-range, and fall back to melee-style chasing outside that range.
-
-## Rendering
-
-The wall/ray column pass is split into pthread bands based on available CPU
-cores, then joined before sprites, projectiles, HUD, and the final blit.
-Packed levels can add sector floor and ceiling heights, slopes, room lighting,
-and arbitrary angled wall segments on top of the grid fallback.
-
-## Level Flow
-
-Levels can use `X` in the map as an exit tile. The current mission flow starts
-with an objective message, requires active pickup items to be collected, then
-completes when the player reaches an exit. Dropping health to zero fails the
-mission after a short message.
-
-Capture-the-flag maps use `G` for the flag. Their only objective is to take it
-and return to the player start tile (the base); no enemy kills, pickups, or
-exit tile are required. The menu's **Capture the Flag (3 maps)** mode starts
-`ctf_1.dnk` and chains through `ctf_2.dnk` and `ctf_3.dnk`. On its minimap,
-the base is blue and the flag is yellow.
-
-To author another CTF map, use exactly one player start (`N`, `S`, `E`, or
-`W`), place one `G`, and optionally add `NEXT path/to/next-level.dnk` to
-chain it to another map. The player start is automatically the return base.
-
-## Laptop Tables
-
-Laptop tables are decorative, non-interactive `J` map tiles. Add this header
-line to use the supplied texture:
-
-```text
-LT assets/images/textures/doom/laptop_table.xpm
+```sh
+./doom-nukem --edit new_level.dnk
 ```
 
-When the player enters a laptop's proximity radius, it plays a one-shot sound.
-It does not repeat while the player remains nearby; leaving the radius and
-returning triggers it again. Laptop tables sit on the ground and are hidden
-from the minimap.
+Source editing should normally use `.cub` plus `.sectors`; `.dnk` is the final
+self-contained deliverable.
 
-## Audio
+## Important map cells
 
-Sound effects and looping music are loaded from the active level's unpacked
-sound directory for `.dnk` files, or from `assets/sounds/` for classic `.cub`
-files. Missing files are skipped without interrupting gameplay. Playback uses
-SDL2's audio queueing API: a dedicated device loops the music buffer, and a
-small fixed pool of channels lets sound effects overlap.
+- `0` is empty floor and `1` is a wall.
+- `2` is a door, `4` is glass, and `5` is a decal wall.
+- `N`, `S`, `E`, or `W` is the single player start and facing direction.
+- `3`, `K`, `I`, `D`, and `C` are the five enemy types.
+- `6`, `7`, `8`, and `9` are health, ammo, key, and jetpack pickups.
+- `T` is a switch, `H` a hazard, `M` a message, and `X` an exit.
+- `L` is an elevator panel, `P` a secret door, and `B` a locked door.
+- `G` is the capture-the-flag objective.
+- `V` is a blocking object and `v` is its pass-through form.
+- `Q` is a vending machine and `J` is a laptop table.
+- `a` through `f` are billboard decorations.
+- `g` through `l` are wall decorations.
+
+## Missions, inventory, and interactions
+
+Normal missions begin with an objective, require the active pickups to be
+collected, and finish on an `X` exit. Reaching zero health fails the mission.
+Campaign levels show briefing and debriefing text and can chain to the next
+packed level.
+
+Capture-the-flag levels use one `G`. The player takes the flag and returns to
+the original start tile, which acts as the base. These missions do not require
+normal pickups or an exit.
+
+Ammo pickups enter inventory slot 2 as reserve ammunition. Reloading transfers
+that reserve into the current weapon's magazine. The slot-4 artifact is a
+jetpack; after it is collected, `F` or Enter while slot 4 is selected toggles
+flight.
+
+`E` opens doors, activates switches and elevators, unlocks `B` doors when a
+key is available, and buys ammunition from a `Q` vending machine. A vending
+purchase costs 5 score and supplies 10 ammunition.
+
+## Audio and platform strategy
+
+The game chooses its audio backend at build time:
+
+```text
+SDL2 available       -> SDL2 audio backend
+SDL2 unavailable
+and Linux + ALSA     -> native ALSA backend
+neither available    -> build error
+```
+
+Music uses a looping channel. Sound effects use a small channel pool so shots,
+doors, pickups, enemies, and environmental sounds can overlap. Missing optional
+sound files are skipped without stopping the game.
+
+Linux and macOS mouse/window differences are isolated in separate source
+files. The gameplay, parser, editor, renderer, and packed format remain shared.
+
+## Project layout
+
+```text
+assets/             textures, HUD images, sound effects, and music
+include/            shared structures, constants, and prototypes
+lib/libft/          bundled utility library
+lib/Minilbx_*/      bundled window and image library
+src/events/         input, gameplay, enemies, projectiles, menu, and editor
+src/graphics/       ray casting, surfaces, sprites, HUD, and minimap
+src/parser/         .cub/.sectors parsing and .dnk packing
+src/utils/          initialization, cleanup, sectors, BSP, and audio
+tests/maps_src/     editable source projects
+tests/maps/         generated self-contained levels
+```
+
+## Validation and testing
+
+Check the 42 Norm across the project-owned C and header files:
+
+```sh
+norminette src include lib/libft/src lib/libft/include
+```
+
+Build and validate every supplied level:
+
+```sh
+make
+make maps
+for level in tests/maps/*.dnk; do
+    ./doom-nukem --check "$level"
+done
+```
+
+The repository currently includes campaign, capture-the-flag, architecture,
+door, item, gameplay, and flight-focused maps. `flight_ops.cub` is a compact
+authoring example for a secret passage, inventory reload, elevator panel, and
+jetpack crossing.
+
+The full packed-level specification and advanced authoring examples are in
+[FORMAT.md](FORMAT.md). Asset conventions are documented in
+[assets/README.md](assets/README.md).

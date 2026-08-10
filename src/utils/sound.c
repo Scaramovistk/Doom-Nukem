@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   sound.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/06 00:00:00 by rperez-t          #+#    #+#             */
 /*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
@@ -14,13 +14,11 @@
 
 void	init_audio(t_game *g)
 {
-# ifdef AUDIO_SDL2
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	if (!audio_backend_init())
 	{
 		g->audio.enabled = false;
 		return ;
 	}
-# endif
 	g->audio.enabled = true;
 	if (!g->audio.sound_dir[0] && !g->unpacked_level)
 		ft_strlcpy(g->audio.sound_dir, SOUND_DIR, LINE_SIZE);
@@ -36,8 +34,8 @@ void	init_audio(t_game *g)
 
 void	play_sound_effect(t_game *g, const char *name)
 {
-	char			path[LINE_SIZE];
-	t_channel		*channel;
+	char		path[LINE_SIZE];
+	t_channel	*channel;
 
 	if (!g->audio.enabled)
 		return ;
@@ -49,8 +47,7 @@ void	play_sound_effect(t_game *g, const char *name)
 
 void	start_background_music(t_game *g)
 {
-	if (!g->audio.enabled || !g->audio.music_path[0]
-		|| g->audio.music.device)
+	if (!g->audio.enabled || !g->audio.music_path[0] || g->audio.music.device)
 		return ;
 	load_channel_wav(&g->audio.music, g->audio.music_path, true);
 }
@@ -65,9 +62,7 @@ void	stop_audio(t_game *g)
 	i = 0;
 	while (i < SFX_CHANNELS_NB)
 		close_channel(&g->audio.sfx[i++]);
-# ifdef AUDIO_SDL2
-	SDL_QuitSubSystem(SDL_INIT_AUDIO);
-# endif
+	audio_backend_stop();
 	g->audio.enabled = false;
 }
 

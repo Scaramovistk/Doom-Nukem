@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   events.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 00:00:00 by rperez-t          #+#    #+#             */
 /*   Updated: 2026/07/07 00:00:00 by rperez-t         ###   ########.fr       */
@@ -51,11 +51,6 @@ static void	toggle_all_doors(t_game *g)
 	}
 }
 
-static void	show_event_message(t_game *g, t_world_event *event)
-{
-	show_message(g, event->message, MESSAGE_DISPLAY_TIME);
-}
-
 static void	run_event_action(t_game *g, t_world_event *event)
 {
 	if (event->action == EVENT_TOGGLE_DOORS)
@@ -73,28 +68,11 @@ static void	run_event_action(t_game *g, t_world_event *event)
 			g->hud.health = 0;
 	}
 	else if (event->action == EVENT_SHOW_MESSAGE)
-		show_event_message(g, event);
+		show_message(g, event->message, MESSAGE_DISPLAY_TIME);
 	else if (event->action == EVENT_OPEN_ONE_DOOR)
 		open_one_door(g, event->door_target);
 	else if (event->action == EVENT_AUTHORED_ACTION)
 		run_authored_action(g, event->target);
-}
-
-void	queue_world_event(t_game *g, t_world_event event)
-{
-	int	i;
-
-	i = 0;
-	while (i < WORLD_EVENT_MAX)
-	{
-		if (!g->events[i].active)
-		{
-			g->events[i] = event;
-			g->events[i].active = true;
-			return ;
-		}
-		i++;
-	}
 }
 
 static bool	update_one_event(t_game *g, t_world_event *event)
@@ -128,40 +106,4 @@ bool	update_world_events(t_game *g)
 		i++;
 	}
 	return (active);
-}
-
-static t_world_event	make_event(t_event_action action, double timer, int value)
-{
-	t_world_event	event;
-
-	event.action = action;
-	event.timer = timer;
-	event.reload = timer;
-	event.value = value;
-	event.repeat = false;
-	event.active = true;
-	event.message[0] = '\0';
-	return (event);
-}
-
-void	trigger_switch_sequence(t_game *g)
-{
-	t_world_event	event;
-	const char *const	messages[5] = {
-		"HANGAR POWER ROUTED", "LAB LOCKDOWN OVERRIDDEN",
-		"INFERNAL SEAL UNLATCHED", "TELEPORTER COORDINATES SET",
-		"EARTH GATE CHARGING"
-	};
-
-	event = make_event(EVENT_SHOW_MESSAGE, 0.0, 0);
-	if (g->campaign_level >= 1 && g->campaign_level <= 5)
-		ft_strlcpy(event.message, messages[g->campaign_level - 1], HUD_MESSAGE_LEN);
-	else
-		ft_strlcpy(event.message, "SWITCH ACTIVE", HUD_MESSAGE_LEN);
-	queue_world_event(g, event);
-	queue_world_event(g, make_event(EVENT_ADD_SCORE, 0.0, 25));
-	queue_world_event(g, make_event(EVENT_TOGGLE_DOORS, SWITCH_EVENT_DELAY, 0));
-	queue_world_event(g, make_event(EVENT_CLOSE_DOORS,
-			SWITCH_DOOR_CLOSE_DELAY, 0));
-	play_sound_effect(g, "switch");
 }

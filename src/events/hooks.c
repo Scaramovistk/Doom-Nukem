@@ -12,24 +12,6 @@
 
 #include "../../include/cub3d.h"
 
-static void	select_item(t_game *g, int item)
-{
-	g->hud.selected_item = item;
-	if (g->hud.inventory[item] > 0)
-		show_message(g, "ARTIFACT SELECTED", 1.0);
-	else
-		show_message(g, "EMPTY ARTIFACT SLOT", 1.0);
-}
-
-static void	cycle_weapon(t_game *g)
-{
-	g->hud.selected_weapon = (g->hud.selected_weapon + 1) % WEAPON_NB;
-	if (g->hud.selected_weapon == 0)
-		show_message(g, "PISTOL", 1.0);
-	else
-		show_message(g, "BLASTER", 1.0);
-}
-
 void	setup_hooks(t_game *g)
 {
 	mlx_loop_hook(g->mlx, game_loop, g);
@@ -38,96 +20,6 @@ void	setup_hooks(t_game *g)
 	mlx_hook(g->mlx_win, CLIENT_MESSAGE, STRUCTURE_NOTIFY_MASK, stop_game, g);
 	mlx_hook(g->mlx_win, KEY_PRESS, KEY_PRESS_MASK, pressed, g);
 	mlx_hook(g->mlx_win, KEY_RELEASE, KEY_RELEASE_MASK, released, g);
-}
-
-int	pressed(int key, t_game *g)
-{
-	if (key == KEY_ESC)
-		stop_game(g);
-	if (key == KEY_F11 || key == KEY_0)
-	{
-		toggle_fullscreen(g->mlx, g->mlx_win, g);
-		if (g->state == STATE_MENU)
-			render_menu(g);
-		else
-			render(g);
-		return (0);
-	}
-	if (g->state == STATE_MENU)
-		return (menu_key(key, g));
-	if (g->story_visible)
-	{
-		if (key == KEY_ENTER)
-		{
-			if (g->story_is_debrief)
-			{
-				g->story_visible = false;
-				if (g->level.next_level[0])
-					load_next_level(g);
-				else
-					stop_game(g);
-			}
-			else
-				g->story_visible = false;
-		}
-		return (0);
-	}
-	if (key == KEY_W || key == KEY_UP)
-		g->player.vertical_move = 1;
-	else if (key == KEY_S || key == KEY_DOWN)
-		g->player.vertical_move = -1;
-	else if (key == KEY_A)
-		g->player.lateral_move = -1;
-	else if (key == KEY_D)
-		g->player.lateral_move = 1;
-	else if (key == KEY_LEFT)
-		g->player.key_rotation_move = -1;
-	else if (key == KEY_RIGHT)
-		g->player.key_rotation_move = 1;
-	else if (key == KEY_PAGE_UP)
-		g->player.key_pitch_move = -1;
-	else if (key == KEY_PAGE_DOWN)
-		g->player.key_pitch_move = 1;
-	else if (key == KEY_SHIFT)
-		g->player.is_running = true;
-	else if (key == KEY_CTRL)
-	{
-		g->player.is_crouching = true;
-		g->player.eye_height = PLAYER_CROUCH_HEIGHT;
-		if (g->player.is_flying || g->player.is_swimming)
-			g->player.fly_move = -1;
-	}
-	else if (key == KEY_SPACE)
-	{
-		if (g->player.is_flying || g->player.is_swimming)
-			g->player.fly_move = 1;
-		else
-			jump_player(&g->player);
-	}
-	else if (key == KEY_E)
-		interact(g);
-	else if (key == KEY_F)
-	{
-		if (g->hud.inventory[ITEM_ARTIFACT] > 0)
-			toggle_fly_mode(&g->player, g);
-		else
-			show_message(g, "JETPACK REQUIRED", MESSAGE_DISPLAY_TIME);
-	}
-	else if (key == KEY_Q)
-		cycle_weapon(g);
-	else if (key == KEY_R)
-		reload_weapon(g);
-	else if (key == KEY_1)
-		select_item(g, 0);
-	else if (key == KEY_2)
-		select_item(g, 1);
-	else if (key == KEY_3)
-		select_item(g, 2);
-	else if (key == KEY_4)
-		select_item(g, 3);
-	else if (key == KEY_ENTER)
-		use_selected_item(g);
-	return (0);
 }
 
 int	released(int key, t_game *g)
@@ -174,8 +66,8 @@ int	mouse_move(int x, int y, void *param)
 	g->player.mouse_move_pending = true;
 	g->player.mouse.x = x;
 	g->player.mouse.y = y;
-	move_mouse_at(g->mlx, g->mlx_win, g->window_width / 2,
-		g->window_height / 2);
+	move_mouse_at(g->mlx, g->mlx_win, g->window_width / 2, g->window_height
+		/ 2);
 	return (0);
 }
 

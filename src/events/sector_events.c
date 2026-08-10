@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   sector_events.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/cub3d.h"
 
-void	make_event_sector(t_world_event *event, int target,
-		double from_value, double to_value)
+void	make_event_sector(t_world_event *event, int target, double from_value,
+		double to_value)
 {
 	event->action = EVENT_SECTOR_ANIMATE;
 	event->timer = ELEVATOR_DURATION;
@@ -40,13 +40,13 @@ bool	animate_sector_event(t_game *g, t_world_event *event)
 		ratio = 0.0;
 	if (ratio > 1.0)
 		ratio = 1.0;
-	sector->floor_z = event->from_value
-		+ (event->to_value - event->from_value) * ratio;
+	sector->floor_z = event->from_value + (event->to_value - event->from_value)
+		* ratio;
 	if (sector->floor_z > sector->ceil_z - 0.25)
 		sector->floor_z = sector->ceil_z - 0.25;
 	if (g->player.on_ground && g->map.sector_grid
-		&& g->map.sector_grid[(int)g->player.pos.y][(int)g->player.pos.x]
-		== event->target)
+		&& g->map.sector_grid[(int)g->player.pos.y]
+		[(int)g->player.pos.x] == event->target)
 		g->player.z = get_floor_z_at(g, g->player.pos);
 	if (ratio >= 1.0)
 		event->active = false;

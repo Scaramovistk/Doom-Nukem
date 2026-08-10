@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw_risers.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ static void	draw_riser_slice(t_ray *ray, t_height_step *step, t_z_range z,
 	slice.texture = get_wall_texture(ray, g);
 	slice.texture_x = get_texture_x(ray, step->distance, step->side, g);
 	slice.viewer_distance = step->distance;
-	slice.light = wall_light(step->side, get_light_at(g,
-				ray_world_pos(ray, step->distance, g)), false);
+	slice.light = wall_light(step->side, get_light_at(g, ray_world_pos(ray,
+					step->distance, g)), false);
 	slice.ray = NULL;
 	draw_texture_slice(&slice, g);
 }
@@ -76,8 +76,7 @@ static void	draw_one_riser(t_height_step *step, t_ray *ray, t_game *g,
 	ray->distance = save_distance;
 }
 
-static void	draw_band_pair(t_game *g, t_step_ctx ctx, int sector,
-		double eye_z)
+static void	draw_band_pair(t_game *g, t_step_ctx ctx, int sector, double eye_z)
 {
 	ctx.is_floor = true;
 	ctx.camera_height = g->map.sectors[sector].floor_z - eye_z;

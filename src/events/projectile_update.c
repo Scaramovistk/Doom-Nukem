@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   projectile_update.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ static void	update_one_projectile(t_projectile *p, t_game *g, double step)
 
 	next.x = p->pos.x + p->velocity.x * step;
 	next.y = p->pos.y + p->velocity.y * step;
-	if (hit_wall(g, p, next) || hit_player(g, p, next)
-		|| hit_sprite(g, p, next))
+	if (hit_wall(g, p, next) || hit_player(g, p, next) || hit_sprite(g, p,
+			next))
 	{
 		p->active = false;
 		return ;
@@ -60,7 +60,6 @@ bool	update_projectiles(t_game *g)
 	i = 0;
 	while (i < PROJECTILE_MAX)
 	{
-		/* Projectiles are player actions: never suspend their physics. */
 		if (g->projectiles[i].active)
 		{
 			update_one_projectile(&g->projectiles[i], g, step);

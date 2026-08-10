@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 00:00:00 by rperez-t          #+#    #+#             */
 /*   Updated: 2026/07/08 00:00:00 by rperez-t         ###   ########.fr       */
@@ -27,63 +27,6 @@ static bool	enemy_cell_legal(t_game *g, t_position pos)
 	if (block == DOOR && !is_door_open(cell, g->map.doors))
 		return (false);
 	return (true);
-}
-
-static void	remove_enemy_sprite(t_game *g, t_enemy *enemy)
-{
-	int	last;
-	int	i;
-
-	last = g->map.sprite_count - 1;
-	if (enemy->sprite_index < 0 || enemy->sprite_index > last)
-		return ;
-	if (enemy->sprite_index != last)
-	{
-		g->map.sprites[enemy->sprite_index] = g->map.sprites[last];
-		i = 0;
-		while (i < g->map.item_count)
-		{
-			if (g->map.items[i].sprite_index == last)
-				g->map.items[i].sprite_index = enemy->sprite_index;
-			i++;
-		}
-		i = 0;
-		while (i < g->map.enemy_count)
-		{
-			if (g->map.enemies[i].active
-				&& g->map.enemies[i].sprite_index == last)
-				g->map.enemies[i].sprite_index = enemy->sprite_index;
-			i++;
-		}
-		i = 0;
-		while (i < g->map.decoration_count)
-		{
-			if (g->map.decorations[i].sprite_index == last)
-				g->map.decorations[i].sprite_index = enemy->sprite_index;
-			i++;
-		}
-		i = 0;
-		while (i < g->map.object_count)
-		{
-			if (g->map.objects[i].sprite_index == last)
-				g->map.objects[i].sprite_index = enemy->sprite_index;
-			i++;
-		}
-		if (g->map.vending_machine.active
-			&& g->map.vending_machine.sprite_index == last)
-			g->map.vending_machine.sprite_index = enemy->sprite_index;
-		if (g->map.has_flag && g->map.flag_sprite_index == last)
-			g->map.flag_sprite_index = enemy->sprite_index;
-		i = 0;
-		while (i < g->map.laptop_count)
-		{
-			if (g->map.laptops[i].sprite_index == last)
-				g->map.laptops[i].sprite_index = enemy->sprite_index;
-			i++;
-		}
-	}
-	g->map.sprite_count--;
-	enemy->sprite_index = -1;
 }
 
 bool	damage_enemy_at_sprite(t_game *g, int sprite_index, int damage)

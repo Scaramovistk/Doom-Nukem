@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ft_error_messages.h                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 22:01:47 by rperez-t          #+#    #+#             */
 /*   Updated: 2024/07/16 22:01:50 by rperez-t         ###   ########.fr       */

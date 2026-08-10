@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   editor_gui.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/07 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/08/07 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/08/07 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/08/07 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/cub3d.h"
-#include "../../include/editor.h"
 
 static bool	editor_display_init(t_editor *e)
 {
@@ -28,36 +27,6 @@ static bool	editor_display_init(t_editor *e)
 	e->img.addr = mlx_get_data_addr(e->img.ptr, &e->img.bits_per_pixel,
 			&e->img.line_length, &e->img.endian);
 	return (e->img.addr != NULL);
-}
-
-static void	editor_setup(t_editor *e)
-{
-	int	x_size;
-	int	y_size;
-
-	x_size = 850 / e->doc.map_width;
-	y_size = 650 / e->doc.map_height;
-	e->cell_size = x_size;
-	if (y_size < x_size)
-		e->cell_size = y_size;
-	if (e->cell_size > 32)
-		e->cell_size = 32;
-	if (e->cell_size < 4)
-		e->cell_size = 4;
-	e->map_x = 32;
-	e->map_y = 84;
-	e->tool = '1';
-	e->sector = 0;
-	e->selected_x = -1;
-	e->selected_y = -1;
-	e->page = 0;
-	e->running = true;
-	e->redraw = true;
-	e->confirm_close = false;
-	ft_strlcpy(e->status, "Click a tool, then paint the map", HUD_MESSAGE_LEN);
-	if (!editor_border_valid(&e->doc))
-		ft_strlcpy(e->status, "Invalid border: repair every edge with walls",
-			HUD_MESSAGE_LEN);
 }
 
 int	editor_exit(t_editor *e)

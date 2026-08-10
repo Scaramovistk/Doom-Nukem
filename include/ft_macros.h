@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ft_macros.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 21:58:02 by rperez-t          #+#    #+#             */
 /*   Updated: 2024/07/16 21:58:05 by rperez-t         ###   ########.fr       */
@@ -47,7 +47,7 @@
 # define ROTATION_SPEED 0.03
 # define PITCH_SPEED 6.0
 # define MOUSE_SENSITIVITY 0.15
-# define PITCH_LIMIT (WIN_HEIGHT / 3)
+# define PITCH_LIMIT 266
 # define PLAYER_FLOOR_Z 0.0
 # define PLAYER_STAND_HEIGHT 0.50
 # define PLAYER_CROUCH_HEIGHT 0.25

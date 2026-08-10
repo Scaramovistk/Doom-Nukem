@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   projectile_fire.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,19 @@ static void	setup_projectile_weapon(t_projectile *p, t_game *g)
 	}
 }
 
+static void	setup_projectile_motion(t_projectile *p, t_game *g,
+		t_shot_spec spec)
+{
+	p->pos = spec.origin;
+	p->z = get_floor_z_at(g, spec.origin) + PLAYER_STAND_HEIGHT;
+	if (!spec.from_enemy)
+		p->z = g->player.z + g->player.eye_height;
+	p->pos.x += cos(spec.angle) * 0.35;
+	p->pos.y += sin(spec.angle) * 0.35;
+	p->velocity.x = cos(spec.angle) * PROJECTILE_SPEED;
+	p->velocity.y = sin(spec.angle) * PROJECTILE_SPEED;
+}
+
 int	fire_projectile_from(t_game *g, t_shot_spec spec)
 {
 	t_projectile	*p;
@@ -48,14 +61,7 @@ int	fire_projectile_from(t_game *g, t_shot_spec spec)
 	if (i == PROJECTILE_MAX)
 		return (-1);
 	p = &g->projectiles[i];
-	p->pos = spec.origin;
-	p->z = get_floor_z_at(g, spec.origin) + PLAYER_STAND_HEIGHT;
-	if (!spec.from_enemy)
-		p->z = g->player.z + g->player.eye_height;
-	p->pos.x += cos(spec.angle) * 0.35;
-	p->pos.y += sin(spec.angle) * 0.35;
-	p->velocity.x = cos(spec.angle) * PROJECTILE_SPEED;
-	p->velocity.y = sin(spec.angle) * PROJECTILE_SPEED;
+	setup_projectile_motion(p, g, spec);
 	p->damage = spec.damage;
 	p->size = PROJECTILE_SIZE;
 	if (spec.from_enemy)
@@ -70,9 +76,9 @@ int	fire_projectile_from(t_game *g, t_shot_spec spec)
 
 void	fire_projectile(t_game *g)
 {
-	int				ammo_cost;
-	int				index;
-	t_shot_spec		spec;
+	int			ammo_cost;
+	int			index;
+	t_shot_spec	spec;
 
 	ammo_cost = weapon_ammo_cost(g);
 	if (g->hud.magazine[g->hud.selected_weapon] < ammo_cost)

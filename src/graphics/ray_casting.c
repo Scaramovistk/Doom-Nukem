@@ -17,8 +17,8 @@ static double	cross(t_position a, t_position b)
 	return (a.x * b.y - a.y * b.x);
 }
 
-static bool	segment_intersection(t_ray *ray, t_wall_segment *wall,
-		t_game *g, double *distance)
+static bool	segment_intersection(t_ray *ray, t_wall_segment *wall, t_game *g,
+		double *distance)
 {
 	t_position	seg;
 	t_position	to_wall;
@@ -62,8 +62,8 @@ void	cast_segment_walls(t_ray *ray, t_game *g)
 			ray->hit_door = NULL;
 			ray->transparent_count = 0;
 			while (ray->height_step_count > 0
-				&& ray->height_steps[ray->height_step_count - 1].distance
-				>= distance)
+				&& ray->height_steps[ray->height_step_count
+					- 1].distance >= distance)
 				ray->height_step_count--;
 		}
 		i++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_border.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/07 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/08/07 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/08/07 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/08/07 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,20 @@ int	ft_solid_map_border(char **map, int lines, int width)
 	y = 1;
 	while (y < lines - 1)
 	{
-		if ((int)ft_strlen(map[y]) != width || map[y][0] != '1'
-			|| map[y][width - 1] != '1')
+		if ((int)ft_strlen(map[y]) != width || map[y][0] != '1' || map[y][width
+			- 1] != '1')
 			return (0);
 		y++;
 	}
 	return (1);
+}
+
+void	ft_set_player_from_map(t_game *g, char **map, int *player)
+{
+	const double	calibrate = COLLISION_SAFETY * 4;
+
+	g->player.pos.y = player[0] + calibrate;
+	g->player.pos.x = player[1] + calibrate;
+	g->map.flag_base = (t_position){player[1] + 0.5, player[0] + 0.5};
+	g->player.look = map[player[0]][player[1]];
 }

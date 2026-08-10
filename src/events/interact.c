@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   interact.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/06 00:00:00 by rperez-t          #+#    #+#             */
 /*   Updated: 2026/07/06 00:00:00 by rperez-t         ###   ########.fr       */
@@ -71,15 +71,17 @@ static bool	try_switches_at(t_coord check, t_game *g)
 	return (false);
 }
 
-static void	use_door(t_coord pos, t_game *g)
+static bool	use_door(t_coord pos, t_game *g)
 {
 	t_door	*door;
 
+	if (!is_door(pos, g) || is_secret_cell(g, pos) || is_on_player(pos, g))
+		return (false);
 	door = &g->map.doors[pos.y][pos.x];
 	if (door->is_locked && g->hud.inventory[ITEM_KEY] <= 0)
 	{
 		show_message(g, "LOCKED - KEY REQUIRED", MESSAGE_DISPLAY_TIME);
-		return ;
+		return (true);
 	}
 	if (door->is_locked)
 	{
@@ -89,6 +91,7 @@ static void	use_door(t_coord pos, t_game *g)
 	}
 	activate_door(pos, g);
 	play_sound_effect(g, "door");
+	return (true);
 }
 
 void	interact(t_game *g)
@@ -105,18 +108,12 @@ void	interact(t_game *g)
 		check.y = (int)(g->player.pos.y + dir.y * check_distance);
 		if (!is_in_bounds(check, g))
 			return ;
-		if (try_pickup_item_at(check, g))
+		if (try_pickup_item_at(check, g)
+			|| try_use_vending_machine_at(check, g)
+			|| try_switches_at(check, g))
 			return ;
-		if (try_use_vending_machine_at(check, g))
+		if (use_door(check, g))
 			return ;
-		if (try_switches_at(check, g))
-			return ;
-		if (is_door(check, g) && !is_secret_cell(g, check)
-			&& !is_on_player(check, g))
-		{
-			use_door(check, g);
-			return ;
-		}
 		if (is_door(check, g) || g->map.grid[check.y][check.x] == WALL
 			|| g->map.grid[check.y][check.x] == TRANSPARENT_WALL
 			|| g->map.grid[check.y][check.x] == DECAL_WALL)

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 21:52:37 by rperez-t          #+#    #+#             */
 /*   Updated: 2024/07/16 21:52:40 by rperez-t         ###   ########.fr       */
@@ -94,29 +94,6 @@ int	ft_parse_file(int argc, char *argv[], t_game *g)
 		if (!values[5])
 			return (ft_parsing_error(MAPP, 0));
 		return (ft_populate_info(&header, g), 1);
-	}
-	return (0);
-}
-
-int	ft_amount_of_commas(char **rgbs, int *values, char *line)
-{
-	while (line[values[4]])
-	{
-		if (line[values[4]] == ',')
-			values[5]++;
-		values[4]++;
-	}
-	while (rgbs[values[3]] != NULL)
-		values[3]++;
-	if (3 < values[3] || values[5] != 2)
-	{
-		while (rgbs[values[0]] != NULL)
-		{
-			free(rgbs[values[0]]);
-			values[0]++;
-		}
-		free(rgbs);
-		return (ft_parsing_error(RGBF, 1));
 	}
 	return (0);
 }

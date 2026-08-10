@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemy_update.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ bool	update_enemies(t_game *g)
 	i = 0;
 	while (i < g->map.enemy_count)
 	{
-		if (g->map.enemies[i].active
-			&& bsp_position_visible(g, g->map.enemies[i].pos)
-			&& update_one_enemy(&g->map.enemies[i], g))
+		if (g->map.enemies[i].active && bsp_position_visible(g,
+				g->map.enemies[i].pos) && update_one_enemy(&g->map.enemies[i],
+				g))
 			updated = true;
 		i++;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemy_ranged.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/07/23 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	fire_enemy_projectile(t_game *g, t_enemy *enemy)
 	t_shot_spec	spec;
 	double		angle;
 
-	angle = atan2(g->player.pos.y - enemy->pos.y,
-			g->player.pos.x - enemy->pos.x);
+	angle = atan2(g->player.pos.y - enemy->pos.y, g->player.pos.x
+			- enemy->pos.x);
 	spec = (t_shot_spec){enemy->pos, angle, enemy->projectile_damage, true};
 	fire_projectile_from(g, spec);
 }

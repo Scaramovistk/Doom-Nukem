@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minimap_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.s19.be>         +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 00:00:00 by rperez-t          #+#    #+#             */
 /*   Updated: 2026/07/23 00:00:00 by rperez-t         ###   ########.fr       */

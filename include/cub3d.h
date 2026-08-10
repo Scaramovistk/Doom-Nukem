@@ -13,6 +13,7 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 # include "ft_structures.h"
+# include "norm_internal.h"
 
 // ----- CUB3D ----- //
 
@@ -21,12 +22,37 @@ int			main(int argc, char *argv[]);
 int			run_editor(int argc, char *argv[]);
 int			check_level_file(char *path);
 int			interactive_level_editor(char *src, char *default_output);
+bool		editor_open(t_editor_doc *doc, char *src, char *output);
+void		editor_close(t_editor_doc *doc);
+bool		editor_command(t_editor_doc *doc, char *command);
+bool		editor_border_valid(t_editor_doc *doc);
+int			terminal_level_editor(char *src, char *default_output);
+int			editor_render(t_editor *editor);
+void		editor_put_labels(t_editor *editor);
+void		editor_put_tool_labels(t_editor *editor);
+int			editor_key(int key, t_editor *editor);
+int			editor_mouse(int button, int x, int y, t_editor *editor);
+void		editor_run_command(t_editor *e, char *command, char *status);
+void		editor_action_at_selection(t_editor *e);
+void		editor_adjust_sector(t_editor *e, int property);
+void		editor_texture_preset(t_editor *e);
+void		editor_project_key(int key, t_editor *e);
+bool		editor_select_tool(int key, t_editor *e);
+bool		editor_panel_click(t_editor *e, int x, int y);
+int			editor_exit(t_editor *editor);
+void		editor_setup(t_editor *editor);
+bool		parse_sector_command(char *command, t_sector *sector, int *id);
+bool		replace_sector_line(t_editor_doc *doc, char *line, int id);
+bool		editor_dispatch_edit(t_editor_doc *doc, char *command);
+bool		editor_dispatch_project(t_editor_doc *doc, char *command);
+bool		editor_terminal_loop(t_editor_doc *doc, char *command);
 
 // ----- EVENTS ----- //
 
 // hooks.c
 void		setup_hooks(t_game *g);
 int			pressed(int keycode, t_game *g);
+void		handle_action_key(int key, t_game *g);
 int			released(int keycode, t_game *g);
 int			mouse_move(int x, int y, void *param);
 int			mouse_press(int button, int x, int y, void *param);
@@ -46,6 +72,9 @@ int			game_loop(t_game *g);
 
 // update_player_pos.c
 void		update_player_pos(t_player *p, t_game *g);
+bool		player_has_free_movement(t_player *p);
+void		clamp_player_z(t_player *p, t_game *g);
+void		update_vertical_physics(t_player *p, t_game *g);
 void		jump_player(t_player *p);
 void		toggle_fly_mode(t_player *p, t_game *g);
 bool		is_position_legal(t_position pos, t_game *g);
@@ -60,6 +89,7 @@ int			apply_light(int color, int light, double distance);
 void		init_default_sectors(t_game *g);
 bool		set_sector_cell(t_game *g, int x, int y, int sector);
 bool		set_sector_info(t_game *g, int id, t_sector sector);
+t_sector	*get_sector_at_cell(t_game *g, t_coord cell);
 void		compute_sector_origins(t_game *g);
 void		init_bsp_visibility(t_game *g);
 void		update_bsp_visibility(t_game *g);
@@ -88,6 +118,7 @@ int			stop_game(void *param);
 void		init_menu(t_game *g);
 void		render_menu(t_game *g);
 int			menu_key(int key, t_game *g);
+void		menu_load_levels(t_menu *menu);
 
 // level_loader.c
 bool		load_level_path(t_game *g, char *path);
@@ -96,6 +127,7 @@ bool		load_level_path(t_game *g, char *path);
 void		update_item_pickups(t_game *g);
 bool		is_object_blocking(t_position pos, t_game *g);
 void		collect_item(t_item *item, t_game *g);
+void		remove_item_sprite(t_item *item, t_game *g);
 
 // item_effects.c
 void		apply_health_pickup(t_game *g, int amount);
@@ -111,6 +143,7 @@ void		interact(t_game *g);
 // triggers.c
 bool		update_proximity_triggers(t_game *g);
 void		show_context_message(t_game *g);
+bool		update_laptop_proximity(t_game *g);
 
 // events.c
 bool		update_world_events(t_game *g);
@@ -119,13 +152,18 @@ void		trigger_switch_sequence(t_game *g);
 bool		authored_action_line_valid(const char *line);
 bool		add_authored_action(t_game *g, const char *line);
 bool		trigger_authored_actions(t_game *g, t_coord trigger);
+bool		parse_block_action(t_authored_action *a, const char *args);
+bool		parse_texture_action(t_authored_action *a, const char *args);
+bool		block_target_valid(t_game *g, t_authored_action *a);
+bool		object_target_valid(t_game *g, t_authored_action *a);
+bool		wall_target_valid(t_game *g, t_authored_action *a);
+bool		queue_authored_action(t_game *g, int index);
 void		run_authored_action(t_game *g, int index);
 
 // sector_events.c
 void		make_event_sector(t_world_event *event, int target,
 				double from_value, double to_value);
-void		make_event_door(t_world_event *event, t_coord target,
-				double delay);
+void		make_event_door(t_world_event *event, t_coord target, double delay);
 bool		animate_sector_event(t_game *g, t_world_event *event);
 
 // switch_targets.c
@@ -142,9 +180,13 @@ bool		update_message(t_game *g);
 void		start_level_flow(t_game *g);
 bool		update_level_flow(t_game *g);
 void		load_next_level(t_game *g);
+void		complete_level(t_game *g);
+void		fail_level(t_game *g);
+bool		update_end_state(t_game *g);
 
 // enemies.c
 bool		damage_enemy_at_sprite(t_game *g, int sprite_index, int damage);
+void		remove_enemy_sprite(t_game *g, t_enemy *enemy);
 bool		enemy_chase(t_enemy *enemy, t_game *g, double distance);
 bool		enemy_attack(t_enemy *enemy, t_game *g, double distance);
 
@@ -159,6 +201,9 @@ void		fire_enemy_projectile(t_game *g, t_enemy *enemy);
 void		fire_projectile(t_game *g);
 bool		update_projectiles(t_game *g);
 bool		hit_sprite(t_game *g, t_projectile *p, t_position pos);
+bool		projectile_is_decoration(t_game *g, int index);
+bool		projectile_target_protected(t_game *g, int index);
+void		remove_projectile_target(t_game *g, int index, int damage);
 bool		hit_wall(t_game *g, t_projectile *p, t_position pos);
 bool		projectile_path_is_blocked(t_game *g, t_position start,
 				t_position end, double z);
@@ -187,6 +232,10 @@ void		draw_hud(t_game *g);
 // minimap.c
 void		draw_minimap(t_game *g);
 void		minimap_pixel(t_game *g, int x, int y, int color);
+void		minimap_rect(t_game *g, t_coord pos, t_coord size, int color);
+void		draw_map_cells(t_game *g, t_coord origin);
+void		draw_minimap_sprites(t_game *g, t_coord origin);
+void		draw_minimap_markers(t_game *g, t_coord origin);
 
 // minimap_utils.c
 void		draw_map_segments(t_game *g, t_coord origin);
@@ -227,6 +276,8 @@ void		draw_height_steps(t_ray *ray, t_game *g);
 // draw_scene.c
 void		draw_scene(t_game *g);
 void		draw_floor_ceiling(t_game *g);
+void		init_floor_cast(t_floor_cast *cast, t_game *g);
+void		set_surface_row(int y, int horizon, t_floor_cast *cast, t_game *g);
 void		draw_all_rays(t_ray *rays, t_game *g, double *z_buffer);
 void		draw_all_rays_threaded(t_ray *rays, t_game *g, double *z_buffer);
 void		draw_one_ray(t_ray *ray, t_game *g);
@@ -247,8 +298,7 @@ int			project_world_z(double world_z, double distance, t_game *g);
 
 // draw_door.c
 void		draw_door_slice(t_ray *ray, t_game *g);
-void		get_door_top_bottom(int *door_top, int *door_bottom,
-				int *raw_top, t_ray *ray, t_game *g);
+void		get_door_top_bottom(t_dimensions *door, t_ray *ray, t_game *g);
 bool		door_occludes_pixel(t_ray *ray, double depth, int y, t_game *g);
 
 // draw_utils.c
@@ -280,6 +330,7 @@ int			ft_check_amount(void);
 // generate_map.c
 void		ft_populate_map(char **map, int *vals, t_game *g);
 void		ft_populate_info(t_header *h, t_game *g);
+t_block		ft_convert_tblock(char c);
 
 // generate_map_utils.c
 void		add_elevators(char **map, int lines, int width, t_game *g);
@@ -290,6 +341,10 @@ void		add_locked_doors(char **map, int lines, int width, t_game *g);
 void		ft_setup_header(t_header *header);
 char		**ft_values_setup(int *readval);
 int			ft_header_extractor(char *line, int *vals, t_header *p);
+void		ft_get_xpm(char *dest, char *src, int *found, int *vals);
+void		ft_get_rgb(int *rgb, int *found, char *line, int *values);
+void		ft_get_surface(char *dest, int *rgb, int *found, char *line);
+int			ft_get_asset_texture(char *text, t_header *header, int *vals);
 
 // get_map.c
 void		ft_extract_line(char *src, char *dest, int chars);
@@ -307,12 +362,18 @@ int			ft_xpm_extension(const char *path);
 
 // valid_header.c
 int			ft_get_header(char *map, int *ok, t_header *p);
+int			ft_xpm_extension(const char *path);
+int			ft_good_xpms(t_header *h, int *ok, int *vals, int amount);
+int			ft_good_rgb(t_header *header, int *ok);
+int			ft_good_optional_assets(t_header *header, int *ok);
+void		ft_ok(int *vals, int *ok, t_header *header);
 
 // ft_valid_map.c
 int			ft_extract_map(char **map, char *mapfile, int *dims);
 char		**ft_map_dup(char **map, int lines, int width);
 int			ft_valid_map(char **map, int lines, t_game *g);
 int			ft_solid_map_border(char **map, int lines, int width);
+void		ft_set_player_from_map(t_game *g, char **map, int *player);
 
 // ----- PARSER UTILS ----- //
 // parsing_error.c
@@ -371,6 +432,8 @@ void		cleanup_unpacked_level(t_game *g);
 // sound.c
 void		play_sound_effect(t_game *g, const char *name);
 void		init_audio(t_game *g);
+bool		audio_backend_init(void);
+void		audio_backend_stop(void);
 void		start_background_music(t_game *g);
 void		stop_audio(t_game *g);
 void		update_audio(void);
@@ -379,8 +442,18 @@ void		update_audio(void);
 bool		sound_path(char *dst, size_t size, const char *dir,
 				const char *name);
 void		close_channel(t_channel *channel);
-void		load_channel_wav(t_channel *channel, const char *path,
-				bool loop);
+void		load_channel_wav(t_channel *channel, const char *path, bool loop);
 t_channel	*pick_sfx_channel(t_game *g);
+void		audio_close_channel(t_channel *channel);
+bool		audio_channel_ready(t_channel *channel);
+
+// ALSA helpers
+t_wav_uint	wav_u16(const unsigned char *data);
+t_wav_uint	wav_u32(const unsigned char *data);
+bool		read_wav_file(const char *path, unsigned char **file, size_t *size);
+void		parse_wav_chunk(t_channel *channel, unsigned char *chunk,
+				unsigned char **data, unsigned int *data_len);
+bool		parse_wav(t_channel *channel, unsigned char *file, size_t size);
+void		*audio_channel_thread(void *data);
 
 #endif

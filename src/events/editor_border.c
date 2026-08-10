@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   editor_border.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@openai.com>                  +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/07 00:00:00 by codex            #+#    #+#             */
-/*   Updated: 2026/08/07 00:00:00 by codex           ###   ########.fr       */
+/*   Created: 2026/08/07 00:00:00 by rperez-t          #+#    #+#             */
+/*   Updated: 2026/08/07 00:00:00 by rperez-t         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/cub3d.h"
-#include "../../include/editor.h"
 
 bool	editor_border_valid(t_editor_doc *doc)
 {

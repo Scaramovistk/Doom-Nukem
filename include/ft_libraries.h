@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ft_libraries.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rperez-t <rperez-t@student.42belgium.be    +#+  +:+       +#+        */
+/*   By: rperez-t <rperez-t@student.42belgium.be>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 21:58:14 by rperez-t          #+#    #+#             */
 /*   Updated: 2026/07/24 10:44:02 by rperez-t         ###   ########.fr       */
@@ -14,8 +14,8 @@
 # define FT_LIBRARIES_H
 
 // Standard libraries
-# include <fcntl.h>
 # include <dirent.h>
+# include <fcntl.h>
 # include <limits.h>
 # include <math.h>
 # include <pthread.h>
@@ -28,17 +28,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 # if defined(AUDIO_SDL2)
-#  if defined(__has_include)
-#   if __has_include(<SDL2/SDL.h>)
-#    include <SDL2/SDL.h>
-#   elif __has_include(<SDL.h>)
-#    include <SDL.h>
-#   else
-#    error "SDL2 audio backend selected but its header was not found"
-#   endif
-#  else
-#   include <SDL2/SDL.h>
-#  endif
+#  include <SDL.h>
 # elif defined(AUDIO_ALSA)
 #  include <alsa/asoundlib.h>
 # else
