@@ -223,8 +223,10 @@ The option is `--edit` with two hyphens. A single-hyphen `-edit` is not a
 recognized editor option.
 
 The editor opens the `.cub` file and the same-basename `.sectors` file when it
-exists. The map is displayed as a clickable grid. Select a brush in the right
-panel, then click a map cell to place it.
+exists. The map is displayed as a clickable grid. Click a cell to select it;
+its white outline blinks until another cell is selected. Pressing any brush
+key immediately changes that selected cell. Clicking a brush in the side panel
+also applies it to the selected cell.
 
 The `< TOOL PAGE >` heading changes between four brush pages. Together they
 expose all 43 map-cell values accepted by the parser:
@@ -237,22 +239,35 @@ expose all 43 map-cell values accepted by the parser:
 - six billboard decorations and six wall decorations;
 - `_`, which writes an outside/void space for irregular map shapes.
 
-The editor side panel and keyboard also provide:
+Every brush uses a different physical key. There are no shared or
+case-dependent shortcuts:
+
+- `0` through `9` place the matching numeric map cells;
+- `N S E W T H M X K I D C V B P L Q J G` place those exact tokens;
+- `;` places pass-through object `v`;
+- `A F O R U Y` place billboard decorations `a` through `f`;
+- `Z - = , . /` place wall decorations `g` through `l`;
+- `'` places `_`, which the editor stores as an outside/void space.
+
+Project and sector actions use function keys so they never conflict with a
+brush:
 
 - `[` / `]`: select a sector id;
-- `C`: assign the selected sector to the selected map cell;
-- `F` / `R`: adjust floor or ceiling height;
-- `G` / `H`: adjust floor slopes;
-- `L`: adjust sector light;
-- `A`: add a door action at the selected cell;
-- `T`: change the texture preset;
-- `S`: save the `.cub` and `.sectors` sources;
-- `K`: validate the project;
-- `P`: pack the output `.dnk` file;
+- Home: save the `.cub` and `.sectors` sources;
+- End: pack the output `.dnk` file;
+- Delete: validate the project;
+- Backspace: change the texture preset;
+- Enter: add a door action at the selected cell;
+- Tab: assign the selected sector to the selected map cell;
+- Page Up / Page Down: adjust floor or ceiling height;
+- Left / Right: adjust the X or Y slope;
+- Insert: toggle fullscreen and windowed mode;
+- Space: adjust sector light;
 - Esc: close the editor.
 
 Border cells are kept as solid walls. This prevents a ray from leaving the
-map when a level is incomplete.
+map when a level is incomplete. Each of the 43 cell types has a unique grid
+color, including the outside/void cell.
 
 ## Source and packed levels
 
@@ -384,10 +399,15 @@ assets/             textures, HUD images, sound effects, and music
 include/            shared structures, constants, and prototypes
 lib/libft/          bundled utility library
 lib/Minilbx_*/      bundled window and image library
-src/events/         input, gameplay, enemies, projectiles, menu, and editor
-src/graphics/       ray casting, surfaces, sprites, HUD, and minimap
-src/parser/         .cub/.sectors parsing and .dnk packing
-src/utils/          initialization, cleanup, sectors, BSP, and audio
+src/app/            entry point, input hooks, menus, and campaign flow
+src/audio/          audio backends, channels, and WAV decoding
+src/core/           initialization, memory ownership, and cleanup
+src/editor/         graphical and terminal level editing
+src/gameplay/       player, enemies, items, actions, and projectiles
+src/level/          runtime level population and .dnk packaging
+src/parsing/        arguments, headers, maps, and validation
+src/rendering/      ray casting, surfaces, sprites, HUD, and minimap
+src/world/          sectors, visibility, and wall-segment collision
 tests/maps_src/     editable source projects
 tests/maps/         generated self-contained levels
 ```

@@ -638,6 +638,8 @@ typedef struct s_editor
 	bool					running;
 	bool					redraw;
 	bool					confirm_close;
+	bool					blink_visible;
+	double					blink_time;
 	char					status[HUD_MESSAGE_LEN];
 }							t_editor;
 
