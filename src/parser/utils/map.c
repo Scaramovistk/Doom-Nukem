@@ -38,26 +38,61 @@ int	ft_invalid_line(const char *str)
 	return (1);
 }
 
-int	ft_find_access_map(char **map, int vert, int hor, int *vals)
+static int	ft_is_accessible(char pos, int player)
 {
-	char	pos;
-
-	if (hor < 0 || vert >= vals[0] || vert < 0 || hor >= vals[1])
-		return (0);
-	pos = map[vert][hor];
-	if (pos == '0' || pos == (char)vals[2] || pos == '2' || pos == '3'
+	return (pos == '0' || pos == (char)player || pos == '2' || pos == '3'
 		|| pos == 'K' || (pos >= '6' && pos <= '9') || pos == 'H'
 		|| pos == 'M' || pos == 'X' || pos == 'L' || pos == 'P' || pos == 'B'
 		|| pos == 'I' || pos == 'D' || pos == 'C' || pos == 'V' || pos == 'v'
 		|| pos == 'G' || pos == 'Q' || pos == 'J'
-		|| (pos >= 'a' && pos <= 'f'))
+		|| (pos >= 'a' && pos <= 'f'));
+}
+
+static void	ft_add_accessible_neighbors(char **map, t_coord *queue,
+		int *queue_end, t_coord current, int *vals)
+{
+	const int	dx[4] = {1, -1, 0, 0};
+	const int	dy[4] = {0, 0, 1, -1};
+	int			i;
+	int			x;
+	int			y;
+
+	i = 0;
+	while (i < 4)
+	{
+		x = current.x + dx[i];
+		y = current.y + dy[i++];
+		if (x >= 0 && y >= 0 && x < vals[1] && y < vals[0]
+			&& ft_is_accessible(map[y][x], vals[2]))
+		{
+			map[y][x] = 'R';
+			queue[(*queue_end)++] = (t_coord){x, y};
+		}
+	}
+}
+
+int	ft_find_access_map(char **map, int vert, int hor, int *vals)
+{
+	t_coord	*queue;
+	int		queue_start;
+	int		queue_end;
+
+	if (hor < 0 || vert >= vals[0] || vert < 0 || hor >= vals[1])
+		return (0);
+	queue = malloc(sizeof(*queue) * vals[0] * vals[1]);
+	if (!queue)
+		return (0);
+	queue_start = 0;
+	queue_end = 0;
+	if (ft_is_accessible(map[vert][hor], vals[2]))
 	{
 		map[vert][hor] = 'R';
-		ft_find_access_map(map, vert + 1, hor, vals);
-		ft_find_access_map(map, vert - 1, hor, vals);
-		ft_find_access_map(map, vert, hor + 1, vals);
-		ft_find_access_map(map, vert, hor - 1, vals);
+		queue[queue_end++] = (t_coord){hor, vert};
 	}
+	while (queue_start < queue_end)
+		ft_add_accessible_neighbors(map, queue, &queue_end,
+			queue[queue_start++], vals);
+	free(queue);
 	return (1);
 }
 

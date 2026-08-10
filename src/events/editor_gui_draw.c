@@ -55,6 +55,13 @@ static int	cell_color(char token)
 	return (0x5C426E);
 }
 
+static char	map_token_at(char *row, int x)
+{
+	if (x >= (int)ft_strlen(row))
+		return (' ');
+	return (row[x]);
+}
+
 static void	draw_map(t_editor *e)
 {
 	t_coord	p;
@@ -73,7 +80,7 @@ static void	draw_map(t_editor *e)
 		{
 			p = (t_coord){e->map_x + x * e->cell_size,
 				e->map_y + y * e->cell_size};
-			fill_rect(e, p, s, cell_color(row[x]));
+			fill_rect(e, p, s, cell_color(map_token_at(row, x)));
 			if (x == e->selected_x && y == e->selected_y)
 				fill_rect(e, p, (t_coord){e->cell_size, 2}, YELLOW);
 			x++;

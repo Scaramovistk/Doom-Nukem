@@ -98,12 +98,27 @@ static bool	write_hex_line(int fd, const char *line)
 			continue ;
 		}
 		high = hex_value(*line++);
+		if (!*line)
+			return (false);
 		low = hex_value(*line++);
 		if (high < 0 || low < 0)
 			return (false);
 		byte = (unsigned char)((high << 4) | low);
 		if (write(fd, &byte, 1) != 1)
 			return (false);
+	}
+	return (true);
+}
+
+static bool	valid_asset_part(const char *text)
+{
+	if (!*text)
+		return (false);
+	while (*text)
+	{
+		if (!ft_isalnum(*text) && *text != '_')
+			return (false);
+		text++;
 	}
 	return (true);
 }
@@ -147,22 +162,30 @@ static bool	extract_asset(int fd, char *header, t_dnk *dnk, t_game *g)
 	t_dnk_asset	*asset;
 	char		*line;
 	int			out;
+	char			extra;
+	bool			ended;
 
 	if (dnk->asset_count >= DNK_MAX_ASSETS)
 		return (false);
 	asset = &dnk->assets[dnk->asset_count];
-	if (sscanf(header, "ASSET %31s %7s", asset->key, asset->ext) != 2)
+	if (sscanf(header, "ASSET %31s %7s %c", asset->key, asset->ext,
+			&extra) != 2
+		|| !valid_asset_part(asset->key) || !valid_asset_part(asset->ext))
 		return (false);
 	asset_path(dnk, asset, g);
 	out = open(asset->path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (out < 0)
 		return (false);
+	ended = false;
 	line = get_next_line(fd, false);
 	while (line)
 	{
 		trim_eol(line);
 		if (ft_strcmp(line, "END_ASSET") == 0)
+		{
+			ended = true;
 			break ;
+		}
 		if (!write_hex_line(out, line))
 			return (close(out), free(line), false);
 		free(line);
@@ -171,7 +194,7 @@ static bool	extract_asset(int fd, char *header, t_dnk *dnk, t_game *g)
 	close(out);
 	free(line);
 	dnk->asset_count++;
-	return (true);
+	return (ended);
 }
 
 static char	*dup_dnk_line(char *line, t_game *g)
@@ -207,36 +230,53 @@ static bool	read_dnk(char *path, t_dnk *dnk, t_game *g)
 	int		state;
 	char	*line;
 	bool	ok;
+	bool	magic_seen;
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		return (false);
 	state = 0;
 	ok = true;
+	magic_seen = false;
 	line = get_next_line(fd, false);
 	while (line && ok)
 	{
 		trim_eol(line);
-		if (ft_strcmp(line, DNK_MAGIC) == 0)
-			ok = true;
+		if (!magic_seen)
+		{
+			magic_seen = true;
+			ok = (ft_strcmp(line, DNK_MAGIC) == 0);
+		}
 		else if (ft_strcmp(line, "BEGIN_CUB") == 0)
+		{
+			ok = (state == 0 && dnk->cub_count == 0);
 			state = 1;
+		}
 		else if (ft_strcmp(line, "END_CUB") == 0)
+		{
+			ok = (state == 1);
 			state = 0;
+		}
 		else if (ft_strcmp(line, "BEGIN_SECTORS") == 0)
+		{
+			ok = (state == 0);
 			state = 2;
+		}
 		else if (ft_strcmp(line, "END_SECTORS") == 0)
+		{
+			ok = (state == 2);
 			state = 0;
+		}
 		else if (starts_with(line, "ASSET "))
-			ok = extract_asset(fd, line, dnk, g);
+			ok = (state == 0 && extract_asset(fd, line, dnk, g));
 		else
-			ok = store_section_line(dnk, line, state, g);
+			ok = (state != 0 && store_section_line(dnk, line, state, g));
 		free(line);
 		line = get_next_line(fd, false);
 	}
 	close(fd);
 	free(line);
-	return (ok && dnk->cub_count > 0);
+	return (ok && magic_seen && state == 0 && dnk->cub_count > 0);
 }
 
 static bool	packed_cub_is_self_contained(t_dnk *dnk)

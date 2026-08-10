@@ -67,6 +67,8 @@ static bool	read_lines(const char *path, char **lines, int *count)
 		(*count)++;
 		line = get_next_line(fd, false);
 	}
+	if (line)
+		return (free(line), close(fd), false);
 	free(line);
 	close(fd);
 	return (*count > 0);

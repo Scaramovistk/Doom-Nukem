@@ -25,6 +25,8 @@ bool	editor_border_valid(t_editor_doc *doc)
 	y = 0;
 	while (y < doc->map_height)
 	{
+		if ((int)ft_strlen(doc->cub[doc->map_start + y]) != doc->map_width)
+			return (free(map), false);
 		map[y] = doc->cub[doc->map_start + y];
 		y++;
 	}
